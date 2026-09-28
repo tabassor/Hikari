@@ -50,7 +50,8 @@
     PROGRAMME.subjects.forEach((s) => { SUBI[s.id] = s; s.domains.forEach((d) => d.items.forEach((it) => { REFI[it.id] = Object.assign({ s: s.id, domain: d.name }, it); })); });
     const map = new Map();
     CONTENT.chapters.forEach((c) => map.set(c.id, normalize(clone(c))));
-    (S.packs || []).forEach((p) => {
+    // Packs livrés avec l'application (dépôt GitHub : data/packs/*.js), puis packs importés sur le téléphone
+    (window.REPO_PACKS || []).concat(S.packs || []).forEach((p) => {
       const pk = p.title || p.id;
       (p.chapters || []).forEach((c0) => {
         const c = normalize(clone(c0)); const base = map.get(c.id);
@@ -75,6 +76,12 @@
     CH.forEach((c) => { CHI[c.id] = c; c.lessons.forEach((l) => { l.ch = c.id; LEI[l.id] = l; }); });
   }
 
+  // Leçons ouvertes automatiquement par les packs du dépôt (une seule fois : elle peut ensuite les refermer)
+  function autoOpen() {
+    S.autoOpened = S.autoOpened || {};
+    (window.REPO_PACKS || []).forEach((p) => (p.open || []).forEach((lid) => { if (!S.autoOpened[lid] && LEI[lid]) { S.autoOpened[lid] = today(); if (!lessonOpen(lid)) openLesson(lid); S.newFromRepo = (S.newFromRepo || []).concat([lid]); } }));
+    save();
+  }
   // Migration v1 → v2 : un chapitre ouvert ouvre toutes ses leçons remplies
   function migrate() {
     if (S.v >= 2 && S.migrated2) return;
@@ -248,7 +255,7 @@
   function reset() { S = DEFAULT(); save(); buildContent(); }
 
   window.STORE = {
-    load, save, get S() { return S; }, today, buildContent, migrate, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
+    load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
     levelInfo, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };

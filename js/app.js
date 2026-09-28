@@ -151,6 +151,11 @@
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Les sept clans</h2><button class="btn ghost sm" id="orb-toggle">${S().settings.clanList ? "Orbite" : "Liste"}</button></div>
         <div id="clans"></div><p class="small muted" style="text-align:center">${c.mastered} / ${c.total} cartes maîtrisées</p></section>`;
     $("#flash").onclick = () => startFlashQuiz();
+    const fresh = (S().newFromRepo || []).filter((id) => STORE.LEI[id]);
+    if (fresh.length) {
+      S().newFromRepo = []; STORE.save();
+      setTimeout(() => celebrate("新しい巻物！", `${ART.sensei("wow", 100)}<p>Ren t'apporte <b>${plural(fresh.length, "nouvelle leçon")}</b> :</p><ul class="small" style="text-align:left">${fresh.map((id) => `<li>${esc(STORE.LEI[id].title)} <span class="muted">(${esc(STORE.SUBI[STORE.CHI[STORE.LEI[id].ch].s].name)})</span></li>`).join("")}</ul>`, "Au travail !", "win"), 400);
+    }
     $("#orb-toggle").onclick = () => { S().settings.clanList = !S().settings.clanList; STORE.save(); render(); };
     const clans = PROGRAMME.subjects.map((s) => { const k = STORE.counts((ch) => ch.s === s.id); const nAct = STORE.activeChapters().filter((ch) => ch.s === s.id).length; return { s, k, nAct }; });
     if (S().settings.clanList) {
@@ -772,7 +777,7 @@
 
   // ---------- Démarrage ----------
   function boot() {
-    STORE.load(); STORE.buildContent(); STORE.migrate(); applyAccent();
+    STORE.load(); STORE.buildContent(); STORE.migrate(); if (S().profile) STORE.autoOpen(); applyAccent();
     document.body.innerHTML = `<div id="app"><header class="hud" hidden></header><main></main></div><nav class="tabs" hidden></nav>`;
     history.replaceState({ d: 0 }, "", location.hash || "#dojo");
     splash(); render();
