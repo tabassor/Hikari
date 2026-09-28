@@ -4,7 +4,11 @@
   function rng(seed) { let s = seed || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 100000) / 100000; }; }
 
   // ---------- Ren, le maître renard ----------
+  // Illustrations facultatives (data/images.js) : si une image existe, elle remplace le dessin SVG.
+  const IMG = () => window.IMAGES || { ren: {}, boss: {} };
   function sensei(mood = "happy", size = 96) {
+    const im = IMG().ren && (IMG().ren[mood] || IMG().ren.happy);
+    if (im) return `<img src="${im}" width="${size}" height="${size}" class="sensei img-art" alt="" aria-hidden="true" loading="lazy">`;
     const eyes = {
       happy: `<path d="M68 96 q10 -10 20 0" stroke="#1b1320" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M112 96 q10 -10 20 0" stroke="#1b1320" stroke-width="5" fill="none" stroke-linecap="round"/>`,
       wow: `<circle cx="78" cy="94" r="9" fill="#1b1320"/><circle cx="122" cy="94" r="9" fill="#1b1320"/><circle cx="81" cy="90" r="3" fill="#fff"/><circle cx="125" cy="90" r="3" fill="#fff"/>`,
@@ -30,6 +34,8 @@
   // ---------- Yōkai (boss puis allié) ----------
   const YPAL = [["#7b5cff", "#c6b8ff"], ["#ff5470", "#ffc2cc"], ["#12b886", "#b2f2e0"], ["#ff922b", "#ffd8a8"], ["#339af0", "#bde0ff"], ["#e64980", "#fcc2d7"], ["#5c7cfa", "#c5d0ff"], ["#94d82d", "#e3f7b8"]];
   function yokai(id, opts = {}) {
+    const im = IMG().boss && IMG().boss[id];
+    if (im) { const sz = opts.size || 140; return `<img src="${im}" width="${sz}" height="${sz}" class="yokai img-art${opts.angry ? " shake" : ""}${opts.ally ? " ally" : ""}" alt="" aria-hidden="true" loading="lazy">`; }
     const r = rng(hash(id)); const [c1, c2] = YPAL[Math.floor(r() * YPAL.length)];
     const size = opts.size || 140, defeated = !!opts.ally, angry = !!opts.angry;
     const N = 14, pts = [];

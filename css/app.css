@@ -416,3 +416,7 @@ body.quake { animation: quake .4s; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 @media (max-width: 380px) { .clans { grid-template-columns: 1fr; } .badges { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Illustrations bitmap (data/images.js) */
+img.img-art { object-fit: contain; display: block; }
+img.yokai.ally { filter: saturate(1.1) drop-shadow(0 0 10px rgba(255, 214, 90, .8)); }
