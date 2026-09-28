@@ -210,6 +210,13 @@
       if (Math.random() < 0.3) { const i = R(0, 6); return { k: "i", q: `What day comes after **${days[i][1]}**?`, a: [days[(i + 1) % 7][1]], caseSensitive: true, x: "Les jours prennent une majuscule en anglais." }; }
       const t = pick(Math.random() < 0.5 ? days : months); return { k: "i", q: `Traduis en anglais : **${t[0]}**`, a: [t[1]], caseSensitive: true, x: "Majuscule obligatoire en anglais." };
     },
+    esDate() {
+      const days = [["lundi", "lunes"], ["mardi", "martes"], ["mercredi", "miércoles"], ["jeudi", "jueves"], ["vendredi", "viernes"], ["samedi", "sábado"], ["dimanche", "domingo"]];
+      const months = [["janvier", "enero"], ["février", "febrero"], ["mars", "marzo"], ["avril", "abril"], ["mai", "mayo"], ["juin", "junio"], ["juillet", "julio"], ["août", "agosto"], ["septembre", "septiembre"], ["octobre", "octubre"], ["novembre", "noviembre"], ["décembre", "diciembre"]];
+      const dt = new Date(2026, 8, 1 + R(0, 364)), n = dt.getDate(), m = months[dt.getMonth()], d = days[(dt.getDay() + 6) % 7];
+      const a = [`${d[1]}, ${n} de ${m[1]}`, `${d[1]} ${n} de ${m[1]}`, `${d[1]}, ${n} de ${m[1]} de ${dt.getFullYear()}`, `${d[1]} ${n} de ${m[1]} de ${dt.getFullYear()}`];
+      return { k: "i", q: `Escribe la fecha en español : **${d[0]} ${n === 1 ? "1er" : n} ${m[0]}**`, a, x: `**${a[0]}** : sans majuscule, et avec **de** entre le jour et le mois.` };
+    },
     esDays() {
       const days = [["lundi", "lunes"], ["mardi", "martes"], ["mercredi", "miércoles"], ["jeudi", "jueves"], ["vendredi", "viernes"], ["samedi", "sábado"], ["dimanche", "domingo"]];
       const months = [["janvier", "enero"], ["février", "febrero"], ["mars", "marzo"], ["avril", "abril"], ["mai", "mayo"], ["juin", "junio"], ["juillet", "julio"], ["août", "agosto"], ["septembre", "septiembre"], ["octobre", "octubre"], ["novembre", "noviembre"], ["décembre", "diciembre"]];
