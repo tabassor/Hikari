@@ -23,10 +23,20 @@
     });
   }
   function senseiLine(text, mood = "happy") { return `<div class="sensei-line">${ART.sensei(mood, 80)}<div class="bubble">${text}</div></div>`; }
+  function elementPicker(cur, level = 1) {
+    const e = ART.ELEMENTS[cur];
+    return `<div class="elements">${Object.entries(ART.ELEMENTS).map(([id, x]) => `<button class="el" data-el="${id}" aria-pressed="${id === cur}"><span class="k" style="color:${id === cur ? "inherit" : x.c}">${x.k}</span>${x.n}</button>`).join("")}</div>
+      <div class="el-desc" style="--c:${e.c}">${ART.avatar(cur, level, 64)}<p><b>${e.k} ${e.n}</b><br>${e.d}</p></div>`;
+  }
   function applyAccent() { document.documentElement.style.setProperty("--accent", el().c); }
   function afterAction() {
     const won = STORE.checkBadges(); STORE.save();
-    won.forEach((id, i) => { const b = STORE.BADGES.find((x) => x[0] === id); setTimeout(() => toast(`Nouveau sceau : ${b[1]} ${b[2]} !`), 400 + i * 2800); });
+    won.forEach((id, i) => { const b = STORE.BADGES.find((x) => x[0] === id); setTimeout(() => toast(`Nouvel emblème : ${b[1]} ${b[2]} !`), 400 + i * 2800); });
+    const lv = STORE.levelInfo().level, t = ART.tierOf(lv);
+    if (S().profile && (S().sealTier ?? 0) < t) {
+      S().sealTier = t; STORE.save();
+      setTimeout(() => celebrate("進化！", `${ART.avatar(S().profile.element, lv, 140)}<p><b>Ton sceau évolue : ${ART.TIERS[t].n} !</b><br>${ART.TIERS[t].d}</p>`, "Magnifique"), 600);
+    }
     renderHUD();
   }
 
@@ -35,7 +45,7 @@
     const p = S().profile; if (!p) { $(".hud").hidden = true; $(".tabs").hidden = true; return; }
     $(".hud").hidden = false; $(".tabs").hidden = false;
     const L = STORE.levelInfo(); const d = S().days[STORE.today()] || { n: 0 };
-    $(".hud").innerHTML = `${ART.seal(el().k, el().c, 44)}
+    $(".hud").innerHTML = `${ART.avatar(S().profile.element, L.level, 50)}
       <div class="who"><div class="name">${esc(p.name)}</div><div class="rank">Niv. ${L.level} · ${L.rank[1]} ${L.rank[2]}</div><div class="xpbar" title="${L.into}/${L.need} XP"><i style="width:${(100 * L.into / L.need).toFixed(1)}%"></i></div></div>
       <div class="chips"><span class="chip flame" title="Flamme : jours d'affilée avec l'objectif atteint"><span class="k">炎</span>${STORE.streakAlive()}</span><span class="chip ki" title="Ki du jour : révisions faites / objectif"><span class="k">気</span>${Math.min(d.n, S().settings.goal)}/${S().settings.goal}</span></div>`;
   }
@@ -72,7 +82,7 @@
           ${senseiLine("Je suis <b>Ren</b>, maître renard de l'Académie. Ici, chaque leçon apprise devient du <b>Ki</b>. Sept clans t'attendent. Comment t'appelles-tu ?")}
           <label class="stack"><span class="eyebrow">Ton nom de guerrière</span><input type="text" id="ob-name" maxlength="20" autocomplete="off" placeholder="Ton prénom ou ton pseudo"></label>
           <span class="eyebrow">Choisis ton élément</span>
-          <div class="elements">${Object.entries(ART.ELEMENTS).map(([id, e]) => `<button class="el" data-el="${id}" aria-pressed="${id === element}" style="--c:${e.c}"><span class="k" style="color:${id === element ? "inherit" : e.c}">${e.k}</span>${e.n}</button>`).join("")}</div>
+          ${elementPicker(element)}
           <button class="btn primary big" id="ob-next">Entrer à l'Académie</button></div>`;
         $$(".el", main).forEach((b) => (b.onclick = () => { element = b.dataset.el; document.documentElement.style.setProperty("--accent", ART.ELEMENTS[element].c); const n = $("#ob-name").value; draw(); $("#ob-name").value = n; }));
         $("#ob-next").onclick = () => { const n = $("#ob-name").value.trim(); if (!n) { $("#ob-name").focus(); toast("Écris ton nom pour continuer."); return; } S().profile = { name: n, element, created: STORE.today() }; step = 2; draw(); };
@@ -465,13 +475,17 @@
   function viewTreasures(main) {
     const L = STORE.levelInfo(); const won = Object.keys(S().badges).length;
     const bossChs = STORE.CH.filter((c) => c.boss && STORE.chapterState(c.id) !== "locked");
+    const tNow = ART.tierOf(L.level);
     main.innerHTML = `<h1>Salle des trésors</h1>
+      <section class="panel stack"><h2>Ton sceau</h2>
+        <div class="row" style="gap:16px">${ART.avatar(S().profile.element, L.level, 110)}<p><b>${ART.TIERS[tNow].n}</b><br><span class="small muted">${ART.TIERS[tNow].d}</span>${ART.TIERS[tNow + 1] ? `<br><span class="small">Prochaine évolution au niveau ${ART.TIERS[tNow + 1].lv}.</span>` : ""}</p></div>
+        <div class="evo">${ART.TIERS.map((t, i) => `<div class="${i > tNow ? "lock" : ""}">${ART.avatar(S().profile.element, t.lv, 54)}<span>niv. ${t.lv}</span></div>`).join("")}</div></section>
       <section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Rang</h2><span class="small muted">${S().xp} XP au total</span></div>
         <div class="ladder">${STORE.RANKS.map((r) => `<div class="r ${L.rank === r ? "cur" : ""}"><span class="jp">${r[1]}</span><span><b>${r[2]}</b></span><span class="small muted">niv. ${r[0]}</span></div>`).join("")}</div>
         ${L.next ? `<p class="small muted">Prochain rang, ${L.next[2]}, au niveau ${L.next[0]}.</p>` : ""}</section>
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Yōkai alliés</h2><span class="small muted">${Object.values(S().bosses).filter((b) => b.won).length} / ${bossChs.length}</span></div>
         <div class="allies">${bossChs.length ? bossChs.map((c) => { const w = S().bosses[c.id] && S().bosses[c.id].won; return `<button class="ally ${w ? "" : "lock"}" data-go="ch~${c.id}" style="background:none;border:0;cursor:pointer">${ART.yokai(c.id, { size: 84, ally: w })}<span>${w ? esc(c.boss.name.split(",")[0]) : "???"}</span></button>`; }).join("") : `<p class="muted small" style="grid-column:1/-1">Ouvre des chapitres pour réveiller leurs yōkai gardiens.</p>`}</div></section>
-      <section class="stack"><div class="row" style="justify-content:space-between"><h2>Sceaux</h2><span class="small muted">${won} / ${STORE.BADGES.length}</span></div>
+      <section class="stack"><div class="row" style="justify-content:space-between"><h2>Emblèmes</h2><span class="small muted">${won} / ${STORE.BADGES.length}</span></div>
         <div class="badges">${STORE.BADGES.map(([id, k, n, d]) => { const got = S().badges[id]; return `<div class="badge ${got ? "" : "lock"}">${ART.seal(k, got ? "var(--seal)" : "var(--mute)", 54, !got)}<span class="t">${n}</span><span class="d">${d}</span></div>`; }).join("")}</div></section>`;
   }
 
@@ -494,7 +508,7 @@
       <details><summary>Réglages</summary><div class="in">
         <label class="stack"><span class="small"><b>Objectif du jour</b> (révisions pour remplir le Ki)</span><select id="st-goal">${[10, 15, 20, 30, 40].map((n) => `<option ${n === g ? "selected" : ""}>${n}</option>`).join("")}</select></label>
         <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum</span><select id="st-new">${[5, 10, 15, 20, 30].map((n) => `<option ${n === S().settings.newPerDay ? "selected" : ""}>${n}</option>`).join("")}</select></label>
-        <span class="small"><b>Élément</b></span><div class="elements">${Object.entries(ART.ELEMENTS).map(([id, e]) => `<button class="el" data-el="${id}" aria-pressed="${id === S().profile.element}"><span class="k">${e.k}</span>${e.n}</button>`).join("")}</div>
+        <span class="small"><b>Élément</b> <span class="muted">(change l'apparence, pas le jeu)</span></span>${elementPicker(S().profile.element, L.level)}
         <button class="btn" id="persist">Protéger mes données contre l'effacement</button>
       </div></details>
       <details><summary>Sauvegarde</summary><div class="in">

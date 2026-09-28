@@ -80,13 +80,47 @@
 
   // ---------- Petits éléments ----------
   const ELEMENTS = {
-    feu: { k: "火", n: "Feu", c: "#E4572E", fx: ["BOUM !", "FLAMBÉ !", "GOOO !"] },
-    eau: { k: "水", n: "Eau", c: "#2B7BD9", fx: ["SPLASH !", "FLOW !", "SHAA !"] },
-    vent: { k: "風", n: "Vent", c: "#12A37A", fx: ["FWOOSH !", "ZAN !", "SHUU !"] },
-    foudre: { k: "雷", n: "Foudre", c: "#C99700", fx: ["BZZT !", "DOON !", "KRAK !"] },
-    lune: { k: "月", n: "Lune", c: "#7650D6", fx: ["SHIIN…", "KIRA !", "FWAA !"] },
-    fleur: { k: "花", n: "Fleur", c: "#D6417B", fx: ["SAKU !", "HANA !", "POP !"] }
+    feu: { k: "火", n: "Feu", c: "#E4572E", fx: ["BOUM !", "FLAMBÉ !", "GOOO !"], d: "La flamme de la détermination. Les élèves du Feu foncent, ne lâchent rien et rallument leur ardeur après chaque défaite." },
+    eau: { k: "水", n: "Eau", c: "#2B7BD9", fx: ["SPLASH !", "FLOW !", "SHAA !"], d: "L'eau contourne les obstacles et finit toujours par passer. Patience, souplesse, et une mémoire aussi profonde que l'océan." },
+    vent: { k: "風", n: "Vent", c: "#12A37A", fx: ["FWOOSH !", "ZAN !", "SHUU !"], d: "Rapide et libre, le Vent file d'une idée à l'autre. L'élément des esprits curieux qui aiment tout explorer." },
+    foudre: { k: "雷", n: "Foudre", c: "#C99700", fx: ["BZZT !", "DOON !", "KRAK !"], d: "Un éclair de génie ! La Foudre frappe vite et fort : réflexes fulgurants et réponses qui claquent." },
+    lune: { k: "月", n: "Lune", c: "#7650D6", fx: ["SHIIN…", "KIRA !", "FWAA !"], d: "Calme et mystérieuse, la Lune éclaire la nuit. Pour celles qui observent, réfléchissent et percent les secrets." },
+    fleur: { k: "花", n: "Fleur", c: "#D6417B", fx: ["SAKU !", "HANA !", "POP !"], d: "La fleur grandit un peu chaque jour. Douceur et persévérance : chaque révision est une graine qui finit par éclore." }
   };
 
-  window.ART = { sensei, yokai, seal, ring, FIG, ELEMENTS, hash, rng };
+  // ---------- Sceau de l'élève : évolue avec le rang ----------
+  const TIERS = [
+    { lv: 1, n: "Sceau simple", d: "Le sceau de toute nouvelle recrue." },
+    { lv: 6, n: "Sceau doré", d: "Une bordure d'or apparaît au rang Shodan." },
+    { lv: 15, n: "Sceau éveillé", d: "Au rang Sandan, l'aura de ton élément s'éveille autour du sceau." },
+    { lv: 27, n: "Sceau ancestral", d: "Au rang Virtuose, double cercle d'or et étoiles." },
+    { lv: 45, n: "Sceau légendaire", d: "Au rang Légende, le sceau rayonne de lumière." }
+  ];
+  const tierOf = (level) => TIERS.reduce((t, x, i) => (level >= x.lv ? i : t), 0);
+  const MOTIF = {
+    feu: "M0 -10 C6 -3 7 4 0 9 C-7 4 -6 -3 0 -10 Z",
+    eau: "M0 -10 C3 -5 7 0 7 3 C7 7 3 9 0 9 C-3 9 -7 7 -7 3 C-7 0 -3 -5 0 -10 Z",
+    vent: "M-8 5 C-9 -5 -2 -9 3 -7 C8 -5 7 1 3 2 C0 3 -2 0 0 -2",
+    foudre: "M2 -11 L-6 1 L-1 1 L-3 11 L6 -2 L1 -2 Z",
+    lune: "M0 -10 L2.5 -2.5 L10 0 L2.5 2.5 L0 10 L-2.5 2.5 L-10 0 L-2.5 -2.5 Z",
+    fleur: "M0 -10 C6 -6 6 4 0 8 C-6 4 -6 -6 0 -10 Z"
+  };
+  function avatar(elId, level = 1, size = 48) {
+    const e = ELEMENTS[elId] || ELEMENTS.feu, t = tierOf(level), gold = "#E8B923";
+    const stroke = elId === "vent" ? `fill="none" stroke="${e.c}" stroke-width="3" stroke-linecap="round"` : `fill="${e.c}" stroke="${t >= 3 ? gold : "#17131F"}" stroke-width="1.5"`;
+    let aura = "";
+    if (t >= 2) {
+      const n = t >= 3 ? 10 : 8;
+      aura = `<g class="aura">${Array.from({ length: n }, (_, i) => `<path d="${MOTIF[elId] || MOTIF.feu}" transform="rotate(${(360 / n) * i} 70 70) translate(70 13)" ${stroke}/>`).join("")}</g>`;
+    }
+    const glow = t >= 4 ? `<circle cx="70" cy="70" r="66" fill="none" stroke="${gold}" stroke-width="3" class="glow"/><circle cx="70" cy="70" r="58" fill="${e.c}" opacity=".18" class="glow"/>` : "";
+    const stars = t >= 3 ? [[24, 30], [116, 30], [24, 112], [116, 112]].map(([x, y]) => `<path d="M${x} ${y - 7} L${x + 2} ${y - 2} L${x + 7} ${y} L${x + 2} ${y + 2} L${x} ${y + 7} L${x - 2} ${y + 2} L${x - 7} ${y} L${x - 2} ${y - 2} Z" fill="${gold}"/>`).join("") : "";
+    const border = t >= 1 ? `<rect x="31" y="31" width="78" height="78" rx="14" fill="none" stroke="${gold}" stroke-width="${t >= 3 ? 7 : 5}" transform="rotate(-4 70 70)"/>` + (t >= 3 ? `<rect x="22" y="22" width="96" height="96" rx="20" fill="none" stroke="${gold}" stroke-width="2.5" transform="rotate(-4 70 70)"/>` : "") : "";
+    return `<svg viewBox="0 0 140 140" width="${size}" height="${size}" class="avatar t${t}" aria-label="${TIERS[t].n} ${e.n}" role="img">${glow}${aura}${stars}
+      <rect x="34" y="34" width="72" height="72" rx="12" fill="${e.c}" transform="rotate(-4 70 70)"/>
+      <rect x="41" y="41" width="58" height="58" rx="8" fill="none" stroke="#fff" stroke-width="2.5" transform="rotate(-4 70 70)"/>${border}
+      <text x="70" y="85" text-anchor="middle" font-size="40" font-weight="900" fill="#fff" font-family="'Dela Gothic One','Hiragino Sans','Noto Sans JP',sans-serif">${e.k}</text></svg>`;
+  }
+
+  window.ART = { sensei, yokai, seal, ring, FIG, ELEMENTS, TIERS, tierOf, avatar, hash, rng };
 })();

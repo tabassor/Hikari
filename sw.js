@@ -1,5 +1,5 @@
 /* Service worker : l'application fonctionne hors ligne. Incrémenter VERSION à chaque mise à jour du contenu. */
-const VERSION = "hikari-2026-09-28a";
+const VERSION = "hikari-2026-09-28b";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "css/app.css", "js/gen.js", "js/art.js", "js/store.js", "js/app.js",
   "data/programme.js", "data/c-fr.js", "data/c-ma.js", "data/c-hg.js", "data/c-sc.js", "data/c-lv-emc.js", "data/maps.js",
   "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"];
