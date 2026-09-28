@@ -1,0 +1,17 @@
+{
+  "name": "Hikari — Académie de révision",
+  "short_name": "Hikari",
+  "description": "Révisions de 6e façon manga : répétition espacée, yōkai, frise et cartes.",
+  "lang": "fr",
+  "start_url": "./index.html#dojo",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#17131F",
+  "theme_color": "#17131F",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
