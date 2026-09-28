@@ -210,6 +210,23 @@
       if (Math.random() < 0.3) { const i = R(0, 6); return { k: "i", q: `What day comes after **${days[i][1]}**?`, a: [days[(i + 1) % 7][1]], caseSensitive: true, x: "Les jours prennent une majuscule en anglais." }; }
       const t = pick(Math.random() < 0.5 ? days : months); return { k: "i", q: `Traduis en anglais : **${t[0]}**`, a: [t[1]], caseSensitive: true, x: "Majuscule obligatoire en anglais." };
     },
+    enColor() {
+      const cols = [["noir", "black", "#1b1b1b"], ["bleu", "blue", "#2a6fdb"], ["marron", "brown", "#7a4a24"], ["vert", "green", "#2e9e44"], ["gris", "grey", "#8a8a8a"], ["orange", "orange", "#f07f1a"], ["rose", "pink", "#f28dbb"], ["violet", "purple", "#7b3fb5"], ["rouge", "red", "#d62839"], ["blanc", "white", "#ffffff"], ["jaune", "yellow", "#f3c613"]];
+      const t = Math.random() < 0.3 ? cols[9] : pick(cols); const sw = `<div class="swatch" style="background:${t[2]}"></div>`;
+      const x = t[1] === "white" ? "**white** : w-h-i-t-e (à ne pas confondre avec **with**, « avec »)." : undefined;
+      if (Math.random() < 0.6) return { k: "i", q: "What colour is it?", svg: sw, a: [t[1], t[1] === "grey" ? "gray" : t[1]], x };
+      return { k: "i", q: `Traduis en anglais : **${t[0]}**`, a: [t[1], t[1] === "grey" ? "gray" : t[1]], x };
+    },
+    enDate() {
+      const days = [["lundi", "Monday"], ["mardi", "Tuesday"], ["mercredi", "Wednesday"], ["jeudi", "Thursday"], ["vendredi", "Friday"], ["samedi", "Saturday"], ["dimanche", "Sunday"]];
+      const months = [["janvier", "January", 31], ["février", "February", 28], ["mars", "March", 31], ["avril", "April", 30], ["mai", "May", 31], ["juin", "June", 30], ["juillet", "July", 31], ["août", "August", 31], ["septembre", "September", 30], ["octobre", "October", 31], ["novembre", "November", 30], ["décembre", "December", 31]];
+      const ord = (n) => n + ((n % 100 >= 11 && n % 100 <= 13) ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[n % 10] || "th"));
+      let dt; do { dt = new Date(2026, 8, 1 + R(0, 364)); } while (Math.random() < 0.6 && ![1, 2, 3, 21, 22, 23, 31].includes(dt.getDate()));
+      const m = months[dt.getMonth()], n = dt.getDate(), d = days[(dt.getDay() + 6) % 7], o = ord(n);
+      if (Math.random() < 0.35) return { k: "i", q: `Écris le nombre ordinal : **${n}** → ?`, a: [o], x: "1st, 2nd, 3rd, puis **th**… mais 21st, 22nd, 23rd, 31st !" };
+      const a = [`${d[1]}, the ${o} of ${m[1]}`, `${d[1]} the ${o} of ${m[1]}`, `${d[1]}, ${o} ${m[1]}`, `${d[1]} ${o} ${m[1]}`];
+      return { k: "i", q: `Écris la date en anglais : **${d[0]} ${n === 1 ? "1er" : n} ${m[0]}**`, a, caseSensitive: true, x: `${a[0]}. Jours et mois prennent une **majuscule**, et on utilise un **nombre ordinal**.` };
+    },
     esDays() {
       const days = [["lundi", "lunes"], ["mardi", "martes"], ["mercredi", "miércoles"], ["jeudi", "jueves"], ["vendredi", "viernes"], ["samedi", "sábado"], ["dimanche", "domingo"]];
       const months = [["janvier", "enero"], ["février", "febrero"], ["mars", "marzo"], ["avril", "abril"], ["mai", "mayo"], ["juin", "junio"], ["juillet", "julio"], ["août", "agosto"], ["septembre", "septiembre"], ["octobre", "octubre"], ["novembre", "noviembre"], ["décembre", "diciembre"]];
