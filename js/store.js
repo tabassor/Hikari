@@ -37,7 +37,18 @@
   }
   function mergeLesson(c, L, pack) {
     const ex = c.lessons.find((l) => l.id === L.id);
-    if (!ex) { c.lessons.push(Object.assign({ cards: [] }, L, { fromPack: pack })); return; }
+    if (!ex) {
+      const nl = Object.assign({ cards: [] }, L, { fromPack: pack, fromTeacher: true });
+      const at = L.after ? c.lessons.findIndex((l) => l.id === L.after) : -1;
+      if (at >= 0) c.lessons.splice(at + 1, 0, nl); else c.lessons.push(nl);
+      return;
+    }
+    // replace : la leçon de la prof devient la référence (fiche et cartes de base remplacées)
+    if (L.replace) {
+      ["fiche", "cards", "events", "places", "routes"].forEach((k) => { if (L[k]) ex[k] = L[k]; });
+      if (L.title) ex.title = L.title; if (L.refs) ex.refs = L.refs; if (L.note) ex.note = L.note;
+      ex.extra = []; ex.stub = false; ex.fromTeacher = true; ex.fromPack = pack; return;
+    }
     if (L.title) ex.title = L.title;
     if (L.refs) ex.refs = Array.from(new Set((ex.refs || []).concat(L.refs)));
     if (L.fiche) ex.extra = (ex.extra || []).concat([{ pack, note: L.note, fiche: L.fiche }]);

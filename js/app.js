@@ -154,7 +154,7 @@
     const fresh = (S().newFromRepo || []).filter((id) => STORE.LEI[id]);
     if (fresh.length) {
       S().newFromRepo = []; STORE.save();
-      setTimeout(() => celebrate("新しい巻物！", `${ART.sensei("wow", 100)}<p>Ren t'apporte <b>${plural(fresh.length, "nouvelle leçon")}</b> :</p><ul class="small" style="text-align:left">${fresh.map((id) => `<li>${esc(STORE.LEI[id].title)} <span class="muted">(${esc(STORE.SUBI[STORE.CHI[STORE.LEI[id].ch].s].name)})</span></li>`).join("")}</ul>`, "Au travail !", "win"), 400);
+      setTimeout(() => celebrate("新しい巻物！", `${ART.sensei("wow", 100)}<p>Ren t'apporte <b>${plural(fresh.length, "leçon")}</b> tirée${fresh.length > 1 ? "s" : ""} du cours de ta prof :</p><ul class="small" style="text-align:left">${fresh.map((id) => `<li>${esc(STORE.LEI[id].title)} <span class="muted">(${esc(STORE.SUBI[STORE.CHI[STORE.LEI[id].ch].s].name)})</span></li>`).join("")}</ul>`, "Au travail !", "win"), 400);
     }
     $("#orb-toggle").onclick = () => { S().settings.clanList = !S().settings.clanList; STORE.save(); render(); };
     const clans = PROGRAMME.subjects.map((s) => { const k = STORE.counts((ch) => ch.s === s.id); const nAct = STORE.activeChapters().filter((ch) => ch.s === s.id).length; return { s, k, nAct }; });
@@ -202,10 +202,11 @@
     return (blocks || []).map((b) => {
       if (b.h) return `<h3>${md(b.h)}</h3>`;
       if (b.p) return `<p>${md(b.p)}</p>`;
-      if (b.def) return `<div class="def"><b>${md(b.def[0])}</b>${md(b.def[1])}</div>`;
+      if (b.def) return `<div class="def"><span class="dt">${md(b.def[0])}</span>${md(b.def[1])}</div>`;
       if (b.list) return `<ul>${b.list.map((x) => `<li>${md(x)}</li>`).join("")}</ul>`;
       if (b.tip) return `<div class="tip">${ART.sensei("happy", 44)}<span>${md(b.tip)}</span></div>`;
       if (b.fig) return ART.FIG[b.fig] || "";
+      if (b.svg) return `<div class="figbox">${b.svg}</div>`;
       if (b.table) return `<div class="tablewrap"><table><thead><tr>${b.table[0].map((x) => `<th>${md(x)}</th>`).join("")}</tr></thead><tbody>${b.table.slice(1).map((r) => `<tr>${r.map((x) => `<td>${md(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
       return "";
     }).join("");
@@ -256,7 +257,7 @@
         ${lc.length ? `<div class="kinds">${Object.entries(kc).map(([k, n]) => `<span class="pill">${n} ${kinds[k] || k}</span>`).join("")}</div>` : ""}
         <div class="row wrap">${open ? (lc.length ? `<button class="btn primary" data-go="seance~l:${lid}">Réviser cette leçon</button>` : "") : `<button class="btn primary pulse" id="le-open">Vu en classe : ouvrir</button>`}${open ? `<button class="btn ghost sm" id="le-close">Refermer</button>` : ""}</div>
       </section>
-      ${l.fiche ? `<section class="panel fiche" style="--accent:${s.color}"><p class="eyebrow">Fiche</p>${renderFiche(l.fiche)}</section>` : l.stub ? `<section class="flat">${senseiLine("Cette leçon est encore vide : c'est un <b>plan</b>. Quand ta prof la fait en classe, photographie ton cours ci-dessous et envoie-le pour qu'il devienne cartes et exercices.", "think")}</section>` : ""}
+      ${l.fiche ? `<section class="panel fiche" style="--accent:${s.color}"><p class="eyebrow">${l.fromTeacher ? "Fiche · d'après le cours de ta prof" : "Fiche"}</p>${l.note ? `<p class="small muted">${md(l.note)}</p>` : ""}${renderFiche(l.fiche)}</section>` : l.stub ? `<section class="flat">${senseiLine("Cette leçon est encore vide : c'est un <b>plan</b>. Quand ta prof la fait en classe, photographie ton cours ci-dessous et envoie-le pour qu'il devienne cartes et exercices.", "think")}</section>` : ""}
       ${(l.extra || []).map((x) => `<section class="extra fiche"><p class="eyebrow">Ajouts de ta prof</p>${x.note ? `<p>${md(x.note)}</p>` : ""}${renderFiche(x.fiche)}</section>`).join("")}
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Mes photos de cours</h2><label class="btn sm">Ajouter<input type="file" accept="image/*" capture="environment" multiple id="ph-in" hidden></label></div><div class="photos" id="ph"></div><div id="ph-share"></div></section>
       <details><summary>Programme officiel lié</summary><div class="in">${refsBlock(l.refs || c.refs)}</div></details>
@@ -348,7 +349,7 @@
     // --- Par cœur : carte qui se retourne, puis se glisse ---
     if (q.k === "f") {
       body.classList.add("flipcard"); body.classList.remove("panel");
-      body.innerHTML = `<div class="flip-in"><div class="face front panel">${head}<div class="q">${md(q.q)}</div>${q.fig ? ART.FIG[q.fig] || "" : ""}<p class="hint">Touche la carte pour la retourner</p></div><div class="face back panel">${head}<div class="q small-q">${md(q.q)}</div><div class="ans">${md(q.a)}${expl()}</div><p class="hint">← je ne savais pas · je savais → · ↑ facile</p></div><div class="stamp-lbl l">RATÉ</div><div class="stamp-lbl r">BIEN</div><div class="stamp-lbl u">FACILE</div></div>`;
+      body.innerHTML = `<div class="flip-in"><div class="face front panel">${head}<div class="q">${md(q.q)}</div>${q.fig ? ART.FIG[q.fig] || "" : ""}${q.svg || ""}<p class="hint">Touche la carte pour la retourner</p></div><div class="face back panel">${head}<div class="q small-q">${md(q.q)}</div><div class="ans">${md(q.a)}${expl()}</div><p class="hint">← je ne savais pas · je savais → · ↑ facile</p></div><div class="stamp-lbl l">RATÉ</div><div class="stamp-lbl r">BIEN</div><div class="stamp-lbl u">FACILE</div></div>`;
       const act = document.createElement("div"); act.className = "stack"; act.innerHTML = `<button class="btn primary big" id="rev">Retourner</button>`; host.appendChild(act);
       const inner = $(".flip-in", body); let flipped = false;
       const flip = () => { if (flipped) return; flipped = true; body.classList.add("flipped"); FX.sfx("flip");

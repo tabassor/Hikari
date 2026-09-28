@@ -102,7 +102,7 @@ textarea { min-height: 120px; font-family: ui-monospace, monospace; font-size: .
 .fiche { display: flex; flex-direction: column; gap: 12px; }
 .fiche h3 { margin-top: 8px; padding-bottom: 4px; border-bottom: 3px solid var(--accent); align-self: flex-start; }
 .fiche .def { border-left: 5px solid var(--accent); padding: 6px 10px; background: color-mix(in srgb, var(--accent) 7%, var(--panel)); border-radius: 0 var(--radius) var(--radius) 0; }
-.fiche .def b { display: block; font-family: var(--f-display); font-weight: 400; }
+.fiche .def .dt { display: block; font-family: var(--f-display); font-weight: 400; }
 .fiche ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 .fiche .tip { display: grid; grid-template-columns: 44px 1fr; gap: 8px; align-items: center; padding: 10px; border: 2px dashed var(--ink); border-radius: var(--radius); font-weight: 700; font-size: .92rem; }
 .tablewrap { overflow-x: auto; border: 2px solid var(--ink); border-radius: var(--radius); }
@@ -383,6 +383,8 @@ body.quake { animation: quake .4s; }
 @keyframes vsInL { from { transform: translateX(-120%); } } @keyframes vsInR { from { transform: translateX(120%); } }
 @keyframes vsOut { to { opacity: 0; } }
 
+.figbox { overflow-x: auto; }
+.figbox svg, .card svg.fig { width: 100%; max-width: 420px; height: auto; display: block; margin: 0 auto; color: var(--ink); }
 /* =================== Effets divers =================== */
 .fx-canvas { position: fixed; inset: 0; z-index: 140; pointer-events: none; }
 .fx { left: 50%; top: 38%; }

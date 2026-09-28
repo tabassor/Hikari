@@ -110,7 +110,8 @@
         const m = +(s.slice(0, i) + d + s.slice(i + 1)); if (String(m).length === s.length) alts.add(m);
       }
       const opts = [...alts];
-      return { k: "q", q: `Comment s'écrit **${fmt(n)}** en lettres ?`, c: opts.map(lettres), a: 0, x: "Les deux orthographes (avec ou sans traits d'union partout) sont acceptées depuis 1990." };
+      const rect = (m) => lettres(m).replace(/ /g, "-");
+      return { k: "q", q: `Comment s'écrit **${fmt(n)}** en lettres ?`, c: opts.map(rect), a: 0, x: "Orthographe rectifiée, comme dans ton cours : tous les mots du nombre sont reliés par des traits d'union." };
     },
     placeDec() {
       const ent = R(10, 999), dec = R(100, 999), n = +(ent + "." + dec);
