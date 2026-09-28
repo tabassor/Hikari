@@ -36,49 +36,59 @@ La boucle prévue :
 4. Tu envoies ces photos à Claude avec l'identifiant. Claude te rend un fichier `.json`.
 5. Elle l'importe avec *Moi → Importer un pack de leçon*.
 
-### Format
+### Format (version 2 : chapitres → leçons)
 
 ```json
 {
   "format": "hikari-pack",
-  "version": 1,
+  "version": 2,
   "id": "pack-2026-10-02-fr-origines",
-  "title": "Ajouts de Mme X — récits des origines",
+  "title": "Récits des origines — leçon du 1er octobre",
   "created": "2026-10-02",
   "extend": [
     {
       "chapter": "fr-origines",
-      "refs": ["FR-CULT-01"],
-      "note": "Notions vues en classe le 1er octobre.",
-      "fiche": [ { "h": "Le mythe de Babel" }, { "p": "…" } ],
-      "cards": [
-        { "k": "f", "q": "Question par cœur", "a": "Réponse" },
-        { "k": "q", "q": "QCM ?", "c": ["bonne réponse", "leurre 1", "leurre 2"], "a": 0, "x": "explication" },
-        { "k": "i", "q": "Réponse à taper ?", "a": ["réponse", "variante acceptée"] }
-      ],
-      "events": [ { "y": -3300, "label": "Invention de l'écriture", "note": "Mésopotamie", "key": true } ],
-      "places": [ { "id": "uruk", "n": "Uruk", "lon": 45.6, "lat": 31.3, "map": "medit" } ]
+      "lessons": [
+        {
+          "id": "u-fr-origines-1790608280766",
+          "title": "La tour de Babel",
+          "refs": ["FR-CULT-01"],
+          "note": "Notions vues en classe le 1er octobre.",
+          "fiche": [ { "h": "Le mythe de Babel" }, { "p": "…" } ],
+          "cards": [
+            { "k": "f", "q": "Question par cœur", "a": "Réponse" },
+            { "k": "q", "q": "QCM ?", "c": ["bonne réponse", "leurre 1", "leurre 2"], "a": 0, "x": "explication" },
+            { "k": "i", "q": "Réponse à taper ?", "a": ["réponse", "variante acceptée"] },
+            { "k": "s", "q": "Classe…", "bins": ["Boîte A", "Boîte B"], "items": [["étiquette", 0], ["autre", 1]] },
+            { "k": "o", "q": "Remets dans l'ordre…", "items": ["premier", "deuxième", "troisième"] },
+            { "k": "p", "q": "Associe…", "pairs": [["gauche", "droite"], ["gauche 2", "droite 2"]] }
+          ],
+          "events": [ { "y": -3300, "label": "Invention de l'écriture", "note": "Mésopotamie", "key": true } ],
+          "places": [ { "id": "uruk", "n": "Uruk", "lon": 45.6, "lat": 31.3, "map": "medit" } ]
+        }
+      ]
     }
-  ],
-  "chapters": [
-    { "id": "hi-grecs", "s": "hg", "title": "Le monde des cités grecques", "period": 2, "refs": ["HI-T2-01"],
-      "boss": { "name": "…", "hp": 10 }, "sum": "…", "fiche": [], "cards": [] }
   ]
 }
 ```
 
-- **`extend`** complète un chapitre existant. Ses ajouts s'affichent dans l'encadré « Ajouts de ta prof ».
-- **`chapters`** crée un chapitre ou remplit un chapitre « à venir ». Il s'ouvre automatiquement à l'import.
+- **`extend[].lessons`** : une leçon qui porte le même `id` qu'une leçon existante est complétée. Ses nouvelles notions apparaissent dans l'encadré « Ajouts de ta prof ». Un nouvel `id` crée la leçon.
+- **Identifiant de la leçon** : il est donné dans le message envoyé depuis l'application avec les photos. Les leçons créées par ta fille ont un identifiant de la forme `u-<chapitre>-<nombre>`.
+- **`chapters`** crée un chapitre complet ou remplit un chapitre « plan ». Chaque chapitre porte ses `lessons`.
 - **Types de cartes :**
   - `f` : par cœur ;
-  - `q` : QCM, où `a` est l'indice de la bonne réponse (les choix sont mélangés à l'affichage) ;
+  - `q` : QCM ;
   - `i` : réponse à taper ;
-  - `g` : générateur d'exercices infinis (voir `js/gen.js`).
-- **Blocs de fiche :** `h` (titre), `p` (paragraphe), `def` ([terme, définition]), `list`, `table` (première ligne = en-têtes), `tip` (bulle du sensei), `fig` (figure prédéfinie).
-- **Mise en forme :** `**gras**` et `__souligné__`.
-- **Cartes :** `world`, `medit` (Méditerranée et Proche-Orient) et `europe`.
-- **Identifiants du programme :** ils sont tous listés dans `data/programme.js`, et dans l'app sous *Moi → Programme officiel et couverture*.
-- **Réimport :** réimporter un pack qui porte le même `id` le remplace.
+  - `g` : générateur ;
+  - `s` : classer ;
+  - `o` : ordonner ;
+  - `p` : associer.
+- **Blocs de fiche :** `h`, `p`, `def`, `list`, `table`, `tip`, `fig`.
+- **Mise en forme :** `**gras**`, `__souligné__`.
+- **Cartes :** `world`, `medit`, `europe`.
+- **Identifiants du programme :** ils sont listés dans `data/programme.js` et dans l'app sous *Moi → Programme officiel et couverture*.
+- **Réimport :** réimporter un pack de même `id` le remplace.
+- **Découpage :** les chapitres correspondent aux séquences de la prof, les leçons à une ou deux séances. Le plan des leçons à venir suit une progression type, non officielle. La leçon réelle de la prof fait foi, et on peut toujours en créer une nouvelle.
 
 ## 5. Ce qu'il faut savoir
 
