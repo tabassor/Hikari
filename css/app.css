@@ -385,6 +385,12 @@ body.quake { animation: quake .4s; }
 
 .figbox { overflow-x: auto; }
 .figbox svg, .card svg.fig { width: 100%; max-width: 420px; height: auto; display: block; margin: 0 auto; color: var(--ink); }
+.week .week-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.photos.cahier { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.photos.cahier figure { margin: 0; display: flex; flex-direction: column; gap: 3px; }
+.photos.cahier figcaption { font-size: .68rem; color: var(--ink2); line-height: 1.2; }
+.lightbox .sheetbox { max-height: 100%; overflow: auto; }
+.lightbox img { max-height: 80vh; }
 /* =================== Effets divers =================== */
 .fx-canvas { position: fixed; inset: 0; z-index: 140; pointer-events: none; }
 .fx { left: 50%; top: 38%; }

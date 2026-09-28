@@ -151,6 +151,12 @@
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Les sept clans</h2><button class="btn ghost sm" id="orb-toggle">${S().settings.clanList ? "Orbite" : "Liste"}</button></div>
         <div id="clans"></div><p class="small muted" style="text-align:center">${c.mastered} / ${c.total} cartes maîtrisées</p></section>`;
     $("#flash").onclick = () => startFlashQuiz();
+    const nw = S().newWeek;
+    if (nw && STORE.CHI[nw.ch]) {
+      S().newWeek = null; STORE.save();
+      const c = STORE.CHI[nw.ch], row = c.schedule.grid[nw.week - 1] || [];
+      setTimeout(() => celebrate("今週の型！", `${ART.sensei("fire", 100)}<p><b>${esc(c.title)}</b> · semaine ${nw.week}</p><p>À apprendre : <b>${fichesTxt(row.slice(0, 2))}</b>${row.length > 2 ? `<br>À réviser : <b>${fichesTxt(row.slice(2))}</b> (je les remets en tête de tes révisions)` : ""}</p>`, "C'est parti !", "level"), (S().newFromRepo || []).length ? 3200 : 500);
+    }
     const fresh = (S().newFromRepo || []).filter((id) => STORE.LEI[id]);
     if (fresh.length) {
       S().newFromRepo = []; STORE.save();
@@ -227,15 +233,31 @@
         <div class="row wrap">${cards.length ? `<button class="btn primary" data-go="seance~c:${cid}">Réviser le chapitre (${cards.length})</button>` : ""}${closedFilled.length ? `<button class="btn" id="open-all">Tout ouvrir</button>` : ""}${st === "active" ? `<button class="btn ghost sm" id="finish">Terminé en classe</button>` : st === "done" ? `<span class="pill done">terminé en classe</span>` : ""}</div>
         ${st !== "locked" && cards.length && c.boss ? `<div class="small muted">${seen} / ${cards.length} cartes découvertes · yōkai ${bossOk ? "prêt au combat" : "réveillé à 50 %"}</div>` : ""}
       </section>
+      ${c.schedule ? weekPanel(c) : ""}
+      ${(c.photos || []).length ? `<section class="stack"><h2>Pages du cahier</h2>${photoStrip(c.photos)}</section>` : ""}
       <section class="stack"><h2>Leçons</h2><div class="lessons">${c.lessons.map((l, i) => { const open = STORE.lessonOpen(l.id), lc = STORE.lessonCards(c, l), k = STORE.countsOf(lc); return `<div class="lesson ${open ? "on" : l.stub ? "plan" : ""}" style="--i:${i}"><button class="lesson-main" data-go="le~${l.id}"><span class="num">${i + 1}</span><span><span class="t">${esc(l.title)}</span><br><span class="tiny muted">${l.userMade ? "Leçon photo · " : ""}${l.stub ? "Plan · à remplir par photo ou pack" : `${plural(lc.length, "carte")}${open ? ` · ${k.seen} vues` : ""}`}</span></span></button>${open ? `<span class="pill on">ouverte</span>` : `<button class="btn sm ${l.stub ? "ghost" : "primary"}" data-open="${l.id}">Vu en classe</button>`}</div>`; }).join("")}</div>
         <button class="btn ghost" id="add-lesson">＋ Nouvelle leçon photo dans ce chapitre</button></section>
       ${c.boss && st !== "locked" ? `<section class="panel boss-card">${ART.yokai(cid, { size: 84, ally: bw && bw.won, angry: !(bw && bw.won) })}<div class="stack" style="flex:1"><b>${esc(c.boss.name)}</b><span class="small muted">${bw && bw.won ? "Vaincu : il a rejoint tes alliés !" : "Gardien du chapitre"}</span><button class="btn sm ${bossOk ? "primary" : ""}" data-go="boss~${cid}" ${bossOk ? "" : "disabled"}>${bw && bw.won ? "Revanche" : "Combattre"}</button></div></section>` : ""}
       <details><summary>Programme officiel lié (${(c.refs || []).length})</summary><div class="in">${refsBlock(c.refs)}</div></details>`;
     $$("[data-open]", main).forEach((b) => (b.onclick = (e) => { e.stopPropagation(); unlockLesson(b.dataset.open, b); }));
+    bindPhotoStrip(main, c.photos || []);
     const oa = $("#open-all"); if (oa) oa.onclick = () => { closedFilled.forEach((l) => STORE.openLesson(l.id)); STORE.addXP(10 * closedFilled.length); STORE.save(); FX.sfx("stamp"); FX.burst(...FX.center(oa), { color: s.color, n: 30 }); afterAction(); render(); };
     const fin = $("#finish"); if (fin) fin.onclick = () => { S().chapters[cid] = Object.assign(S().chapters[cid] || {}, { state: "done" }); STORE.save(); toast("Chapitre terminé en classe. Il reste dans tes révisions."); render(); };
     $("#add-lesson").onclick = () => { newLessonTarget = { s: c.s, ch: cid }; go("moi~nouvelle"); };
   }
+  const fichesTxt = (a) => a.length ? a.map((f) => "n° " + f).join(", ") : "—";
+  function weekPanel(c) {
+    const sc = c.schedule, w = STORE.classWeek(sc), row = sc.grid[w - 1] || [], next = sc.grid[w] || null;
+    const zoneWarn = !S().settings.zone && STORE.today() >= "2027-01-20" ? `<p class="small" style="color:var(--bad)"><b>Choisis ta zone de vacances</b> dans Moi → Réglages, pour que les semaines sautent bien les vacances d'hiver et de printemps.</p>` : "";
+    if (!w) return `<section class="flat"><p class="small">Le programme commence le ${esc(sc.start)}.</p></section>`;
+    if (w > sc.grid.length) return `<section class="flat"><p class="small">Toutes les fiches de la grille sont débloquées. Bravo !</p></section>`;
+    return `<section class="panel week"><p class="eyebrow">Semaine de cours ${w} · depuis le ${esc(STORE.weekStart(sc, w).split("-").reverse().join("/"))}</p>
+      <div class="week-row"><span class="pill new">À apprendre</span><b>${fichesTxt(row.slice(0, 2))}</b></div>
+      ${row.length > 2 ? `<div class="week-row"><span class="pill on">À réviser</span><b>${fichesTxt(row.slice(2))}</b></div>` : ""}
+      ${next ? `<p class="tiny muted">Semaine prochaine : ${fichesTxt(next.slice(0, 2))}${next.length > 2 ? ` · révision ${fichesTxt(next.slice(2))}` : ""}. Les fiches s'ouvrent toutes seules chaque lundi de cours (vacances sautées).</p>` : ""}${zoneWarn}</section>`;
+  }
+  function photoStrip(list) { return `<div class="photos cahier">${list.map((p, i) => `<figure><img src="${esc(p.src)}" alt="${esc(p.cap || "Page du cahier")}" loading="lazy" data-ph="${i}"><figcaption>${esc(p.cap || "")}</figcaption></figure>`).join("")}</div>`; }
+  function bindPhotoStrip(root, list) { $$(".cahier img", root).forEach((im) => (im.onclick = () => lightbox(im.src, null, null, list[+im.dataset.ph].cap))); }
   function unlockLesson(lid, btn) {
     const l = STORE.LEI[lid]; STORE.openLesson(lid); const up = STORE.addXP(20); STORE.save();
     FX.sfx("stamp"); FX.buzz(25);
@@ -259,10 +281,12 @@
       </section>
       ${l.fiche ? `<section class="panel fiche" style="--accent:${s.color}"><p class="eyebrow">${l.fromTeacher ? "Fiche · d'après le cours de ta prof" : "Fiche"}</p>${l.note ? `<p class="small muted">${md(l.note)}</p>` : ""}${renderFiche(l.fiche)}</section>` : l.stub ? `<section class="flat">${senseiLine("Cette leçon est encore vide : c'est un <b>plan</b>. Quand ta prof la fait en classe, photographie ton cours ci-dessous et envoie-le pour qu'il devienne cartes et exercices.", "think")}</section>` : ""}
       ${(l.extra || []).map((x) => `<section class="extra fiche"><p class="eyebrow">Ajouts de ta prof</p>${x.note ? `<p>${md(x.note)}</p>` : ""}${renderFiche(x.fiche)}</section>`).join("")}
+      ${(l.photos || []).length ? `<section class="stack"><h2>Pages du cahier</h2>${photoStrip(l.photos)}</section>` : ""}
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Mes photos de cours</h2><label class="btn sm">Ajouter<input type="file" accept="image/*" capture="environment" multiple id="ph-in" hidden></label></div><div class="photos" id="ph"></div><div id="ph-share"></div></section>
       <details><summary>Programme officiel lié</summary><div class="in">${refsBlock(l.refs || c.refs)}</div></details>
       <div class="row" style="justify-content:space-between">${c.lessons[idx - 1] ? `<button class="btn ghost sm" data-go="le~${c.lessons[idx - 1].id}">← Précédente</button>` : "<span></span>"}${c.lessons[idx + 1] ? `<button class="btn ghost sm" data-go="le~${c.lessons[idx + 1].id}">Suivante →</button>` : ""}</div>`;
     const lo = $("#le-open"); if (lo) lo.onclick = () => unlockLesson(lid, lo);
+    bindPhotoStrip(main, l.photos || []);
     const lcb = $("#le-close"); if (lcb) lcb.onclick = (e) => { if (e.target.dataset.sure) { STORE.closeLesson(lid); STORE.save(); render(); } else { e.target.dataset.sure = 1; e.target.textContent = "Confirmer (tes progrès sont gardés)"; } };
     $("#ph-in").onchange = async (e) => { const files = Array.from(e.target.files || []); for (const f of files) await STORE.addPhoto(lid, f); toast(files.length > 1 ? `${files.length} photos ajoutées` : "Photo ajoutée"); FX.sfx("drop"); afterAction(); drawPhotos(); };
     async function drawPhotos() {
@@ -280,12 +304,13 @@
     }
     drawPhotos();
   }
-  function lightbox(url, id, redraw) {
+  function lightbox(url, id, redraw, cap) {
     const l = document.createElement("div"); l.className = "lightbox";
-    l.innerHTML = `<div class="stack sheetbox" style="align-items:center"><img src="${url}" alt="Photo de cours"><div class="row"><button class="btn sm" id="lb-close">Fermer</button><button class="btn sm" id="lb-del">Supprimer</button></div></div>`;
+    l.innerHTML = `<div class="stack sheetbox" style="align-items:center"><img src="${url}" alt="Photo de cours">${cap ? `<p class="small" style="color:#fff">${esc(cap)}</p>` : ""}<div class="row"><button class="btn sm" id="lb-close">Fermer</button>${id ? `<button class="btn sm" id="lb-del">Supprimer</button>` : ""}</div></div>`;
     document.body.appendChild(l);
     $("#lb-close", l).onclick = () => l.remove();
-    $("#lb-del", l).onclick = async (e) => { if (e.target.dataset.sure) { await STORE.delPhoto(id); l.remove(); redraw(); } else { e.target.dataset.sure = 1; e.target.textContent = "Confirmer la suppression"; } };
+    l.onclick = (e) => { if (e.target === l) l.remove(); };
+    if (id) $("#lb-del", l).onclick = async (e) => { if (e.target.dataset.sure) { await STORE.delPhoto(id); l.remove(); redraw(); } else { e.target.dataset.sure = 1; e.target.textContent = "Confirmer la suppression"; } };
   }
 
   // ---------- Vérification des réponses tapées ----------
@@ -714,6 +739,7 @@
       <details><summary>Réglages</summary><div class="in">
         <label class="stack"><span class="small"><b>Objectif du jour</b> (révisions pour remplir le Ki)</span><select id="st-goal">${[10, 15, 20, 30, 40].map((n) => `<option ${n === g ? "selected" : ""}>${n}</option>`).join("")}</select></label>
         <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum</span><select id="st-new">${[5, 10, 15, 20, 30].map((n) => `<option ${n === S().settings.newPerDay ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+        <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone"><option value="">Pas encore choisie</option>${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
         <label class="row"><input type="checkbox" id="st-sound" ${S().settings.sound ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Sons</b></span></label>
         <label class="row"><input type="checkbox" id="st-hap" ${S().settings.haptics ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Vibrations</b></span></label>
         <span class="small"><b>Élément</b> <span class="muted">(change l'apparence, pas le jeu)</span></span>${elementPicker(S().profile.element, L.level)}
@@ -765,6 +791,7 @@
     $("#pk-go").onclick = () => doImport($("#pk-txt").value);
     $("#st-goal").onchange = (e) => { S().settings.goal = +e.target.value; STORE.save(); renderHUD(); };
     $("#st-new").onchange = (e) => { S().settings.newPerDay = +e.target.value; STORE.save(); };
+    $("#st-zone").onchange = (e) => { S().settings.zone = e.target.value || null; STORE.save(); toast(e.target.value ? `Zone ${e.target.value} enregistrée.` : "Zone effacée."); };
     $("#st-sound").onchange = (e) => { S().settings.sound = e.target.checked; STORE.save(); FX.sfx("good"); };
     $("#st-hap").onchange = (e) => { S().settings.haptics = e.target.checked; STORE.save(); FX.buzz(30); };
     $$("[data-el]", main).forEach((b) => (b.onclick = () => { S().profile.element = b.dataset.el; STORE.save(); FX.sfx("pick"); applyAccent(); viewMe(main); }));

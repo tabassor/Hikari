@@ -6,12 +6,6 @@ window.REPO_PACKS.push({
  "title": "Français — carnet de conjugaison, dictionnaire, poésie",
  "created": "2026-09-28",
  "open": [
-  "fr-conjugaison-l1",
-  "fr-conjugaison-l2",
-  "fr-conjugaison-l3",
-  "fr-conjugaison-l4",
-  "fr-conjugaison-l5",
-  "fr-conjugaison-l6",
   "fr-dico-l1",
   "fr-poesie-l1",
   "fr-poesie-l3"
@@ -29,11 +23,197 @@ window.REPO_PACKS.push({
     "FR-CONJ-03",
     "FR-CONJ-04"
    ],
-   "sum": "Les fiches de conjugaison de la classe : six temps, les verbes à connaître par cœur.",
+   "sum": "Les 40 fiches de conjugaison de la classe. Elles s'ouvrent chaque semaine de cours, en suivant la grille de la prof.",
    "boss": {
     "name": "Katsuyō, le démon aux mille terminaisons",
     "hp": 12
    },
+   "schedule": {
+    "start": "2026-09-14",
+    "grid": [
+     [
+      1,
+      2
+     ],
+     [
+      3,
+      4
+     ],
+     [
+      5,
+      6
+     ],
+     [
+      7,
+      8
+     ],
+     [
+      9,
+      10
+     ],
+     [
+      11,
+      12,
+      1
+     ],
+     [
+      13,
+      14,
+      2
+     ],
+     [
+      15,
+      16,
+      3
+     ],
+     [
+      17,
+      18,
+      4
+     ],
+     [
+      19,
+      20,
+      5
+     ],
+     [
+      21,
+      22,
+      6
+     ],
+     [
+      23,
+      24,
+      7
+     ],
+     [
+      25,
+      26,
+      8
+     ],
+     [
+      29,
+      30,
+      10
+     ],
+     [
+      31,
+      32,
+      11
+     ],
+     [
+      33,
+      34,
+      12
+     ],
+     [
+      35,
+      36,
+      13
+     ],
+     [
+      37,
+      38,
+      14
+     ],
+     [
+      39,
+      40,
+      15,
+      25
+     ],
+     [
+      1,
+      2,
+      16,
+      26
+     ],
+     [
+      3,
+      4,
+      17,
+      27
+     ],
+     [
+      5,
+      6,
+      18,
+      28
+     ],
+     [
+      7,
+      8,
+      19,
+      29
+     ],
+     [
+      9,
+      10,
+      20,
+      30
+     ],
+     [
+      11,
+      12,
+      21,
+      31
+     ],
+     [
+      13,
+      14,
+      22,
+      32
+     ],
+     [
+      15,
+      16,
+      23,
+      33
+     ],
+     [
+      17,
+      18,
+      24,
+      34
+     ],
+     [
+      19,
+      20,
+      25,
+      35
+     ],
+     [
+      21,
+      22,
+      26,
+      36
+     ],
+     [
+      23,
+      24,
+      27,
+      37
+     ],
+     [
+      25,
+      26,
+      28,
+      39
+     ],
+     [
+      27,
+      28,
+      38,
+      40
+     ]
+    ]
+   },
+   "photos": [
+    {
+     "src": "data/photos/2026-09-28/fr-conj-grille.jpg",
+     "cap": "Grille des semaines"
+    }
+   ],
    "lessons": [
     {
      "id": "fr-conjugaison-l1",
@@ -282,6 +462,15 @@ window.REPO_PACKS.push({
           "faites",
           "font"
          ]
+        },
+        "fiches": {
+         "être": 1,
+         "avoir": 2,
+         "appeler": 3,
+         "finir": 4,
+         "dire": 5,
+         "pouvoir": 6,
+         "faire": 7
         }
        }
       },
@@ -348,6 +537,15 @@ window.REPO_PACKS.push({
           "avez fait",
           "ont fait"
          ]
+        },
+        "fiches": {
+         "être": 1,
+         "avoir": 2,
+         "appeler": 3,
+         "finir": 4,
+         "dire": 5,
+         "pouvoir": 6,
+         "faire": 7
         }
        }
       },
@@ -383,7 +581,8 @@ window.REPO_PACKS.push({
          "faire",
          "fait"
         ]
-       ]
+       ],
+       "fiche": 7
       },
       {
        "k": "q",
@@ -394,7 +593,8 @@ window.REPO_PACKS.push({
         "dîtes",
         "dites-vous"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 5
       },
       {
        "k": "q",
@@ -405,7 +605,8 @@ window.REPO_PACKS.push({
         "fêtes",
         "faîtes"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 7
       },
       {
        "k": "q",
@@ -416,7 +617,8 @@ window.REPO_PACKS.push({
         "fonts",
         "faient"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 7
       },
       {
        "k": "q",
@@ -427,7 +629,8 @@ window.REPO_PACKS.push({
         "peus",
         "pouve"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 6
       },
       {
        "k": "s",
@@ -461,17 +664,39 @@ window.REPO_PACKS.push({
          "ils appellent",
          1
         ]
-       ]
+       ],
+       "fiche": 3
       },
       {
        "k": "f",
        "q": "**ÊTRE** au présent ?",
-       "a": "je suis, tu es, il est, nous sommes, vous êtes, ils sont."
+       "a": "je suis, tu es, il est, nous sommes, vous êtes, ils sont.",
+       "fiche": 1
       },
       {
        "k": "f",
        "q": "Comment se forme le **passé composé** dans ces fiches ?",
-       "a": "**Avoir au présent + participe passé** : j'ai fini, nous avons dit."
+       "a": "**Avoir au présent + participe passé** : j'ai fini, nous avons dit.",
+       "fiche": 1
+      }
+     ],
+     "fiches": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-01-05.jpg",
+       "cap": "Fiches 01 à 05"
+      },
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-06-10.jpg",
+       "cap": "Fiches 06 à 10"
       }
      ]
     },
@@ -685,6 +910,15 @@ window.REPO_PACKS.push({
           "faisiez",
           "faisaient"
          ]
+        },
+        "fiches": {
+         "être": 8,
+         "avoir": 9,
+         "appeler": 10,
+         "finir": 11,
+         "dire": 12,
+         "pouvoir": 13,
+         "faire": 14
         }
        }
       },
@@ -751,18 +985,29 @@ window.REPO_PACKS.push({
           "aviez fait",
           "avaient fait"
          ]
+        },
+        "fiches": {
+         "être": 8,
+         "avoir": 9,
+         "appeler": 10,
+         "finir": 11,
+         "dire": 12,
+         "pouvoir": 13,
+         "faire": 14
         }
        }
       },
       {
        "k": "f",
        "q": "Terminaisons de l'**imparfait** ?",
-       "a": "-ais, -ais, -ait, -ions, -iez, -aient."
+       "a": "-ais, -ais, -ait, -ions, -iez, -aient.",
+       "fiche": 8
       },
       {
        "k": "f",
        "q": "Comment se forme le **plus-que-parfait** ?",
-       "a": "**Avoir à l'imparfait + participe passé** : j'avais fini, nous avions dit."
+       "a": "**Avoir à l'imparfait + participe passé** : j'avais fini, nous avions dit.",
+       "fiche": 8
       },
       {
        "k": "q",
@@ -773,7 +1018,8 @@ window.REPO_PACKS.push({
         "appelons",
         "appelâmes"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 10
       },
       {
        "k": "q",
@@ -784,7 +1030,8 @@ window.REPO_PACKS.push({
         "faisons",
         "faisiions"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 14
       },
       {
        "k": "q",
@@ -795,7 +1042,8 @@ window.REPO_PACKS.push({
         "finions",
         "finîmes"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 11
       },
       {
        "k": "s",
@@ -829,7 +1077,27 @@ window.REPO_PACKS.push({
          "ils avaient fait",
          1
         ]
-       ]
+       ],
+       "fiche": 14
+      }
+     ],
+     "fiches": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-06-10.jpg",
+       "cap": "Fiches 06 à 10"
+      },
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-11-16.jpg",
+       "cap": "Fiches 11 à 16"
       }
      ]
     },
@@ -1192,18 +1460,36 @@ window.REPO_PACKS.push({
           "vîntes",
           "vinrent"
          ]
+        },
+        "fiches": {
+         "être": 15,
+         "avoir": 15,
+         "appeler": 16,
+         "manger": 16,
+         "finir": 17,
+         "rougir": 17,
+         "prendre": 18,
+         "dire": 18,
+         "pouvoir": 19,
+         "vouloir": 19,
+         "faire": 20,
+         "voir": 20,
+         "aller": 21,
+         "venir": 21
         }
        }
       },
       {
        "k": "f",
        "q": "**ÊTRE** au passé simple ?",
-       "a": "je fus, tu fus, il fut, nous fûmes, vous fûtes, ils furent."
+       "a": "je fus, tu fus, il fut, nous fûmes, vous fûtes, ils furent.",
+       "fiche": 15
       },
       {
        "k": "f",
        "q": "**AVOIR** au passé simple ?",
-       "a": "j'eus, tu eus, il eut, nous eûmes, vous eûtes, ils eurent."
+       "a": "j'eus, tu eus, il eut, nous eûmes, vous eûtes, ils eurent.",
+       "fiche": 15
       },
       {
        "k": "s",
@@ -1259,7 +1545,8 @@ window.REPO_PACKS.push({
          "je vins",
          3
         ]
-       ]
+       ],
+       "fiche": 21
       },
       {
        "k": "q",
@@ -1271,7 +1558,8 @@ window.REPO_PACKS.push({
         "dîmes"
        ],
        "a": 0,
-       "x": "Au présent : vous dites. Au passé simple : vous dîtes, avec un accent."
+       "x": "Au présent : vous dites. Au passé simple : vous dîtes, avec un accent.",
+       "fiche": 18
       },
       {
        "k": "q",
@@ -1282,7 +1570,8 @@ window.REPO_PACKS.push({
         "venîmes",
         "vînes"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 21
       },
       {
        "k": "q",
@@ -1293,7 +1582,8 @@ window.REPO_PACKS.push({
         "mangeat",
         "mangeât"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 16
       },
       {
        "k": "q",
@@ -1304,7 +1594,27 @@ window.REPO_PACKS.push({
         "allâmes",
         "allirent"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 21
+      }
+     ],
+     "fiches": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-11-16.jpg",
+       "cap": "Fiches 11 à 16"
+      },
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-17-22.jpg",
+       "cap": "Fiches 17 à 22"
       }
      ]
     },
@@ -1707,13 +2017,30 @@ window.REPO_PACKS.push({
           "viendrez",
           "viendront"
          ]
+        },
+        "fiches": {
+         "être": 22,
+         "avoir": 22,
+         "appeler": 23,
+         "manger": 23,
+         "finir": 24,
+         "rougir": 24,
+         "prendre": 25,
+         "dire": 25,
+         "pouvoir": 26,
+         "vouloir": 26,
+         "faire": 27,
+         "voir": 27,
+         "aller": 28,
+         "venir": 28
         }
        }
       },
       {
        "k": "f",
        "q": "Terminaisons du **futur simple** ?",
-       "a": "-ai, -as, -a, -ons, -ez, -ont."
+       "a": "-ai, -as, -a, -ons, -ez, -ont.",
+       "fiche": 22
       },
       {
        "k": "p",
@@ -1743,7 +2070,8 @@ window.REPO_PACKS.push({
          "venir",
          "je viendrai"
         ]
-       ]
+       ],
+       "fiche": 28
       },
       {
        "k": "q",
@@ -1755,7 +2083,8 @@ window.REPO_PACKS.push({
         "appelerais"
        ],
        "a": 0,
-       "x": "Deux l : j'appellerai."
+       "x": "Deux l : j'appellerai.",
+       "fiche": 23
       },
       {
        "k": "q",
@@ -1766,7 +2095,8 @@ window.REPO_PACKS.push({
         "sommes",
         "étions"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 22
       },
       {
        "k": "q",
@@ -1777,7 +2107,27 @@ window.REPO_PACKS.push({
         "verons",
         "voyeront"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 27
+      }
+     ],
+     "fiches": [
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-17-22.jpg",
+       "cap": "Fiches 17 à 22"
+      },
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-23-28.jpg",
+       "cap": "Fiches 23 à 28"
       }
      ]
     },
@@ -2143,13 +2493,30 @@ window.REPO_PACKS.push({
           "viendriez",
           "viendraient"
          ]
+        },
+        "fiches": {
+         "être": 29,
+         "avoir": 29,
+         "appeler": 30,
+         "manger": 30,
+         "finir": 31,
+         "rougir": 31,
+         "prendre": 32,
+         "dire": 32,
+         "pouvoir": 33,
+         "vouloir": 33,
+         "faire": 34,
+         "voir": 34,
+         "aller": 35,
+         "venir": 35
         }
        }
       },
       {
        "k": "f",
        "q": "Terminaisons du **conditionnel présent** ?",
-       "a": "-ais, -ais, -ait, -ions, -iez, -aient."
+       "a": "-ais, -ais, -ait, -ions, -iez, -aient.",
+       "fiche": 29
       },
       {
        "k": "s",
@@ -2191,7 +2558,8 @@ window.REPO_PACKS.push({
          "tu dirais",
          1
         ]
-       ]
+       ],
+       "fiche": 35
       },
       {
        "k": "q",
@@ -2202,7 +2570,8 @@ window.REPO_PACKS.push({
         "voulions",
         "voudrerions"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 33
       },
       {
        "k": "q",
@@ -2213,7 +2582,27 @@ window.REPO_PACKS.push({
         "allerais",
         "allais"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 35
+      }
+     ],
+     "fiches": [
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-29-34.jpg",
+       "cap": "Fiches 29 à 34"
+      },
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-35-40.jpg",
+       "cap": "Fiches 35 à 40"
       }
      ]
     },
@@ -2440,13 +2829,29 @@ window.REPO_PACKS.push({
           "mettons",
           "mettez"
          ]
+        },
+        "fiches": {
+         "être": 36,
+         "avoir": 36,
+         "arriver": 37,
+         "appeler": 37,
+         "finir": 38,
+         "venir": 38,
+         "dire": 38,
+         "voir": 39,
+         "recevoir": 39,
+         "savoir": 39,
+         "faire": 40,
+         "prendre": 40,
+         "mettre": 40
         }
        }
       },
       {
        "k": "f",
        "q": "Combien de personnes a l'**impératif** ?",
-       "a": "Trois : 2e du singulier (tu), 1re du pluriel (nous), 2e du pluriel (vous). Sans pronom sujet."
+       "a": "Trois : 2e du singulier (tu), 1re du pluriel (nous), 2e du pluriel (vous). Sans pronom sujet.",
+       "fiche": 36
       },
       {
        "k": "q",
@@ -2457,7 +2862,8 @@ window.REPO_PACKS.push({
         "arrivez",
         "arrivons"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 37
       },
       {
        "k": "q",
@@ -2468,7 +2874,8 @@ window.REPO_PACKS.push({
         "aies",
         "as"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 36
       },
       {
        "k": "q",
@@ -2479,7 +2886,8 @@ window.REPO_PACKS.push({
         "saches",
         "sachez"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 39
       },
       {
        "k": "q",
@@ -2490,7 +2898,8 @@ window.REPO_PACKS.push({
         "dîtes",
         "disiez"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 38
       },
       {
        "k": "q",
@@ -2501,7 +2910,21 @@ window.REPO_PACKS.push({
         "reçoit",
         "recevez"
        ],
-       "a": 0
+       "a": 0,
+       "fiche": 39
+      }
+     ],
+     "fiches": [
+      36,
+      37,
+      38,
+      39,
+      40
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-conj-fiches-35-40.jpg",
+       "cap": "Fiches 35 à 40"
       }
      ]
     }
@@ -2761,6 +3184,12 @@ window.REPO_PACKS.push({
         "les expressions"
        ]
       }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-dictionnaire.jpg",
+       "cap": "Article de dictionnaire"
+      }
      ]
     }
    ]
@@ -2836,6 +3265,12 @@ window.REPO_PACKS.push({
         "seulement en alexandrins"
        ],
        "a": 0
+      }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-poesie.jpg",
+       "cap": "La poésie"
       }
      ]
     },
@@ -3088,6 +3523,12 @@ window.REPO_PACKS.push({
          1
         ]
        ]
+      }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/fr-poesie.jpg",
+       "cap": "La poésie"
       }
      ]
     }

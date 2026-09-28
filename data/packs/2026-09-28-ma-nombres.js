@@ -167,6 +167,12 @@ window.REPO_PACKS.push({
        "g": "nbOf",
        "n": 3
       }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p1.jpg",
+       "cap": "Nombres · page 1"
+      }
      ]
     },
     {
@@ -317,6 +323,16 @@ window.REPO_PACKS.push({
        "k": "g",
        "g": "words",
        "n": 4
+      }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p1.jpg",
+       "cap": "Nombres · page 1"
+      },
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p2.jpg",
+       "cap": "Nombres · page 2"
       }
      ]
     }
@@ -532,6 +548,16 @@ window.REPO_PACKS.push({
        "k": "g",
        "g": "placeDec",
        "n": 4
+      }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p2.jpg",
+       "cap": "Nombres · page 2"
+      },
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p3.jpg",
+       "cap": "Nombres · page 3"
       }
      ]
     },
@@ -827,6 +853,16 @@ window.REPO_PACKS.push({
        "g": "decFrac",
        "n": 3
       }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p3.jpg",
+       "cap": "Nombres · page 3"
+      },
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p4.jpg",
+       "cap": "Nombres · page 4"
+      }
      ]
     },
     {
@@ -961,6 +997,12 @@ window.REPO_PACKS.push({
          "1"
         ]
        ]
+      }
+     ],
+     "photos": [
+      {
+       "src": "data/photos/2026-09-28/maths-nombres-p5.jpg",
+       "cap": "Nombres · page 5"
       }
      ]
     }

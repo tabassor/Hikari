@@ -10,7 +10,7 @@
     v: 2, profile: null, xp: 0, days: {}, streak: { cur: 0, best: 0, last: null },
     chapters: {}, lessons: {}, cards: {}, bosses: {}, badges: {}, packs: [],
     stats: { reviews: 0, mapWins: 0, orderWins: 0, bestCombo: 0, dragWins: 0 },
-    settings: { goal: 20, newPerDay: 15, sound: true, haptics: true }
+    settings: { goal: 20, newPerDay: 15, sound: true, haptics: true, zone: null }
   });
 
   let S;
@@ -45,7 +45,7 @@
     }
     // replace : la leçon de la prof devient la référence (fiche et cartes de base remplacées)
     if (L.replace) {
-      ["fiche", "cards", "events", "places", "routes"].forEach((k) => { if (L[k]) ex[k] = L[k]; });
+      ["fiche", "cards", "events", "places", "routes", "photos"].forEach((k) => { if (L[k]) ex[k] = L[k]; });
       if (L.title) ex.title = L.title; if (L.refs) ex.refs = L.refs; if (L.note) ex.note = L.note;
       ex.extra = []; ex.stub = false; ex.fromTeacher = true; ex.fromPack = pack; return;
     }
@@ -53,7 +53,7 @@
     if (L.refs) ex.refs = Array.from(new Set((ex.refs || []).concat(L.refs)));
     if (L.fiche) ex.extra = (ex.extra || []).concat([{ pack, note: L.note, fiche: L.fiche }]);
     else if (L.note) ex.extra = (ex.extra || []).concat([{ pack, note: L.note, fiche: [] }]);
-    ["cards", "events", "places", "routes"].forEach((k) => { if (L[k]) ex[k] = (ex[k] || []).concat(L[k]); });
+    ["cards", "events", "places", "routes", "photos"].forEach((k) => { if (L[k]) ex[k] = (ex[k] || []).concat(L[k]); });
     if (L.cards && L.cards.length || L.fiche) ex.stub = false;
   }
   function buildContent() {
@@ -87,10 +87,48 @@
     CH.forEach((c) => { CHI[c.id] = c; c.lessons.forEach((l) => { l.ch = c.id; LEI[l.id] = l; }); });
   }
 
+  // ---------- Calendrier scolaire 2026-2027 (vacances : du samedi, fin des cours, au lundi de reprise exclu) ----------
+  // Sources : education.gouv.fr (calendrier officiel), L'Étudiant et vacances-scolaires.com (dates par zone).
+  const HOLIDAYS = {
+    all: [["2026-10-17", "2026-11-02"], ["2026-12-19", "2027-01-04"], ["2027-07-03", "2027-09-01"]],
+    A: [["2027-02-13", "2027-03-01"], ["2027-04-10", "2027-04-26"]],
+    B: [["2027-02-20", "2027-03-08"], ["2027-04-17", "2027-05-03"]],
+    C: [["2027-02-06", "2027-02-22"], ["2027-04-03", "2027-04-19"]]
+  };
+  const ZONE_SENSITIVE_FROM = "2027-02-06";
+  const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return today(d); };
+  function inHoliday(iso, zone) { return HOLIDAYS.all.concat(zone ? HOLIDAYS[zone] : []).some(([a, b]) => iso >= a && iso < b); }
+  // Numéro de la semaine de cours (1 = semaine de start) à la date donnée ; les semaines de vacances ne comptent pas
+  function classWeek(sched, iso = today(), zone = S && S.settings.zone) {
+    if (!sched || iso < sched.start) return 0;
+    let n = 0, mon = sched.start;
+    while (mon <= iso) { if (!inHoliday(mon, zone)) n++; mon = addDays(mon, 7); }
+    return n;
+  }
+  function weekStart(sched, n, zone = S && S.settings.zone) { let k = 0, mon = sched.start; while (true) { if (!inHoliday(mon, zone)) { k++; if (k === n) return mon; } mon = addDays(mon, 7); if (k > 80) return null; } }
+  function unlockedFiches(ch) {
+    const sc = ch && ch.schedule; if (!sc) return null;
+    const w = classWeek(sc), set = new Set();
+    sc.grid.slice(0, w).forEach((row) => row.forEach((f) => set.add(f)));
+    return set;
+  }
+
   // Leçons ouvertes automatiquement par les packs du dépôt (une seule fois : elle peut ensuite les refermer)
   function autoOpen() {
     S.autoOpened = S.autoOpened || {};
     (window.REPO_PACKS || []).forEach((p) => (p.open || []).forEach((lid) => { if (!S.autoOpened[lid] && LEI[lid]) { S.autoOpened[lid] = today(); if (!lessonOpen(lid)) openLesson(lid); S.newFromRepo = (S.newFromRepo || []).concat([lid]); } }));
+    // Chapitres à calendrier (carnet de conjugaison) : ouverture des leçons au fil des semaines
+    S.schedWeek = S.schedWeek || {};
+    CH.filter((c) => c.schedule).forEach((c) => {
+      const w = classWeek(c.schedule), prev = S.schedWeek[c.id] || 0; if (w <= prev) return;
+      const un = unlockedFiches(c);
+      c.lessons.forEach((l) => { if ((l.fiches || []).some((f) => un.has(f)) && !lessonOpen(l.id)) openLesson(l.id); });
+      // fiches « à réviser » de la semaine : leurs cartes repassent en tête des révisions
+      const row = c.schedule.grid[w - 1] || [], review = new Set(row.slice(2));
+      if (review.size) c.lessons.forEach((l) => lessonCards(c, l).forEach((k) => { const fs = k.fiche ? [k.fiche] : k.tab && k.tab.fiches ? (k._verbs || []).map((v) => k.tab.fiches[v]) : []; if (fs.some((f) => review.has(f)) && S.cards[k.id] && S.cards[k.id].due > Date.now()) S.cards[k.id].due = Date.now(); }));
+      if (prev) S.newWeek = { ch: c.id, week: w }; else S.newWeek = { ch: c.id, week: w, first: true };
+      S.schedWeek[c.id] = w;
+    });
     save();
   }
   // Migration v1 → v2 : un chapitre ouvert ouvre toutes ses leçons remplies
@@ -122,8 +160,13 @@
     return `${ch.id}:${ART.hash(c.q + "|" + String(c.a))}`;
   }
   function lessonCards(ch, l) {
-    const out = [];
-    (l.cards || []).forEach((c) => {
+    const out = [], un = unlockedFiches(ch);
+    (l.cards || []).forEach((c0) => {
+      let c = c0;
+      if (un) {
+        if (c.fiche && !un.has(c.fiche)) return;
+        if (c.tab && c.tab.fiches) { const ok = Object.keys(c.tab.verbs).filter((v) => un.has(c.tab.fiches[v])); if (!ok.length) return; c = Object.assign({}, c, { _verbs: ok }); }
+      }
       if (c.k === "g") { const tag = c.tab ? ART.hash(c.tab.tense + Object.keys(c.tab.verbs).join()) + ":" : ""; for (let i = 0; i < (c.n || 3); i++) out.push(Object.assign({ id: `${ch.id}:g:${c.g}:${tag}${i}`, ch: ch.id, le: l.id }, c)); }
       else out.push(Object.assign({ id: cardId(ch, c), ch: ch.id, le: l.id }, c));
     });
@@ -266,7 +309,7 @@
   function reset() { S = DEFAULT(); save(); buildContent(); }
 
   window.STORE = {
-    load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
+    load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
     levelInfo, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };

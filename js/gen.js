@@ -225,7 +225,7 @@
 
   // Tirage dans un tableau de conjugaison fourni par la carte : { tense, verbs: { verbe: [6 formes] ou [3 formes à l'impératif] } }
   G.tab = function (card) {
-    const T = card.tab, v = pick(Object.keys(T.verbs)), forms = T.verbs[v], p = R(0, forms.length - 1), f = forms[p];
+    const T = card.tab, v = pick(card._verbs || Object.keys(T.verbs)), forms = T.verbs[v], p = R(0, forms.length - 1), f = forms[p];
     const V = v.toUpperCase();
     if (forms.length === 3) {
       const lbl = ["2e pers. du singulier (tu)", "1re pers. du pluriel (nous)", "2e pers. du pluriel (vous)"][p];
