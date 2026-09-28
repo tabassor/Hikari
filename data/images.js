@@ -3,6 +3,36 @@
    ren  : humeurs de Ren (happy, wow, think, fire)
    boss : un yōkai par chapitre (clé = identifiant du chapitre) */
 window.IMAGES = {
-  ren: {},
-  boss: {}
+  "ren": {
+    "fire": "img/ren-fire.webp",
+    "happy": "img/ren-happy.webp",
+    "think": "img/ren-think.webp",
+    "wow": "img/ren-wow.webp"
+  },
+  "boss": {
+    "emc-representer": "img/boss-emc-representer.webp",
+    "en-class": "img/boss-en-class.webp",
+    "en-family": "img/boss-en-family.webp",
+    "en-hello": "img/boss-en-hello.webp",
+    "es-clase": "img/boss-es-clase.webp",
+    "es-com": "img/boss-es-com.webp",
+    "es-hola": "img/boss-es-hola.webp",
+    "fr-conjugaison": "img/boss-fr-conjugaison.webp",
+    "fr-dico": "img/boss-fr-dico.webp",
+    "fr-origines": "img/boss-fr-origines.webp",
+    "fr-phrase": "img/boss-fr-phrase.webp",
+    "fr-poesie": "img/boss-fr-poesie.webp",
+    "fr-temps": "img/boss-fr-temps.webp",
+    "ge-metropoles": "img/boss-ge-metropoles.webp",
+    "hi-etats": "img/boss-hi-etats.webp",
+    "hi-humanite": "img/boss-hi-humanite.webp",
+    "hi-neolithique": "img/boss-hi-neolithique.webp",
+    "ma-auto": "img/boss-ma-auto.webp",
+    "ma-decimaux": "img/boss-ma-decimaux.webp",
+    "ma-entiers": "img/boss-ma-entiers.webp",
+    "ma-geom1": "img/boss-ma-geom1.webp",
+    "sc-boisjoli": "img/boss-sc-boisjoli.webp",
+    "sc-matiere": "img/boss-sc-matiere.webp",
+    "sc-vivant": "img/boss-sc-vivant.webp"
+  }
 };
