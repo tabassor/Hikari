@@ -40,7 +40,7 @@
     if (!ex) {
       const nl = Object.assign({ cards: [] }, L, { fromPack: pack, fromTeacher: true });
       const at = L.after ? c.lessons.findIndex((l) => l.id === L.after) : -1;
-      if (at >= 0) c.lessons.splice(at + 1, 0, nl); else c.lessons.push(nl);
+      if (at >= 0) c.lessons.splice(at + 1, 0, nl); else if (L.first) c.lessons.unshift(nl); else c.lessons.push(nl);
       return;
     }
     // replace : la leçon de la prof devient la référence (fiche et cartes de base remplacées)
