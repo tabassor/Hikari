@@ -208,12 +208,6 @@ window.REPO_PACKS.push({
      ]
     ]
    },
-   "photos": [
-    {
-     "src": "data/photos/2026-09-28/fr-conj-grille.jpg",
-     "cap": "Grille des semaines"
-    }
-   ],
    "lessons": [
     {
      "id": "fr-conjugaison-l1",
@@ -688,16 +682,6 @@ window.REPO_PACKS.push({
       5,
       6,
       7
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-01-05.jpg",
-       "cap": "Fiches 01 à 05"
-      },
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-06-10.jpg",
-       "cap": "Fiches 06 à 10"
-      }
      ]
     },
     {
@@ -1089,16 +1073,6 @@ window.REPO_PACKS.push({
       12,
       13,
       14
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-06-10.jpg",
-       "cap": "Fiches 06 à 10"
-      },
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-11-16.jpg",
-       "cap": "Fiches 11 à 16"
-      }
      ]
     },
     {
@@ -1606,16 +1580,6 @@ window.REPO_PACKS.push({
       19,
       20,
       21
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-11-16.jpg",
-       "cap": "Fiches 11 à 16"
-      },
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-17-22.jpg",
-       "cap": "Fiches 17 à 22"
-      }
      ]
     },
     {
@@ -2119,16 +2083,6 @@ window.REPO_PACKS.push({
       26,
       27,
       28
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-17-22.jpg",
-       "cap": "Fiches 17 à 22"
-      },
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-23-28.jpg",
-       "cap": "Fiches 23 à 28"
-      }
      ]
     },
     {
@@ -2594,16 +2548,6 @@ window.REPO_PACKS.push({
       33,
       34,
       35
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-29-34.jpg",
-       "cap": "Fiches 29 à 34"
-      },
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-35-40.jpg",
-       "cap": "Fiches 35 à 40"
-      }
      ]
     },
     {
@@ -2920,12 +2864,6 @@ window.REPO_PACKS.push({
       38,
       39,
       40
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-conj-fiches-35-40.jpg",
-       "cap": "Fiches 35 à 40"
-      }
      ]
     }
    ]
@@ -3184,12 +3122,6 @@ window.REPO_PACKS.push({
         "les expressions"
        ]
       }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-dictionnaire.jpg",
-       "cap": "Article de dictionnaire"
-      }
      ]
     }
    ]
@@ -3265,12 +3197,6 @@ window.REPO_PACKS.push({
         "seulement en alexandrins"
        ],
        "a": 0
-      }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-poesie.jpg",
-       "cap": "La poésie"
       }
      ]
     },
@@ -3523,12 +3449,6 @@ window.REPO_PACKS.push({
          1
         ]
        ]
-      }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/fr-poesie.jpg",
-       "cap": "La poésie"
       }
      ]
     }

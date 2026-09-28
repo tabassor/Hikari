@@ -275,20 +275,6 @@ window.REPO_PACKS.push({
        ],
        "a": 0
       }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p1.jpg",
-       "cap": "Géométrie · page 1"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p2.jpg",
-       "cap": "Géométrie · page 2"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p3.jpg",
-       "cap": "Géométrie · page 3"
-      }
      ]
     },
     {
@@ -456,16 +442,6 @@ window.REPO_PACKS.push({
        ],
        "a": 0,
        "x": "[DC) part de D et va vers C : elle part dans l'autre sens, loin de E."
-      }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p3.jpg",
-       "cap": "Géométrie · page 3"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p4.jpg",
-       "cap": "Géométrie · page 4"
       }
      ]
     },
@@ -655,16 +631,6 @@ window.REPO_PACKS.push({
        ],
        "a": 0
       }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p4.jpg",
-       "cap": "Géométrie · page 4"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p5.jpg",
-       "cap": "Géométrie · page 5"
-      }
      ]
     },
     {
@@ -796,12 +762,6 @@ window.REPO_PACKS.push({
         "MA < MB"
        ],
        "a": 0
-      }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/maths-geometrie-p6.jpg",
-       "cap": "Géométrie · page 6"
       }
      ]
     },
@@ -1048,20 +1008,6 @@ window.REPO_PACKS.push({
        ],
        "a": 0
       }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/maths-cercle-p7.jpg",
-       "cap": "Le cercle · page 7"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-cercle-p8.jpg",
-       "cap": "Le cercle · page 8"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-cercle-p9.jpg",
-       "cap": "Le cercle · page 9"
-      }
      ]
     },
     {
@@ -1276,16 +1222,6 @@ window.REPO_PACKS.push({
          1
         ]
        ]
-      }
-     ],
-     "photos": [
-      {
-       "src": "data/photos/2026-09-28/maths-triangles-p10.jpg",
-       "cap": "Les triangles · page 10"
-      },
-      {
-       "src": "data/photos/2026-09-28/maths-triangles-p11.jpg",
-       "cap": "Les triangles · page 11"
       }
      ]
     }

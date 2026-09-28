@@ -26,7 +26,7 @@
      "h": "Un berceau africain"
     },
     {
-     "p": "Les plus anciens fossiles d'ancêtres de l'homme ont été trouvés en **Afrique**. Lucy, une australopithèque découverte en Éthiopie en 1974, a vécu il y a environ 3,2 millions d'années. Le genre **Homo** apparaît vers **−2,8 millions d'années**."
+     "p": "Les plus anciens fossiles d'ancêtres de l'homme ont été trouvés en **Afrique**. Lucy, une australopithèque découverte en Éthiopie en 1974, a vécu il y a environ 3,2 millions d'années. **Homo habilis** apparaît il y a environ **2,5 millions d'années**."
     }
    ],
    "cards": [
@@ -45,10 +45,10 @@
      "k": "q",
      "q": "Vers quand apparaît le genre **Homo** ?",
      "c": [
-      "Vers −2,8 millions d'années",
+      "Il y a environ 2,5 millions d'années",
       "Vers −10 000",
       "Vers −300 000",
-      "Vers −3300"
+      "Vers −3500"
      ],
      "a": 0
     },
@@ -70,8 +70,8 @@
      "note": "Éthiopie, découverte en 1974"
     },
     {
-     "y": -2800000,
-     "label": "Apparition du genre Homo",
+     "y": -2500000,
+     "label": "Homo habilis",
      "note": "Afrique",
      "key": true
     },
@@ -375,8 +375,8 @@
      "k": "o",
      "q": "Remets ces repères dans l'ordre chronologique.",
      "items": [
-      "Lucy",
-      "Genre Homo",
+      "Lucie",
+      "Homo habilis",
       "Humains à Dmanissi",
       "Premiers Homo sapiens",
       "Grotte Chauvet",
@@ -465,8 +465,8 @@
      "q": "Vers quand commence le Néolithique au Proche-Orient ?",
      "c": [
       "Vers −10 000",
-      "Vers −3300",
-      "Vers −2,8 millions",
+      "Vers −3500",
+      "Vers −2,5 millions",
       "Vers −100 000"
      ],
      "a": 0
@@ -752,7 +752,7 @@
     },
     {
      "list": [
-      "Vers **−3300**, en Mésopotamie : l'écriture **cunéiforme** (en forme de clous), tracée avec un calame dans l'argile.",
+      "Vers **−3500**, en Mésopotamie : l'écriture **cunéiforme** (en forme de clous), tracée avec un calame dans l'argile.",
       "Vers −3200 en Égypte : les **hiéroglyphes**.",
       "Au début, on écrit pour **compter** (récoltes, impôts, troupeaux), puis pour les lois, la religion, les récits (comme Gilgamesh)."
      ]
@@ -769,7 +769,7 @@
      "k": "q",
      "q": "Vers quand l'écriture est-elle inventée ?",
      "c": [
-      "Vers −3300",
+      "Vers −3500",
       "Vers −10 000",
       "Vers −753",
       "Vers −40 000"
@@ -828,7 +828,7 @@
     {
      "k": "f",
      "q": "Qu'est-ce qui sépare la Préhistoire de l'Histoire ?",
-     "a": "L'invention de l'écriture (vers −3300)."
+     "a": "L'invention de l'écriture (vers −3500)."
     },
     {
      "k": "p",
@@ -847,7 +847,7 @@
    ],
    "events": [
     {
-     "y": -3300,
+     "y": -3500,
      "label": "Invention de l'écriture",
      "note": "Cunéiforme en Mésopotamie",
      "key": true
