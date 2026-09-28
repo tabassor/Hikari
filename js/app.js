@@ -154,7 +154,7 @@
     const fresh = (S().newFromRepo || []).filter((id) => STORE.LEI[id]);
     if (fresh.length) {
       S().newFromRepo = []; STORE.save();
-      setTimeout(() => celebrate("新しい巻物！", `${ART.sensei("wow", 100)}<p>Ren t'apporte <b>${plural(fresh.length, "leçon")}</b> tirée${fresh.length > 1 ? "s" : ""} du cours de ta prof :</p><ul class="small" style="text-align:left">${fresh.map((id) => `<li>${esc(STORE.LEI[id].title)} <span class="muted">(${esc(STORE.SUBI[STORE.CHI[STORE.LEI[id].ch].s].name)})</span></li>`).join("")}</ul>`, "Au travail !", "win"), 400);
+      setTimeout(() => celebrate("新しい巻物！", `${ART.sensei("wow", 100)}<p>Ren t'apporte <b>${plural(fresh.length, "leçon")}</b> tirée${fresh.length > 1 ? "s" : ""} du cours de ta prof :</p><ul class="small" style="text-align:left">${fresh.slice(0, 6).map((id) => `<li>${esc(STORE.LEI[id].title)} <span class="muted">(${esc(STORE.SUBI[STORE.CHI[STORE.LEI[id].ch].s].name)})</span></li>`).join("")}${fresh.length > 6 ? `<li class="muted">… et ${fresh.length - 6} autres</li>` : ""}</ul>`, "Au travail !", "win"), 400);
     }
     $("#orb-toggle").onclick = () => { S().settings.clanList = !S().settings.clanList; STORE.save(); render(); };
     const clans = PROGRAMME.subjects.map((s) => { const k = STORE.counts((ch) => ch.s === s.id); const nAct = STORE.activeChapters().filter((ch) => ch.s === s.id).length; return { s, k, nAct }; });
@@ -300,7 +300,7 @@
     return { ok: false };
   }
   function instantiate(card) {
-    let q = card.k === "g" ? Object.assign({}, GEN.run(card.g), { id: card.id, ch: card.ch, le: card.le, g: card.g }) : Object.assign({}, card);
+    let q = card.k === "g" ? Object.assign({}, GEN.run(card.g, card), { id: card.id, ch: card.ch, le: card.le, g: card.g }) : Object.assign({}, card);
     if (q.k === "q") { const order = shuffle(q.c.map((_, i) => i)); q.choices = order.map((i) => q.c[i]); q.good = order.indexOf(q.a); }
     return q;
   }

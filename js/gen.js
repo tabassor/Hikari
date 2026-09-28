@@ -223,5 +223,19 @@
     }
   };
 
-  window.GEN = { run: (id) => (G[id] ? G[id]() : null), list: Object.keys(G), fmt, lettres };
+  // Tirage dans un tableau de conjugaison fourni par la carte : { tense, verbs: { verbe: [6 formes] ou [3 formes à l'impératif] } }
+  G.tab = function (card) {
+    const T = card.tab, v = pick(Object.keys(T.verbs)), forms = T.verbs[v], p = R(0, forms.length - 1), f = forms[p];
+    const V = v.toUpperCase();
+    if (forms.length === 3) {
+      const lbl = ["2e pers. du singulier (tu)", "1re pers. du pluriel (nous)", "2e pers. du pluriel (vous)"][p];
+      return { k: "i", q: `Conjugue **${V}** au **${T.tense}**, ${lbl} :`, a: [f, f + " !"], x: `${V} au ${T.tense} : ${forms.join(", ")}.` };
+    }
+    const el = p === 0 && /^[aeéèêiouhy]/i.test(f);
+    const shown = ["je", "tu", "il / elle / on", "nous", "vous", "ils / elles"][p];
+    const a = [f, (el ? "j'" : ["je ", "tu ", "il ", "nous ", "vous ", "ils "][p]) + f];
+    if (p === 2) a.push("elle " + f, "on " + f); if (p === 5) a.push("elles " + f);
+    return { k: "i", q: `**${V}** au **${T.tense}** :<br><span class="big">${el ? "j'" : shown + " "}…</span>`, a, x: `${V} au ${T.tense} : ${forms.map((x, i) => (i === 0 && /^[aeéèêiouhy]/i.test(x) ? "j'" : ["je ", "tu ", "il ", "nous ", "vous ", "ils "][i]) + x).join(", ")}.` };
+  };
+  window.GEN = { run: (id, card) => (G[id] ? G[id](card || {}) : null), list: Object.keys(G), fmt, lettres };
 })();

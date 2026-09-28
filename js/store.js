@@ -66,7 +66,7 @@
       const pk = p.title || p.id;
       (p.chapters || []).forEach((c0) => {
         const c = normalize(clone(c0)); const base = map.get(c.id);
-        if (!base) { c.fromPack = pk; map.set(c.id, c); return; }
+        if (!base) { c.fromPack = pk; c.lessons.forEach((l) => { if (!l.stub) l.fromTeacher = true; }); map.set(c.id, c); return; }
         ["title", "sum", "boss", "kanji", "period"].forEach((k) => { if (c[k] != null) base[k] = c[k]; });
         if (c.refs) base.refs = Array.from(new Set((base.refs || []).concat(c.refs)));
         c.lessons.forEach((L) => mergeLesson(base, L, pk)); base.fromPack = pk; normalize(base);
@@ -124,7 +124,7 @@
   function lessonCards(ch, l) {
     const out = [];
     (l.cards || []).forEach((c) => {
-      if (c.k === "g") { for (let i = 0; i < (c.n || 3); i++) out.push(Object.assign({ id: `${ch.id}:g:${c.g}:${i}`, ch: ch.id, le: l.id }, c)); }
+      if (c.k === "g") { const tag = c.tab ? ART.hash(c.tab.tense + Object.keys(c.tab.verbs).join()) + ":" : ""; for (let i = 0; i < (c.n || 3); i++) out.push(Object.assign({ id: `${ch.id}:g:${c.g}:${tag}${i}`, ch: ch.id, le: l.id }, c)); }
       else out.push(Object.assign({ id: cardId(ch, c), ch: ch.id, le: l.id }, c));
     });
     (l.places || []).forEach((p) => out.push({ id: `${ch.id}:m:${p.id}`, ch: ch.id, le: l.id, k: "m", place: p, q: `Touche la carte là où se trouve **${p.n}**.` }));
