@@ -59,9 +59,30 @@
     return `<svg viewBox="0 0 200 200" width="${size}" height="${size}" class="yokai${angry ? " shake" : ""}" aria-hidden="true">${horns}<path d="${d}" fill="${c1}" stroke="#15101c" stroke-width="5"/>${spots}${eyes}${teeth}${blush}</svg>`;
   }
 
+  // ---------- Tuile « cel shading » (sceaux de clan et sceau d'élément) ----------
+  // Style manga : contour noir épais, ombre portée pleine, ombre nette en diagonale, reflet blanc.
+  function mix(hex, to, t) { const a = parseInt(hex.slice(1), 16), b = parseInt(to.slice(1), 16); const ch = (v, sh) => (v >> sh) & 255; const m = (sh) => Math.round(ch(a, sh) + (ch(b, sh) - ch(a, sh)) * t); return "#" + ((m(16) << 16) | (m(8) << 8) | m(0)).toString(16).padStart(6, "0"); }
+  let tileN = 0;
+  function celTile(x, y, w, rx, color, rot, cx, cy, opts = {}) {
+    const id = "ct" + (++tileN), ink = "#17131F", shade = mix(color, "#1b1030", 0.32), hi = mix(color, "#ffffff", 0.55);
+    const tr = `rotate(${rot} ${cx} ${cy})`, o = w * 0.09;
+    return `<defs><clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${w}" rx="${rx}"/></clipPath></defs>
+      <g transform="${tr}"><rect x="${x + o * .55}" y="${y + o * .7}" width="${w}" height="${w}" rx="${rx}" fill="${ink}"/>
+      <rect x="${x}" y="${y}" width="${w}" height="${w}" rx="${rx}" fill="${color}"/>
+      <g clip-path="url(#${id})"><path d="M${x + w * 1.1} ${y + w * .28} L${x + w * .18} ${y + w * 1.1} L${x + w * 1.1} ${y + w * 1.1} Z" fill="${shade}"/>
+      <path d="M${x - 2} ${y + w * .34} Q${x + w * .06} ${y + w * .06} ${x + w * .36} ${y - 2} L${x + w * .5} ${y - 2} Q${x + w * .12} ${y + w * .1} ${x - 2} ${y + w * .5} Z" fill="${hi}" opacity=".75"/></g>
+      <rect x="${x}" y="${y}" width="${w}" height="${w}" rx="${rx}" fill="none" stroke="${ink}" stroke-width="${w * .055}"/>
+      <rect x="${x + w * .1}" y="${y + w * .1}" width="${w * .8}" height="${w * .8}" rx="${rx * .6}" fill="none" stroke="#fff" stroke-width="${w * .03}" stroke-dasharray="${opts.dashed ? `${w * .05} ${w * .05}` : "none"}" opacity=".9"/></g>`;
+  }
+  const KFONT = "'Kaisei Kanji','Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif";
+  function kanjiText(k, x, y, fs, ink = "#17131F") { return `<text x="${x}" y="${y}" text-anchor="middle" font-size="${fs}" font-weight="700" fill="#fff" stroke="${ink}" stroke-width="${fs * .11}" stroke-linejoin="round" paint-order="stroke" font-family="${KFONT}">${k}</text>`; }
+
   // ---------- Sceau de clan ----------
+  // Clan sans chapitre ouvert : même couleur, adoucie, cadre en pointillés et petit cadenas.
   function seal(kanji, color, size = 52, locked = false) {
-    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true" class="seal"><rect x="8" y="8" width="84" height="84" rx="14" fill="${locked ? "var(--mute)" : color}" transform="rotate(-4 50 50)"/><rect x="16" y="16" width="68" height="68" rx="9" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="${locked ? "4 4" : "none"}" transform="rotate(-4 50 50)"/><text x="50" y="67" text-anchor="middle" font-size="50" font-weight="700" fill="#fff" font-family="'Kaisei Kanji','Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif">${kanji}</text></svg>`;
+    const c = locked ? mix(color, "#b9b6c8", 0.45) : color;
+    const lock = locked ? `<g transform="translate(74 70)"><rect x="-9" y="-3" width="18" height="15" rx="3" fill="#fff" stroke="#17131F" stroke-width="3"/><path d="M-5 -3 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="#17131F" stroke-width="3"/></g>` : "";
+    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" aria-hidden="true" class="seal${locked ? " locked" : ""}">${celTile(9, 7, 80, 14, c, -4, 50, 50, { dashed: locked })}${kanjiText(kanji, 48, 63, 46)}${lock}</svg>`;
   }
 
   // ---------- Anneau de progression ----------
@@ -123,9 +144,8 @@
     const stars = t >= 3 ? [[24, 30], [116, 30], [24, 112], [116, 112]].map(([x, y]) => `<path d="M${x} ${y - 7} L${x + 2} ${y - 2} L${x + 7} ${y} L${x + 2} ${y + 2} L${x} ${y + 7} L${x - 2} ${y + 2} L${x - 7} ${y} L${x - 2} ${y - 2} Z" fill="${gold}"/>`).join("") : "";
     const border = t >= 1 ? `<rect x="31" y="31" width="78" height="78" rx="14" fill="none" stroke="${gold}" stroke-width="${t >= 3 ? 7 : 5}" transform="rotate(-4 70 70)"/>` + (t >= 3 ? `<rect x="22" y="22" width="96" height="96" rx="20" fill="none" stroke="${gold}" stroke-width="2.5" transform="rotate(-4 70 70)"/>` : "") : "";
     return `<svg viewBox="0 0 140 140" width="${size}" height="${size}" class="avatar t${t}" aria-label="${TIERS[t].n} ${e.n}" role="img">${glow}${aura}${stars}
-      <rect x="34" y="34" width="72" height="72" rx="12" fill="${e.c}" transform="rotate(-4 70 70)"/>
-      <rect x="41" y="41" width="58" height="58" rx="8" fill="none" stroke="#fff" stroke-width="2.5" transform="rotate(-4 70 70)"/>${border}
-      <text x="70" y="86" text-anchor="middle" font-size="44" font-weight="700" fill="#fff" font-family="'Kaisei Kanji','Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif">${e.k}</text></svg>`;
+      ${celTile(34, 33, 72, 12, e.c, -4, 70, 70)}${border}
+      ${kanjiText(e.k, 69, 85, 42)}</svg>`;
   }
 
   window.ART = { sensei, yokai, seal, ring, FIG, ELEMENTS, TIERS, tierOf, avatar, hash, rng };

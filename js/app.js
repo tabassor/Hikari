@@ -169,24 +169,64 @@
       return;
     }
     $("#clans").innerHTML = `<div class="orbit" id="orbit"><div class="orb-center">${ART.avatar(S().profile.element, L.level, 96)}<span class="tiny muted">niv. ${L.level}</span></div>
-      ${clans.map(({ s, k, nAct }, i) => `<button class="orb-v" data-go="clan~${s.id}" style="--i:${i}" aria-label="${s.name}">${ART.seal(s.kanji, s.color, 58, !nAct)}<span class="orb-n">${s.short || s.name}</span>${k.due ? `<span class="due">${k.due}</span>` : ""}</button>`).join("")}</div>`;
+      ${clans.map(({ s, k, nAct }, i) => `<button class="orb-v" data-go="clan~${s.id}" style="--i:${i};--c:${s.color}" aria-label="${s.name}">${ART.seal(s.kanji, s.color, 58, !nAct)}<span class="orb-n">${s.short || s.name}</span>${k.due ? `<span class="due">${k.due}</span>` : ""}</button>`).join("")}</div>
+      <div class="orb-nav"><button class="btn ghost sm" id="orb-prev" aria-label="Tourner vers la gauche">‹</button><span class="tiny muted">Tourne la roue · touche le clan de devant</span><button class="btn ghost sm" id="orb-next" aria-label="Tourner vers la droite">›</button></div>`;
     orbitStop = startOrbit($("#orbit"));
   }
+  // Roue des clans : elle ne tourne que sous le doigt. Glisser pour tourner (avec élan), la roue se cale
+  // sur un clan ; toucher le clan de devant l'ouvre, toucher un autre clan l'amène devant.
   function startOrbit(box) {
-    const sats = $$(".orb-v", box), n = sats.length; let base = -Math.PI / 2, paused = false, raf = 0, last = performance.now();
+    const sats = $$(".orb-v", box), n = sats.length, step = (2 * Math.PI) / n, FRONT = Math.PI / 2;
+    const norm = (a) => ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+    const frontIdx = (b) => { let best = 0, bd = 9; sats.forEach((_, i) => { const d = Math.abs(norm(b + i * step - FRONT + Math.PI) - Math.PI); if (d < bd) { bd = d; best = i; } }); return best; };
+    let base = FRONT - (S().settings.orbitFront || 0) * step, raf = 0, vel = 0, anim = null, drag = null, lastFront = -1;
     const place = () => {
       const W = box.clientWidth, H = box.clientHeight, R = W * 0.38;
       sats.forEach((s, i) => {
-        const a = base + (i * 2 * Math.PI) / n, depthv = (Math.sin(a) + 1) / 2; // 0 = derrière, 1 = devant
-        const x = W / 2 + Math.cos(a) * R, y = H / 2 - 10 + Math.sin(a) * R * 0.58;
-        s.style.left = x + "px"; s.style.top = y + "px"; s.style.setProperty("--ech", (0.72 + depthv * 0.36).toFixed(3));
-        s.style.zIndex = Math.round(depthv * 10) + (depthv > 0.5 ? 3 : 0); s.style.setProperty("--lbl", depthv < 0.3 ? 0 : Math.min(1, (depthv - 0.3) * 3).toFixed(2)); s.style.setProperty("--fl", ((1 - depthv) * 1.2).toFixed(2) + "px"); s.style.opacity = (0.55 + depthv * 0.45).toFixed(2);
+        const a = base + i * step, depthv = (Math.sin(a) + 1) / 2; // 0 = derrière, 1 = devant
+        s.style.left = W / 2 + Math.cos(a) * R + "px"; s.style.top = H / 2 - 10 + Math.sin(a) * R * 0.58 + "px";
+        s.style.setProperty("--ech", (0.72 + depthv * 0.36).toFixed(3)); s.style.zIndex = Math.round(depthv * 10) + (depthv > 0.5 ? 3 : 0);
+        s.style.setProperty("--lbl", depthv < 0.3 ? 0 : Math.min(1, (depthv - 0.3) * 3).toFixed(2)); s.style.setProperty("--fl", ((1 - depthv) * 1.2).toFixed(2) + "px"); s.style.opacity = (0.55 + depthv * 0.45).toFixed(2);
       });
+      const f = frontIdx(base);
+      if (f !== lastFront) { sats.forEach((s, i) => s.classList.toggle("front", i === f)); if (lastFront >= 0 && drag) FX.sfx("tap"); lastFront = f; }
     };
-    const tick = (t) => { const dt = Math.min(50, t - last); last = t; if (!paused) base += dt * 0.00012; place(); raf = requestAnimationFrame(tick); };
+    const snapTo = (target) => {
+      cancelAnimationFrame(raf); const from = base, t0 = performance.now(), dur = FX.reduce() ? 1 : 420;
+      anim = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); base = from + (target - from) * e; place(); if (k < 1) raf = requestAnimationFrame(anim); else { anim = null; S().settings.orbitFront = frontIdx(base); STORE.save(); } };
+      raf = requestAnimationFrame(anim);
+    };
+    const nearest = (b) => { const i = frontIdx(b); let t = FRONT - i * step; while (t - b > Math.PI) t -= 2 * Math.PI; while (b - t > Math.PI) t += 2 * Math.PI; return t; };
+    const bringFront = (i) => { let t = FRONT - i * step; while (t - base > Math.PI) t -= 2 * Math.PI; while (base - t > Math.PI) t += 2 * Math.PI; snapTo(t); };
+    const coast = () => { // élan après le lâcher, puis calage
+      cancelAnimationFrame(raf); let last = performance.now();
+      const run = (t) => { const dt = Math.min(40, t - last); last = t; base += vel * dt; vel *= Math.pow(0.992, dt); place(); if (Math.abs(vel) > 0.0006 && !FX.reduce()) raf = requestAnimationFrame(run); else snapTo(nearest(base)); };
+      raf = requestAnimationFrame(run);
+    };
+    box.style.touchAction = "pan-y";
+    box.addEventListener("pointerdown", (e) => { cancelAnimationFrame(raf); drag = { x: e.clientX, b: base, t: performance.now(), moved: false, lx: e.clientX, lt: performance.now() }; vel = 0; });
+    box.addEventListener("pointermove", (e) => {
+      if (!drag) return; const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) > 6) { drag.moved = true; box.setPointerCapture && box.setPointerCapture(e.pointerId); }
+      if (!drag.moved) return;
+      const R = box.clientWidth * 0.38, nb = drag.b - dx / R, now = performance.now();
+      vel = (nb - base) / Math.max(8, now - drag.lt); drag.lt = now; base = nb; place();
+    });
+    const end = () => { if (!drag) return; const moved = drag.moved; drag = moved ? { moved: true, done: true } : null; if (moved) coast(); setTimeout(() => (drag = null), 0); };
+    box.addEventListener("pointerup", end); box.addEventListener("pointercancel", end);
+    // Clic : après un glissé on ignore ; sur un clan qui n'est pas devant, on l'amène devant au lieu d'ouvrir.
+    box.addEventListener("click", (e) => {
+      const b = e.target.closest(".orb-v"); if (!b) return;
+      if (drag && drag.moved) { e.preventDefault(); e.stopPropagation(); return; }
+      const i = sats.indexOf(b);
+      if (i !== frontIdx(base)) { e.preventDefault(); e.stopPropagation(); FX.sfx("tap"); bringFront(i); }
+    }, true);
+    const prev = $("#orb-prev"), next = $("#orb-next");
+    if (prev) prev.onclick = () => { FX.sfx("tap"); bringFront((frontIdx(base) + 1) % n); };
+    if (next) next.onclick = () => { FX.sfx("tap"); bringFront((frontIdx(base) + n - 1) % n); };
+    box.tabIndex = 0; box.setAttribute("aria-label", "Roue des clans : flèches gauche et droite pour tourner, Entrée pour ouvrir");
+    box.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") { e.preventDefault(); prev && prev.click(); } else if (e.key === "ArrowRight") { e.preventDefault(); next && next.click(); } else if (e.key === "Enter") { e.preventDefault(); go(sats[frontIdx(base)].dataset.go); } });
     place();
-    if (!FX.reduce()) raf = requestAnimationFrame(tick);
-    box.addEventListener("pointerdown", () => (paused = true)); box.addEventListener("pointerup", () => setTimeout(() => (paused = false), 1500)); box.addEventListener("pointerleave", () => (paused = false));
     addEventListener("resize", place);
     return () => { cancelAnimationFrame(raf); removeEventListener("resize", place); };
   }
