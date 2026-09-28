@@ -739,7 +739,7 @@
       <details><summary>Réglages</summary><div class="in">
         <label class="stack"><span class="small"><b>Objectif du jour</b> (révisions pour remplir le Ki)</span><select id="st-goal">${[10, 15, 20, 30, 40].map((n) => `<option ${n === g ? "selected" : ""}>${n}</option>`).join("")}</select></label>
         <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum</span><select id="st-new">${[5, 10, 15, 20, 30].map((n) => `<option ${n === S().settings.newPerDay ? "selected" : ""}>${n}</option>`).join("")}</select></label>
-        <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone"><option value="">Pas encore choisie</option>${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
+        <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone">${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
         <label class="row"><input type="checkbox" id="st-sound" ${S().settings.sound ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Sons</b></span></label>
         <label class="row"><input type="checkbox" id="st-hap" ${S().settings.haptics ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Vibrations</b></span></label>
         <span class="small"><b>Élément</b> <span class="muted">(change l'apparence, pas le jeu)</span></span>${elementPicker(S().profile.element, L.level)}
@@ -791,7 +791,7 @@
     $("#pk-go").onclick = () => doImport($("#pk-txt").value);
     $("#st-goal").onchange = (e) => { S().settings.goal = +e.target.value; STORE.save(); renderHUD(); };
     $("#st-new").onchange = (e) => { S().settings.newPerDay = +e.target.value; STORE.save(); };
-    $("#st-zone").onchange = (e) => { S().settings.zone = e.target.value || null; STORE.save(); toast(e.target.value ? `Zone ${e.target.value} enregistrée.` : "Zone effacée."); };
+    $("#st-zone").onchange = (e) => { S().settings.zone = e.target.value; STORE.save(); toast(`Zone ${e.target.value} enregistrée.`); };
     $("#st-sound").onchange = (e) => { S().settings.sound = e.target.checked; STORE.save(); FX.sfx("good"); };
     $("#st-hap").onchange = (e) => { S().settings.haptics = e.target.checked; STORE.save(); FX.buzz(30); };
     $$("[data-el]", main).forEach((b) => (b.onclick = () => { S().profile.element = b.dataset.el; STORE.save(); FX.sfx("pick"); applyAccent(); viewMe(main); }));

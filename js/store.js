@@ -10,13 +10,13 @@
     v: 2, profile: null, xp: 0, days: {}, streak: { cur: 0, best: 0, last: null },
     chapters: {}, lessons: {}, cards: {}, bosses: {}, badges: {}, packs: [],
     stats: { reviews: 0, mapWins: 0, orderWins: 0, bestCombo: 0, dragWins: 0 },
-    settings: { goal: 20, newPerDay: 15, sound: true, haptics: true, zone: null }
+    settings: { goal: 20, newPerDay: 15, sound: true, haptics: true, zone: "C" }
   });
 
   let S;
   function load() {
     try { S = Object.assign(DEFAULT(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { S = DEFAULT(); }
-    S.settings = Object.assign(DEFAULT().settings, S.settings || {}); S.stats = Object.assign(DEFAULT().stats, S.stats || {});
+    S.settings = Object.assign(DEFAULT().settings, S.settings || {}); S.stats = Object.assign(DEFAULT().stats, S.stats || {}); if (!S.settings.zone) S.settings.zone = "C"; // famille en zone C
     S.lessons = S.lessons || {};
     return S;
   }
