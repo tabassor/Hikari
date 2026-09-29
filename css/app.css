@@ -658,3 +658,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .idk { align-self: center; min-height: 40px; font-size: .9rem; color: var(--ink2); }
 .idk-lock .choices, .idk-lock form, .idk-lock .bins, .idk-lock .pool, .idk-lock .olist, .idk-lock #chk, .idk-lock .pairs { pointer-events: none; opacity: .55; }
 .verdict.idk-v { color: var(--ink2); font-size: 1.05rem; }
+
+/* Paliers de mémoire (Dōjō) */
+.stages { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; text-align: center; }
+.stages > div { padding: 8px 4px; border-radius: var(--radius-sm); background: var(--panel); box-shadow: var(--shadow-sm); }
+.stages b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.stages span { font-size: .7rem; font-weight: 800; color: var(--ink2); line-height: 1.2; display: block; }
+.stages i { font-style: normal; font-weight: 600; color: var(--mute); }

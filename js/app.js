@@ -150,13 +150,14 @@
         ${senseiLine(line, mood)}
         <div><div class="row" style="justify-content:space-between"><span class="eyebrow">Ki du jour</span><span class="small muted">${Math.min(d.n, goal)} / ${goal} révisions</span></div>
         <div class="ki-meter">${Array.from({ length: 10 }, (_, i) => `<i class="${d.n >= ((i + 1) * goal) / 10 ? "on" : ""}" style="--i:${i}"></i>`).join("")}</div></div>
-        <button class="btn primary big ${ses ? "pulse" : ""}" data-go="seance" ${ses ? "" : "disabled"}>${ses ? `Révision du jour · ${ses}` : "Tout est révisé ✓"}</button>
+        ${ses ? `<button class="btn primary big pulse" data-go="seance">Révision du jour · ${ses}</button>` : `<button class="btn primary big" disabled>Tout est révisé ✓</button>${c.fresh ? `<button class="btn" id="more-new">Encore motivée ? +10 nouvelles cartes</button>` : ""}`}
         <button class="btn" id="flash">Entraînement éclair (10 questions)</button>
       </section>
       <div id="defis" class="stack"></div>
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Les sept clans</h2><button class="btn ghost sm" id="orb-toggle">${S().settings.clanList ? "Orbite" : "Liste"}</button></div>
-        <div id="clans"></div><p class="small muted" style="text-align:center">${c.mastered} / ${c.total} cartes maîtrisées</p></section>`;
+        <div id="clans"></div>${(() => { const g = STORE.stagesOf(STORE.allActiveCards()); return `<div class="stages"><div><b>${g.seen}</b><span>étudiées</span></div><div><b>${g.solid}</b><span>solides<br><i>tenues 1 sem.</i></span></div><div><b>${g.mastered}</b><span>maîtrisées<br><i>tenues 3 sem.</i></span></div><div><b>${c.total}</b><span>cartes<br><i>ouvertes</i></span></div></div>`; })()}</section>`;
     $("#flash").onclick = () => startFlashQuiz();
+    const mn = $("#more-new"); if (mn) mn.onclick = () => { const t = STORE.today(); S().extraNew = { d: t, n: ((S().extraNew && S().extraNew.d === t) ? S().extraNew.n : 0) + 10 }; STORE.save(); go("seance"); };
     drawDefis();
     const nw = S().newWeek;
     if (nw && STORE.CHI[nw.ch]) {

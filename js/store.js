@@ -209,7 +209,8 @@
     let pool = allActiveCards((c) => (!subject || c.s === subject) && (!chapter || c.id === chapter));
     if (lesson) pool = pool.filter((c) => c.le === lesson);
     const due = pool.filter((c) => isDue(c.id)).sort((a, b) => S.cards[a.id].due - S.cards[b.id].due);
-    const room = chapter || lesson ? 999 : Math.max(0, S.settings.newPerDay - newSeenToday());
+    const extra = (S.extraNew && S.extraNew.d === today()) ? S.extraNew.n : 0;
+    const room = chapter || lesson ? 999 : Math.max(0, S.settings.newPerDay + extra - newSeenToday());
     // Nouvelles cartes : d'abord les leçons ouvertes le plus récemment (le cours de la semaine),
     // à tour de rôle entre leçons ouvertes le même jour.
     const byL = {}; pool.filter((c) => isNew(c.id)).forEach((c) => (byL[c.le] = byL[c.le] || []).push(c));
@@ -291,6 +292,8 @@
     const all = countsOf(allActiveCards());
     return { subs, hard, fresh: all.fresh, total: all.total, perDay: S.settings.newPerDay, days: Math.ceil(all.fresh / Math.max(1, S.settings.newPerDay)) };
   }
+  // Paliers de mémoire : vue (étudiée), solide (intervalle ≥ 7 j), maîtrisée (≥ 21 j)
+  function stagesOf(pool) { const o = { seen: 0, solid: 0, mastered: 0 }; pool.forEach((c) => { const st = S.cards[c.id]; if (!st) return; o.seen++; if (st.ivl >= 7) o.solid++; if (st.ivl >= 21) o.mastered++; }); return o; }
   function countsOf(pool) { return { total: pool.length, due: pool.filter((c) => isDue(c.id)).length, fresh: pool.filter((c) => isNew(c.id)).length, mastered: pool.filter((c) => mastered(c.id)).length, seen: pool.filter((c) => !isNew(c.id)).length }; }
   const counts = (filter) => countsOf(allActiveCards(filter));
 
@@ -392,6 +395,6 @@
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
-    levelInfo, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
+    levelInfo, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();
