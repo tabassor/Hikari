@@ -10,13 +10,14 @@
     v: 2, profile: null, xp: 0, days: {}, streak: { cur: 0, best: 0, last: null },
     chapters: {}, lessons: {}, cards: {}, bosses: {}, badges: {}, packs: [],
     stats: { reviews: 0, mapWins: 0, orderWins: 0, bestCombo: 0, dragWins: 0 },
-    settings: { goal: 20, newPerDay: 15, sound: true, haptics: true, zone: "C" }
+    settings: { goal: 20, newPerDay: 25, sound: true, haptics: true, zone: "C" }
   });
 
   let S;
   function load() {
     try { S = Object.assign(DEFAULT(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { S = DEFAULT(); }
     S.settings = Object.assign(DEFAULT().settings, S.settings || {}); S.stats = Object.assign(DEFAULT().stats, S.stats || {}); if (!S.settings.zone) S.settings.zone = "C"; // famille en zone C
+    if (!S.settings.newPerDayV2) { if (S.settings.newPerDay === 15) S.settings.newPerDay = 25; S.settings.newPerDayV2 = true; }
     S.lessons = S.lessons || {};
     return S;
   }
@@ -181,6 +182,7 @@
   function grade(cardId, g) {
     const now = Date.now();
     const c = S.cards[cardId] || { ivl: 0, ease: 2.5, reps: 0, lapses: 0, first: today() };
+    c.tries = (c.tries || 0) + 1; c.last = today();
     if (g === 0) { c.lapses++; c.reps = 0; c.ivl = 0; c.due = now + 10 * 60000; c.ease = Math.max(1.3, c.ease - 0.2); }
     else {
       if (c.reps === 0) c.ivl = g === 3 ? 3 : 1;
@@ -204,11 +206,33 @@
     if (lesson) pool = pool.filter((c) => c.le === lesson);
     const due = pool.filter((c) => isDue(c.id)).sort((a, b) => S.cards[a.id].due - S.cards[b.id].due);
     const room = chapter || lesson ? 999 : Math.max(0, S.settings.newPerDay - newSeenToday());
+    // Nouvelles cartes : d'abord les leçons ouvertes le plus récemment (le cours de la semaine),
+    // à tour de rôle entre leçons ouvertes le même jour.
     const byL = {}; pool.filter((c) => isNew(c.id)).forEach((c) => (byL[c.le] = byL[c.le] || []).push(c));
-    let fresh = [], more = true; while (more) { more = false; Object.values(byL).forEach((arr) => { if (arr.length) { fresh.push(arr.shift()); more = true; } }); }
+    const since = (lid) => (S.lessons[lid] && S.lessons[lid].since) || "0000";
+    const byDay = {}; Object.keys(byL).forEach((lid) => (byDay[since(lid)] = byDay[since(lid)] || []).push(byL[lid]));
+    let fresh = [];
+    Object.keys(byDay).sort().reverse().forEach((d) => { const groups = byDay[d]; let more = true; while (more) { more = false; groups.forEach((arr) => { if (arr.length) { fresh.push(arr.shift()); more = true; } }); } });
     fresh = fresh.slice(0, room);
     let list = due.slice(0, max).concat(fresh.slice(0, Math.max(0, max - Math.min(due.length, max))));
     return list.map((c, i) => [c, i + Math.random() * 6]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
+  }
+  const GEN_LABEL = { tab: "conjugaison", enNum: "nombres en anglais", enDays: "jours et mois en anglais", enColor: "couleurs en anglais", enDate: "dates en anglais", esNum: "nombres en espagnol", esDays: "jours et mois en espagnol", esColor: "couleurs en espagnol", esDate: "dates en espagnol", words: "nombres en lettres", placeInt: "chiffres des grands nombres", nbOf: "nombre de dizaines, centaines…", placeDec: "chiffres des décimaux", decFrac: "fractions décimales", rayon: "rayon et diamètre", cmpDec: "comparer des décimaux", convLen: "conversions de longueurs", double: "doubles et moitiés", durees: "durées", encadre: "encadrements", fracQty: "fraction d'une quantité", numline: "droite graduée", round: "arrondis", tables: "tables de multiplication", convVol: "conversions de volumes", grossissement: "grossissement du microscope" };
+  // ---------- Suivi parent ----------
+  function report() {
+    const subs = (PROGRAMME.subjects || []).map((sb) => {
+      const chs = CH.filter((c) => c.s === sb.id);
+      let lTot = 0, lOpen = 0; const refsSeen = new Set();
+      chs.forEach((c) => c.lessons.forEach((l) => { if (l.stub) return; lTot++; if (lessonOpen(l.id)) { lOpen++; (l.refs || c.refs || []).forEach((r) => refsSeen.add(r)); } }));
+      const refsAll = []; sb.domains.forEach((d) => d.items.forEach((it) => refsAll.push(it.id)));
+      const k = countsOf(allActiveCards((c) => c.s === sb.id));
+      return { s: sb, lTot, lOpen, refs: refsAll.filter((r) => refsSeen.has(r)).length, refsAll: refsAll.length, k };
+    });
+    const byLesson = {};
+    allActiveCards().forEach((c) => { const st = S.cards[c.id]; if (!st) return; const L = (byLesson[c.le] = byLesson[c.le] || { le: c.le, ch: c.ch, seen: 0, tries: 0, lapses: 0, cards: [] }); L.seen++; L.tries += st.tries || (st.reps + st.lapses) || 1; L.lapses += st.lapses || 0; if (st.lapses) L.cards.push({ q: c.q || (c.g ? "Exercices : " + (GEN_LABEL[c.g] || c.g) + (c.tab ? " (" + c.tab.tense + ")" : "") : c.id), lapses: st.lapses, ok: st.ivl >= 3 }); });
+    const hard = Object.values(byLesson).filter((L) => L.seen >= 3 && L.lapses > 0).map((L) => Object.assign(L, { rate: L.lapses / Math.max(1, L.tries), cards: L.cards.sort((a, b) => b.lapses - a.lapses).slice(0, 3) })).sort((a, b) => b.rate - a.rate || b.lapses - a.lapses).slice(0, 5);
+    const all = countsOf(allActiveCards());
+    return { subs, hard, fresh: all.fresh, total: all.total, perDay: S.settings.newPerDay, days: Math.ceil(all.fresh / Math.max(1, S.settings.newPerDay)) };
   }
   function countsOf(pool) { return { total: pool.length, due: pool.filter((c) => isDue(c.id)).length, fresh: pool.filter((c) => isNew(c.id)).length, mastered: pool.filter((c) => mastered(c.id)).length, seen: pool.filter((c) => !isNew(c.id)).length }; }
   const counts = (filter) => countsOf(allActiveCards(filter));
@@ -311,6 +335,6 @@
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
-    levelInfo, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
+    levelInfo, report, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();

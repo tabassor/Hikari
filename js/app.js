@@ -778,7 +778,7 @@
       </div></details>
       <details><summary>Réglages</summary><div class="in">
         <label class="stack"><span class="small"><b>Objectif du jour</b> (révisions pour remplir le Ki)</span><select id="st-goal">${[10, 15, 20, 30, 40].map((n) => `<option ${n === g ? "selected" : ""}>${n}</option>`).join("")}</select></label>
-        <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum</span><select id="st-new">${[5, 10, 15, 20, 30].map((n) => `<option ${n === S().settings.newPerDay ? "selected" : ""}>${n}</option>`).join("")}</select></label>
+        <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum : <b id="st-new-v">${S().settings.newPerDay}</b></span><input type="range" id="st-new" min="5" max="50" step="5" value="${S().settings.newPerDay}"><span class="tiny muted">Plus haut = découvre plus vite les nouvelles leçons, mais les révisions des jours suivants seront plus longues.</span></label>
         <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone">${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
         <label class="row"><input type="checkbox" id="st-sound" ${S().settings.sound ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Sons</b></span></label>
         <label class="row"><input type="checkbox" id="st-hap" ${S().settings.haptics ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Vibrations</b></span></label>
@@ -791,12 +791,14 @@
         <label class="btn">Restaurer une sauvegarde<input type="file" accept=".json,application/json" id="bk-in" hidden></label>
         <button class="btn ghost" id="reset">Tout effacer et recommencer</button>
       </div></details>
+      <details id="d-parent"><summary>Suivi parent</summary><div class="in" id="parent"></div></details>
       <details><summary>Programme officiel et couverture</summary><div class="in" id="cov"></div></details>
       <details><summary>Sources et à propos</summary><div class="in small">
         <p>Hikari suit les programmes officiels de 6e en vigueur en 2026-2027. Les textes sont paraphrasés ; en cas de doute, la leçon de ta prof fait foi. Le découpage en leçons suit une progression type, non officielle.</p>
         ${Object.values(PROGRAMME.sources).map((s) => `<p>• <a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a></p>`).join("")}
         <p>Fonds de carte : Natural Earth (domaine public). Police des kanji : Kaisei Decol (SIL Open Font License). Univers, personnages et yōkai : créations originales.</p></div></details>`;
     if (arg === "nouvelle") setTimeout(() => $("#d-nl").scrollIntoView({ behavior: "smooth" }), 200);
+    drawParent();
     // Nouvelle leçon photo : matière → chapitre → titre, points du programme, photos
     const nl = $("#nl"); let tgt = newLessonTarget || { s: "fr", ch: null }; newLessonTarget = null;
     function drawNL() {
@@ -830,7 +832,8 @@
     $("#pk-file").onchange = async (e) => { const f = e.target.files[0]; if (f) doImport(await f.text()); };
     $("#pk-go").onclick = () => doImport($("#pk-txt").value);
     $("#st-goal").onchange = (e) => { S().settings.goal = +e.target.value; STORE.save(); renderHUD(); };
-    $("#st-new").onchange = (e) => { S().settings.newPerDay = +e.target.value; STORE.save(); };
+    $("#st-new").oninput = (e) => { $("#st-new-v").textContent = e.target.value; };
+    $("#st-new").onchange = (e) => { S().settings.newPerDay = +e.target.value; STORE.save(); toast(`${e.target.value} nouvelles cartes par jour au maximum.`); };
     $("#st-zone").onchange = (e) => { S().settings.zone = e.target.value; STORE.save(); toast(`Zone ${e.target.value} enregistrée.`); };
     $("#st-sound").onchange = (e) => { S().settings.sound = e.target.checked; STORE.save(); FX.sfx("good"); };
     $("#st-hap").onchange = (e) => { S().settings.haptics = e.target.checked; STORE.save(); FX.buzz(30); };
@@ -841,6 +844,38 @@
     $("#reset").onclick = (e) => { if (e.target.dataset.sure) { STORE.reset(); location.hash = "#dojo"; render(); } else { e.target.dataset.sure = 1; e.target.textContent = "Confirmer : tout effacer définitivement"; e.target.classList.add("primary"); } };
     const covered = {}; STORE.CH.forEach((c) => { (c.refs || []).forEach((r) => ((covered[r] = covered[r] || []).push({ c, filled: !c.stub }))); c.lessons.forEach((l) => (l.refs || []).forEach((r) => ((covered[r] = covered[r] || []).push({ c, filled: !l.stub })))); });
     $("#cov").innerHTML = `<p class="small">Pour chaque point officiel : y a-t-il du contenu Hikari qui s'y rattache ?</p>` + PROGRAMME.subjects.map((s) => `<details><summary>${s.name}</summary><div class="in cov">${s.domains.map((d) => `<span class="eyebrow">${esc(d.name)}</span>${d.items.map((it) => { const cs = covered[it.id] || []; const withContent = cs.filter((x) => x.filled); return `<div class="it"><span><b>${esc(it.t)}</b> <span class="muted tiny">${it.id}</span></span><span class="pill ${withContent.length ? "on" : cs.length ? "new" : "off"}">${withContent.length ? "contenu" : cs.length ? "prévu" : "—"}</span></div>`; }).join("")}`).join("")}<p class="tiny muted">${esc(PROGRAMME.sources[s.src].label)}</p></div></details>`).join("");
+  }
+
+  // ---------- Suivi parent ----------
+  function parentSummary(R) {
+    const d = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+    const lines = [`Hikari · bilan de ${S().profile.name} au ${d}`, ""];
+    R.subs.filter((x) => x.lOpen).forEach((x) => lines.push(`${x.s.name} : ${x.lOpen} leçon${x.lOpen > 1 ? "s" : ""} vue${x.lOpen > 1 ? "s" : ""} · ${x.k.seen}/${x.k.total} cartes découvertes · ${x.k.mastered} maîtrisées · programme abordé ${x.refs}/${x.refsAll}`));
+    lines.push("", `Cartes jamais vues : ${R.fresh} (≈ ${R.days} jour${R.days > 1 ? "s" : ""} à ${R.perDay}/jour)`);
+    if (R.hard.length) { lines.push("", "Leçons les plus difficiles :"); R.hard.forEach((L) => { lines.push(`- ${STORE.LEI[L.le] ? STORE.LEI[L.le].title : L.le} (${STORE.SUBI[STORE.CHI[L.ch].s].name}) : ${L.lapses} raté${L.lapses > 1 ? "s" : ""} sur ${L.tries} réponses`); L.cards.forEach((c) => lines.push(`   · ${c.q.replace(/\*\*|__/g, "")} (${c.lapses}×)`)); }); }
+    return lines.join("\n");
+  }
+  function drawParent() {
+    const box = $("#parent"); if (!box) return; const R = STORE.report();
+    const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+    const bar = (v, c) => `<span class="pbar"><i style="width:${v}%;background:${c}"></i></span>`;
+    box.innerHTML = `<p class="small muted">Ce que ta fille a vu et retenu, matière par matière. « Programme abordé » compte les points du programme officiel de l'année rattachés aux leçons ouvertes.</p>
+      <div class="ptab">${R.subs.map((x) => `<div class="prow" style="--c:${x.s.color}"><div class="pname">${ART.seal(x.s.kanji, x.s.color, 30, !x.lOpen)}<b>${esc(x.s.short || x.s.name)}</b></div>
+        ${x.lOpen ? `<div class="pmet"><span>Programme abordé</span>${bar(pct(x.refs, x.refsAll), x.s.color)}<b>${x.refs}/${x.refsAll}</b></div>
+        <div class="pmet"><span>Cartes découvertes</span>${bar(pct(x.k.seen, x.k.total), x.s.color)}<b>${x.k.seen}/${x.k.total}</b></div>
+        <div class="pmet"><span>Maîtrisées (≥ 3 sem.)</span>${bar(pct(x.k.mastered, x.k.total), "var(--good)")}<b>${x.k.mastered}</b></div>` : `<p class="tiny muted">Aucune leçon ouverte pour l'instant.</p>`}</div>`).join("")}</div>
+      <div class="pnote ${R.days > 21 ? "warn" : ""}"><b>${R.fresh}</b> carte${R.fresh > 1 ? "s" : ""} jamais vue${R.fresh > 1 ? "s" : ""} : environ <b>${R.days} jour${R.days > 1 ? "s" : ""}</b> pour toutes les découvrir à ${R.perDay} par jour.${R.days > 21 ? " C'est long : tu peux relever le nombre de nouvelles cartes dans Réglages." : ""}</div>
+      <p class="eyebrow">Leçons les plus difficiles</p>
+      ${R.hard.length ? R.hard.map((L) => `<div class="phard"><div class="row" style="justify-content:space-between;align-items:flex-start"><b>${esc(STORE.LEI[L.le] ? STORE.LEI[L.le].title : L.le)}</b><span class="pill off">${Math.round(100 * L.rate)} % ratés</span></div>
+        <span class="tiny muted">${esc(STORE.SUBI[STORE.CHI[L.ch].s].name)} · ${L.lapses} raté${L.lapses > 1 ? "s" : ""} sur ${L.tries} réponses</span>
+        ${L.cards.length ? `<ul class="tiny">${L.cards.map((c) => `<li>${md(c.q)} <span class="muted">(${c.lapses}×)</span></li>`).join("")}</ul>` : ""}
+        <button class="btn sm" data-go="le~${L.le}">Voir la leçon</button></div>`).join("") : `<p class="small muted">Pas encore assez de révisions pour le dire (il faut au moins 3 cartes vues et un raté dans une leçon).</p>`}
+      <button class="btn primary" id="p-share">Envoyer le bilan</button><p class="tiny muted" id="p-share-msg"></p>`;
+    $("#p-share").onclick = async () => {
+      const txt = parentSummary(STORE.report());
+      try { if (navigator.share) { await navigator.share({ title: "Bilan Hikari", text: txt }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(txt); $("#p-share-msg").textContent = "Bilan copié : colle-le dans un message."; } catch (e) { $("#p-share-msg").textContent = "Partage indisponible sur cet appareil."; }
+    };
   }
 
   // ---------- Démarrage ----------

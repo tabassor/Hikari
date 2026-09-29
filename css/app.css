@@ -579,3 +579,19 @@ th { background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var
 .orb-v.front .orb-n { background: var(--ink); color: var(--paper); }
 .orb-nav .btn { border-radius: 99px; }
 .flipcard + *, .flipcard { margin-bottom: 4px; } .flipcard { margin-bottom: 14px; }
+
+/* Suivi parent */
+.ptab { display: flex; flex-direction: column; gap: 10px; }
+.prow { display: grid; gap: 6px; padding: 12px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--c) 6%, var(--panel)); border: 1px solid var(--hair); }
+.pname { display: flex; align-items: center; gap: 8px; }
+.pmet { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) 3.4rem; gap: 8px; align-items: center; font-size: .78rem; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.pmet b { text-align: right; color: var(--ink); }
+.pbar { height: 8px; border-radius: 99px; background: var(--hair); overflow: hidden; }
+.pbar i { display: block; height: 100%; border-radius: 99px; min-width: 2px; }
+.pnote { font-size: .85rem; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--panel2); }
+.pnote.warn { background: color-mix(in srgb, var(--warn) 14%, var(--panel)); }
+.phard { display: grid; gap: 4px; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--hair); background: var(--panel); }
+.phard ul { margin: 2px 0 4px; padding-left: 18px; }
+.phard .btn { justify-self: start; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+@media (max-width: 380px) { .pmet { grid-template-columns: 7rem minmax(0, 1fr) 3rem; } }
