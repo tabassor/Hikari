@@ -409,7 +409,25 @@
     }
     const cb = $(".combo"); if (cb) { cb.innerHTML = combo >= 2 ? `<span class="k">炎</span>×${combo}` : ""; cb.style.setProperty("--heat", Math.min(combo, 15) / 15); }
   }
-  function mountCard(host, card, { selfGrade = true, onDone } = {}) {
+  // « Je ne sais pas » : montre la réponse et compte la carte comme ratée (pas de chance au hasard).
+  function mountCard(host, card, opts = {}) {
+    let settled = false; const onDone = (r) => { if (settled) return; settled = true; opts.onDone && opts.onDone(r); };
+    mountCardCore(host, card, Object.assign({}, opts, { onDone }));
+    const q = card, body = host.querySelector(".card"), after = body && $("#after", body);
+    if (!body || !after || !"qisop".includes(q.k)) return;
+    const b = document.createElement("button"); b.className = "btn ghost idk"; b.type = "button"; b.textContent = "Je ne sais pas"; after.after(b);
+    b.onclick = () => {
+      if (after.innerHTML.trim()) return;
+      body.classList.add("idk-lock"); b.remove(); FX.sfx("flip");
+      if (q.k === "q") $$(".choice", body).forEach((x) => { x.disabled = true; if (+x.dataset.i === q.good) x.classList.add("good"); });
+      const ans = q.k === "q" ? md(q.choices[q.good]) : q.k === "i" ? md(q.a[0])
+        : q.k === "s" ? q.bins.map((bn, bi) => `<b>${md(bn)}</b> : ${q.items.filter((it) => it[1] === bi).map((it) => md(it[0])).join(", ")}`).join("<br>")
+        : q.k === "o" ? q.items.map((t, i) => `${i + 1}. ${md(t)}`).join("<br>") : q.pairs.map(([l, r]) => `${md(l)} ↔ ${md(r)}`).join("<br>");
+      after.innerHTML = `<p class="verdict idk-v">Pas grave : bien joué d'être honnête. Voici la réponse :</p>${q.k === "q" ? "" : `<p class="${q.k === "i" ? "big" : "small"}">${ans}</p>`}${q.x ? `<p class="x">${md(q.x)}</p>` : ""}<p class="tiny muted">Cette carte reviendra bientôt pour que tu la retiennes.</p><button class="btn primary big" id="nx">Suite</button>`;
+      const nx = $("#nx", after); nx.focus(); nx.onclick = () => onDone({ ok: false, grade: 0, idk: true });
+    };
+  }
+  function mountCardCore(host, card, { selfGrade = true, onDone } = {}) {
     const ch = STORE.CHI[card.ch], s = ch && sub(ch.s), le = card.le && STORE.LEI[card.le];
     const head = s ? `<div class="src">${ART.seal(s.kanji, s.color, 22)}<span>${esc(le ? le.title : ch.title)}</span>${card.bonus ? `<span class="revanche" title="Carte tirée d'une erreur d'interro : XP ×3">⚔ Revanche ×3</span>` : ""}</div>` : "";
     const q = card;

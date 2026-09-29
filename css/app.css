@@ -653,3 +653,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .revanche { margin-left: auto; font-size: .7rem; font-weight: 900; color: #fff; background: linear-gradient(135deg, #F59E0B, #EA580C); padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
 
 .nf-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; } .nf-row label { display: grid; gap: 4px; min-width: 0; }
+
+/* Je ne sais pas */
+.idk { align-self: center; min-height: 40px; font-size: .9rem; color: var(--ink2); }
+.idk-lock .choices, .idk-lock form, .idk-lock .bins, .idk-lock .pool, .idk-lock .olist, .idk-lock #chk, .idk-lock .pairs { pointer-events: none; opacity: .55; }
+.verdict.idk-v { color: var(--ink2); font-size: 1.05rem; }
