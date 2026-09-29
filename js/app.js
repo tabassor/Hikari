@@ -83,6 +83,7 @@
     const route = (location.hash || "#dojo").slice(1);
     const main = $("main"); main.innerHTML = ""; window.scrollTo(0, 0);
     main.className = ""; void main.offsetWidth; main.className = "anim nav-" + navDir;
+    if (route.startsWith("bilan~")) { if (S().profile) renderHUD(); return viewBilan(main, route.slice(6)); }
     if (!S().profile) { renderTabs(""); renderHUD(); return viewOnboarding(main); }
     renderHUD();
     const [name, ...rest] = route.split("~"); const arg = rest.join("~");
@@ -148,9 +149,11 @@
         <button class="btn primary big ${ses ? "pulse" : ""}" data-go="seance" ${ses ? "" : "disabled"}>${ses ? `Révision du jour · ${ses}` : "Tout est révisé ✓"}</button>
         <button class="btn" id="flash">Entraînement éclair (10 questions)</button>
       </section>
+      <div id="defis" class="stack"></div>
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Les sept clans</h2><button class="btn ghost sm" id="orb-toggle">${S().settings.clanList ? "Orbite" : "Liste"}</button></div>
         <div id="clans"></div><p class="small muted" style="text-align:center">${c.mastered} / ${c.total} cartes maîtrisées</p></section>`;
     $("#flash").onclick = () => startFlashQuiz();
+    drawDefis();
     const nw = S().newWeek;
     if (nw && STORE.CHI[nw.ch]) {
       S().newWeek = null; STORE.save();
@@ -770,16 +773,8 @@
         <div><p class="eyebrow">Activité des 5 dernières semaines</p><div class="heat">${days.map(([d, n], i) => `<i class="${n >= g ? "l3" : n >= g / 2 ? "l2" : n > 0 ? "l1" : ""} ${i === days.length - 1 ? "today" : ""}" title="${d} : ${n} révisions" style="--i:${i}"></i>`).join("")}</div></div>
         <div class="grid2">${PROGRAMME.subjects.map((s) => { const k = STORE.counts((c) => c.s === s.id); return `<div class="row">${ring(k.total ? k.mastered / k.total : 0, s.color, 44)}<span class="small"><b>${s.name}</b><br>${k.seen}/${k.total} vues · ${k.mastered} maîtrisées</span></div>`; }).join("")}</div></section>
       <details id="d-nl" ${arg === "nouvelle" ? "open" : ""}><summary>Nouvelle leçon photo</summary><div class="in" id="nl"></div></details>
-      <details><summary>Importer un pack de leçon</summary><div class="in">
-        <p class="small">Un pack ajoute des leçons, des fiches, des cartes, des repères de frise ou des lieux, rattachés au programme. Choisis le fichier <b>.json</b> reçu, ou colle son contenu.</p>
-        <label class="btn">Choisir un fichier<input type="file" accept=".json,application/json" id="pk-file" hidden></label>
-        <textarea id="pk-txt" placeholder='{"format":"hikari-pack", …}'></textarea><button class="btn primary" id="pk-go">Importer le texte collé</button><div id="pk-res"></div>
-        ${(S().packs || []).length ? `<p class="eyebrow">Packs installés</p>${S().packs.map((p) => `<div class="small">• ${esc(p.title || p.id)} <span class="muted">(${esc(p.created || "")})</span></div>`).join("")}` : ""}
-      </div></details>
       <details><summary>Réglages</summary><div class="in">
         <label class="stack"><span class="small"><b>Objectif du jour</b> (révisions pour remplir le Ki)</span><select id="st-goal">${[10, 15, 20, 30, 40].map((n) => `<option ${n === g ? "selected" : ""}>${n}</option>`).join("")}</select></label>
-        <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum : <b id="st-new-v">${S().settings.newPerDay}</b></span><input type="range" id="st-new" min="5" max="50" step="5" value="${S().settings.newPerDay}"><span class="tiny muted">Plus haut = découvre plus vite les nouvelles leçons, mais les révisions des jours suivants seront plus longues.</span></label>
-        <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone">${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
         <label class="row"><input type="checkbox" id="st-sound" ${S().settings.sound ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Sons</b></span></label>
         <label class="row"><input type="checkbox" id="st-hap" ${S().settings.haptics ? "checked" : ""} style="width:22px;height:22px"> <span class="small"><b>Vibrations</b></span></label>
         <span class="small"><b>Élément</b> <span class="muted">(change l'apparence, pas le jeu)</span></span>${elementPicker(S().profile.element, L.level)}
@@ -788,17 +783,31 @@
       <details><summary>Sauvegarde</summary><div class="in">
         <p class="small">Tes progrès sont enregistrés sur ce téléphone. Fais une sauvegarde de temps en temps (les photos ne sont pas incluses).</p>
         <button class="btn" id="bk-out">Télécharger une sauvegarde</button>
+      </div></details>
+      <details id="d-parent" ${arg === "parent" ? "open" : ""}><summary>🔒 Espace parent</summary><div class="in">
+        <div id="p-lock"></div>
+        <div id="p-zone" class="stack" hidden>
+          <p class="eyebrow">Suivi</p><div id="parent" class="stack"></div>
+          <p class="eyebrow">Réglages</p>
+        <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum : <b id="st-new-v">${S().settings.newPerDay}</b></span><input type="range" id="st-new" min="5" max="50" step="5" value="${S().settings.newPerDay}"><span class="tiny muted">Plus haut = découvre plus vite les nouvelles leçons, mais les révisions des jours suivants seront plus longues.</span></label>
+        <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone">${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
+          <p class="eyebrow">Importer un pack de leçon</p>
+        <p class="small">Un pack ajoute des leçons, des fiches, des cartes, des repères de frise ou des lieux, rattachés au programme. Choisis le fichier <b>.json</b> reçu, ou colle son contenu.</p>
+        <label class="btn">Choisir un fichier<input type="file" accept=".json,application/json" id="pk-file" hidden></label>
+        <textarea id="pk-txt" placeholder='{"format":"hikari-pack", …}'></textarea><button class="btn primary" id="pk-go">Importer le texte collé</button><div id="pk-res"></div>
+        ${(S().packs || []).length ? `<p class="eyebrow">Packs installés</p>${S().packs.map((p) => `<div class="small">• ${esc(p.title || p.id)} <span class="muted">(${esc(p.created || "")})</span></div>`).join("")}` : ""}
+          <p class="eyebrow">Sauvegarde et remise à zéro</p>
         <label class="btn">Restaurer une sauvegarde<input type="file" accept=".json,application/json" id="bk-in" hidden></label>
         <button class="btn ghost" id="reset">Tout effacer et recommencer</button>
-      </div></details>
-      <details id="d-parent"><summary>Suivi parent</summary><div class="in" id="parent"></div></details>
+          <button class="btn ghost sm" id="p-chg">Changer le code parent</button> <button class="btn ghost sm" id="p-out">Verrouiller</button>
+        </div></div></details>
       <details><summary>Programme officiel et couverture</summary><div class="in" id="cov"></div></details>
       <details><summary>Sources et à propos</summary><div class="in small">
         <p>Hikari suit les programmes officiels de 6e en vigueur en 2026-2027. Les textes sont paraphrasés ; en cas de doute, la leçon de ta prof fait foi. Le découpage en leçons suit une progression type, non officielle.</p>
         ${Object.values(PROGRAMME.sources).map((s) => `<p>• <a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a></p>`).join("")}
         <p>Fonds de carte : Natural Earth (domaine public). Police des kanji : Kaisei Decol (SIL Open Font License). Univers, personnages et yōkai : créations originales.</p></div></details>`;
     if (arg === "nouvelle") setTimeout(() => $("#d-nl").scrollIntoView({ behavior: "smooth" }), 200);
-    drawParent();
+    drawLock();
     // Nouvelle leçon photo : matière → chapitre → titre, points du programme, photos
     const nl = $("#nl"); let tgt = newLessonTarget || { s: "fr", ch: null }; newLessonTarget = null;
     function drawNL() {
@@ -846,36 +855,126 @@
     $("#cov").innerHTML = `<p class="small">Pour chaque point officiel : y a-t-il du contenu Hikari qui s'y rattache ?</p>` + PROGRAMME.subjects.map((s) => `<details><summary>${s.name}</summary><div class="in cov">${s.domains.map((d) => `<span class="eyebrow">${esc(d.name)}</span>${d.items.map((it) => { const cs = covered[it.id] || []; const withContent = cs.filter((x) => x.filled); return `<div class="it"><span><b>${esc(it.t)}</b> <span class="muted tiny">${it.id}</span></span><span class="pill ${withContent.length ? "on" : cs.length ? "new" : "off"}">${withContent.length ? "contenu" : cs.length ? "prévu" : "—"}</span></div>`; }).join("")}`).join("")}<p class="tiny muted">${esc(PROGRAMME.sources[s.src].label)}</p></div></details>`).join("");
   }
 
-  // ---------- Suivi parent ----------
-  function parentSummary(R) {
-    const d = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
-    const lines = [`Hikari · bilan de ${S().profile.name} au ${d}`, ""];
-    R.subs.filter((x) => x.lOpen).forEach((x) => lines.push(`${x.s.name} : ${x.lOpen} leçon${x.lOpen > 1 ? "s" : ""} vue${x.lOpen > 1 ? "s" : ""} · ${x.k.seen}/${x.k.total} cartes découvertes · ${x.k.mastered} maîtrisées · programme abordé ${x.refs}/${x.refsAll}`));
-    lines.push("", `Cartes jamais vues : ${R.fresh} (≈ ${R.days} jour${R.days > 1 ? "s" : ""} à ${R.perDay}/jour)`);
-    if (R.hard.length) { lines.push("", "Leçons les plus difficiles :"); R.hard.forEach((L) => { lines.push(`- ${STORE.LEI[L.le] ? STORE.LEI[L.le].title : L.le} (${STORE.SUBI[STORE.CHI[L.ch].s].name}) : ${L.lapses} raté${L.lapses > 1 ? "s" : ""} sur ${L.tries} réponses`); L.cards.forEach((c) => lines.push(`   · ${c.q.replace(/\*\*|__/g, "")} (${c.lapses}×)`)); }); }
-    return lines.join("\n");
+
+  // ---------- Messages et défis de papa ----------
+  function drawDefis() {
+    const box = $("#defis"); if (!box) return;
+    const ms = STORE.messages(), seen = S().msgs;
+    const live = ms.filter((m) => { const st = STORE.defiState(m); return st.isDefi && !st.expired && !(st.done && seen[m.id] && seen[m.id].cheered); });
+    box.innerHTML = live.map((m) => { const st = STORE.defiState(m), ch = m.boss && STORE.CHI[m.boss];
+      const until = m.until ? new Date(m.until + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
+      return `<section class="panel defi ${st.done ? "done" : ""}">${ART.sensei(st.done ? "fire" : "wow", 56)}<div class="stack" style="gap:4px"><span class="who">Défi de ${esc(m.from)}</span><b>${md(esc(m.text))}</b>
+        <span class="tiny muted">${st.done ? "Réussi !" : st.prog ? `${st.prog[0]} / ${st.prog[1]} révisions` : ch ? `Yōkai : ${esc(ch.boss.name)}` : ""}${until && !st.done ? ` · jusqu'à ${until}` : ""}</span>
+        ${ch && !st.done ? `<button class="btn sm primary" data-go="ch~${m.boss}" style="justify-self:start">Aller au chapitre</button>` : ""}</div></section>`; }).join("");
+    // Annonces : nouveau message, puis défi réussi (une seule fois chacun)
+    const fresh = ms.filter((m) => !seen[m.id] && !(m.until && STORE.today() > m.until));
+    const won = ms.filter((m) => { const st = STORE.defiState(m); return st.isDefi && st.done && seen[m.id] && !seen[m.id].cheered; });
+    let delay = 900;
+    fresh.forEach((m) => { seen[m.id] = { seen: STORE.today() }; setTimeout(() => celebrate("お便り！", `${ART.sensei("wow", 100)}<p class="small muted">Ren t'apporte un message de <b>${esc(m.from)}</b> :</p><p class="big" style="font-size:1.1rem">${md(esc(m.text))}</p>${m.reward ? `<p class="small">Récompense promise : <b>${esc(m.reward)}</b></p>` : ""}`, STORE.defiState(m).isDefi ? "Défi accepté !" : "Merci !", "level"), delay); delay += 2600; });
+    won.forEach((m) => { seen[m.id].cheered = STORE.today(); setTimeout(() => celebrate("達成！", `${ART.sensei("fire", 100)}<p><b>Défi de ${esc(m.from)} réussi !</b></p><p class="small">${md(esc(m.text))}</p>${m.reward ? `<p>Réclame ta récompense : <b>${esc(m.reward)}</b></p>` : ""}`, "Génial !", "win"), delay); delay += 2600; });
+    if (fresh.length || won.length) STORE.save();
   }
-  function drawParent() {
-    const box = $("#parent"); if (!box) return; const R = STORE.report();
+
+  // ---------- Code parent ----------
+  // Code à 4 chiffres, stocké haché (SHA-256 + sel). Déverrouillé pour 10 minutes.
+  // Code de secours (connu de Felipe seulement) si le code est oublié.
+  let parentUntil = 0;
+  const RESCUE = "b3d4cb4fcb9b6210368d0638929a2f760b28e4712ef4b6878c07fb4ebab106eb";
+  async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  function drawLock() {
+    const lock = $("#p-lock"), zone = $("#p-zone"); if (!lock) return;
+    const set = !!S().settings.parentPin, open = parentUntil > Date.now();
+    zone.hidden = !open; lock.hidden = open;
+    if (open) { drawParent(); return; }
+    let mode = set ? "enter" : "create", first = "", code = "";
+    const paint = (msg) => {
+      lock.innerHTML = `<p class="small">${mode === "create" ? "Choisis un <b>code parent à 4 chiffres</b>. Il protège le suivi, le nombre de nouvelles cartes, la zone de vacances, l'import de packs et la remise à zéro." : mode === "confirm" ? "Tape le code une seconde fois." : "Réservé aux parents : tape le code parent."}</p>
+        <div class="pin-dots">${[0, 1, 2, 3].map((i) => `<i class="${i < code.length ? "on" : ""}"></i>`).join("")}</div>${msg ? `<p class="small pin-msg">${msg}</p>` : ""}
+        <div class="pinpad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((k) => k === "" ? "<span></span>" : `<button class="btn" data-k="${k}">${k}</button>`).join("")}</div>
+        ${mode === "enter" ? `<details class="rescue"><summary class="tiny">Code oublié ?</summary><div class="in"><input type="text" id="p-rescue" placeholder="Code de secours" autocomplete="off"><button class="btn sm" id="p-rescue-go">Réinitialiser le code</button></div></details>` : ""}`;
+      $$("[data-k]", lock).forEach((b) => (b.onclick = () => press(b.dataset.k)));
+      const rg = $("#p-rescue-go"); if (rg) rg.onclick = async () => { if ((await sha("hikari-secours:" + $("#p-rescue").value.trim().toUpperCase())) === RESCUE) { delete S().settings.parentPin; STORE.save(); toast("Code effacé : choisis-en un nouveau."); drawLock(); } else toast("Code de secours incorrect."); };
+    };
+    const press = async (k) => {
+      FX.sfx("tap");
+      if (k === "⌫") { code = code.slice(0, -1); return paint(); }
+      if (code.length >= 4) return; code += k; paint();
+      if (code.length < 4) return;
+      if (mode === "create") { first = code; code = ""; mode = "confirm"; return setTimeout(() => paint(), 150); }
+      if (mode === "confirm") {
+        if (code !== first) { code = ""; mode = "create"; return setTimeout(() => paint("Les deux codes sont différents : recommence."), 150); }
+        const salt = Math.random().toString(36).slice(2, 10); S().settings.parentPin = { salt, h: await sha(salt + ":" + code) }; STORE.save();
+        parentUntil = Date.now() + 10 * 60000; toast("Code parent enregistré."); return drawLock();
+      }
+      const P = S().settings.parentPin;
+      if ((await sha(P.salt + ":" + code)) === P.h) { parentUntil = Date.now() + 10 * 60000; FX.sfx("good"); drawLock(); }
+      else { code = ""; FX.buzz(80); lock.classList.add("shake-soft"); setTimeout(() => lock.classList.remove("shake-soft"), 400); paint("Code incorrect."); }
+    };
+    paint();
+    const chg = $("#p-chg"), out = $("#p-out");
+    if (chg) chg.onclick = () => { delete S().settings.parentPin; STORE.save(); parentUntil = 0; drawLock(); };
+    if (out) out.onclick = () => { parentUntil = 0; drawLock(); };
+  }
+
+  // ---------- Suivi parent ----------
+  // Données compactes du bilan (aussi transportées dans le lien envoyé au parent).
+  function reportData() {
+    const R = STORE.report(), L = STORE.levelInfo();
+    const act = []; for (let i = 34; i >= 0; i--) { const d = STORE.today(new Date(Date.now() - i * 86400000)); act.push((S().days[d] || { n: 0 }).n); }
+    return { v: 1, n: S().profile.name, d: STORE.today(), lv: L.level, fl: STORE.streakAlive(), g: S().settings.goal, a: act, f: R.fresh, p: R.perDay, dy: R.days,
+      s: R.subs.map((x) => [x.s.id, x.lOpen, x.lTot, x.refs, x.refsAll, x.k.seen, x.k.total, x.k.mastered]),
+      h: R.hard.map((H) => [STORE.LEI[H.le] ? STORE.LEI[H.le].title : H.le, STORE.CHI[H.ch].s, H.lapses, H.tries, H.cards.map((c) => [String(c.q).slice(0, 140), c.lapses]), H.le]) };
+  }
+  const b64u = (u8) => { let s = ""; u8.forEach((b) => (s += String.fromCharCode(b))); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+  const unb64u = (t) => { const s = atob(t.replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(s, (c) => c.charCodeAt(0)); };
+  async function packReport(D) {
+    const raw = new TextEncoder().encode(JSON.stringify(D));
+    if (window.CompressionStream) { const z = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer()); return "z" + b64u(z); }
+    return "j" + b64u(raw);
+  }
+  async function unpackReport(t) {
+    const kind = t[0], bytes = unb64u(t.slice(1));
+    const raw = kind === "z" ? new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer()) : bytes;
+    return JSON.parse(new TextDecoder().decode(raw));
+  }
+  function reportHTML(D, own) {
     const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
     const bar = (v, c) => `<span class="pbar"><i style="width:${v}%;background:${c}"></i></span>`;
-    box.innerHTML = `<p class="small muted">Ce que ta fille a vu et retenu, matière par matière. « Programme abordé » compte les points du programme officiel de l'année rattachés aux leçons ouvertes.</p>
-      <div class="ptab">${R.subs.map((x) => `<div class="prow" style="--c:${x.s.color}"><div class="pname">${ART.seal(x.s.kanji, x.s.color, 30, !x.lOpen)}<b>${esc(x.s.short || x.s.name)}</b></div>
-        ${x.lOpen ? `<div class="pmet"><span>Programme abordé</span>${bar(pct(x.refs, x.refsAll), x.s.color)}<b>${x.refs}/${x.refsAll}</b></div>
-        <div class="pmet"><span>Cartes découvertes</span>${bar(pct(x.k.seen, x.k.total), x.s.color)}<b>${x.k.seen}/${x.k.total}</b></div>
-        <div class="pmet"><span>Maîtrisées (≥ 3 sem.)</span>${bar(pct(x.k.mastered, x.k.total), "var(--good)")}<b>${x.k.mastered}</b></div>` : `<p class="tiny muted">Aucune leçon ouverte pour l'instant.</p>`}</div>`).join("")}</div>
-      <div class="pnote ${R.days > 21 ? "warn" : ""}"><b>${R.fresh}</b> carte${R.fresh > 1 ? "s" : ""} jamais vue${R.fresh > 1 ? "s" : ""} : environ <b>${R.days} jour${R.days > 1 ? "s" : ""}</b> pour toutes les découvrir à ${R.perDay} par jour.${R.days > 21 ? " C'est long : tu peux relever le nombre de nouvelles cartes dans Réglages." : ""}</div>
+    const SB = (id) => PROGRAMME.subjects.find((x) => x.id === id) || { name: id, color: "#888", kanji: "?" };
+    const goal = D.g || 20, act = D.a || [], week = act.slice(-7).reduce((a, b) => a + b, 0), daysOn = act.slice(-7).filter((n) => n > 0).length;
+    return `<div class="pkpi"><div><b>${D.lv}</b><span>niveau</span></div><div><b>${D.fl}</b><span>jours de flamme</span></div><div><b>${week}</b><span>révisions sur 7 j</span></div><div><b>${daysOn}/7</b><span>jours actifs</span></div></div>
+      <div class="heat">${act.map((n, i) => `<i class="${n >= goal ? "l3" : n >= goal / 2 ? "l2" : n > 0 ? "l1" : ""} ${i === act.length - 1 ? "today" : ""}" title="${n} révisions" style="--i:${i}"></i>`).join("")}</div>
+      <div class="ptab">${D.s.map(([id, lOpen, lTot, refs, refsAll, seen, total, mast]) => { const x = SB(id); return `<div class="prow" style="--c:${x.color}"><div class="pname">${ART.seal(x.kanji, x.color, 30, !lOpen)}<b>${esc(x.short || x.name)}</b></div>
+        ${lOpen ? `<div class="pmet"><span>Programme abordé</span>${bar(pct(refs, refsAll), x.color)}<b>${refs}/${refsAll}</b></div>
+        <div class="pmet"><span>Cartes découvertes</span>${bar(pct(seen, total), x.color)}<b>${seen}/${total}</b></div>
+        <div class="pmet"><span>Maîtrisées (≥ 3 sem.)</span>${bar(pct(mast, total), "var(--good)")}<b>${mast}</b></div>` : `<p class="tiny muted">Aucune leçon ouverte pour l'instant.</p>`}</div>`; }).join("")}</div>
+      <div class="pnote ${D.dy > 21 ? "warn" : ""}"><b>${D.f}</b> carte${D.f > 1 ? "s" : ""} jamais vue${D.f > 1 ? "s" : ""} : environ <b>${D.dy} jour${D.dy > 1 ? "s" : ""}</b> pour toutes les découvrir à ${D.p} par jour.${D.dy > 21 && own ? " C'est long : tu peux relever le nombre de nouvelles cartes ci-dessous." : ""}</div>
       <p class="eyebrow">Leçons les plus difficiles</p>
-      ${R.hard.length ? R.hard.map((L) => `<div class="phard"><div class="row" style="justify-content:space-between;align-items:flex-start"><b>${esc(STORE.LEI[L.le] ? STORE.LEI[L.le].title : L.le)}</b><span class="pill off">${Math.round(100 * L.rate)} % ratés</span></div>
-        <span class="tiny muted">${esc(STORE.SUBI[STORE.CHI[L.ch].s].name)} · ${L.lapses} raté${L.lapses > 1 ? "s" : ""} sur ${L.tries} réponses</span>
-        ${L.cards.length ? `<ul class="tiny">${L.cards.map((c) => `<li>${md(c.q)} <span class="muted">(${c.lapses}×)</span></li>`).join("")}</ul>` : ""}
-        <button class="btn sm" data-go="le~${L.le}">Voir la leçon</button></div>`).join("") : `<p class="small muted">Pas encore assez de révisions pour le dire (il faut au moins 3 cartes vues et un raté dans une leçon).</p>`}
-      <button class="btn primary" id="p-share">Envoyer le bilan</button><p class="tiny muted" id="p-share-msg"></p>`;
+      ${D.h.length ? D.h.map(([title, sid, lapses, tries, cards, le]) => `<div class="phard"><div class="row" style="justify-content:space-between;align-items:flex-start"><b>${esc(title)}</b><span class="pill off">${pct(lapses, tries)} % ratés</span></div>
+        <span class="tiny muted">${esc(SB(sid).name)} · ${lapses} raté${lapses > 1 ? "s" : ""} sur ${tries} réponses</span>
+        ${cards.length ? `<ul class="tiny">${cards.map(([q, n]) => `<li>${md(esc(q))} <span class="muted">(${n}×)</span></li>`).join("")}</ul>` : ""}
+        ${own && le ? `<button class="btn sm" data-go="le~${le}">Voir la leçon</button>` : ""}</div>`).join("") : `<p class="small muted">Pas encore assez de révisions pour le dire (il faut au moins 3 cartes vues et un raté dans une leçon).</p>`}`;
+  }
+  function drawParent() {
+    const box = $("#parent"); if (!box) return; const D = reportData();
+    box.innerHTML = `<p class="small muted">Ce que ta fille a vu et retenu. « Programme abordé » compte les points du programme officiel de l'année rattachés aux leçons ouvertes.</p>${reportHTML(D, true)}
+      <button class="btn primary" id="p-share">Envoyer le bilan</button><p class="tiny muted" id="p-share-msg">Le bilan part sous forme de lien : en l'ouvrant, le parent voit ce tableau sur son téléphone. Rien n'est stocké en ligne.</p>`;
     $("#p-share").onclick = async () => {
-      const txt = parentSummary(STORE.report());
-      try { if (navigator.share) { await navigator.share({ title: "Bilan Hikari", text: txt }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
-      try { await navigator.clipboard.writeText(txt); $("#p-share-msg").textContent = "Bilan copié : colle-le dans un message."; } catch (e) { $("#p-share-msg").textContent = "Partage indisponible sur cet appareil."; }
+      const url = location.origin + location.pathname + "#bilan~" + (await packReport(reportData()));
+      const txt = `Bilan Hikari de ${S().profile.name} au ${new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`;
+      try { if (navigator.share) { await navigator.share({ title: "Bilan Hikari", text: txt, url }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+      try { await navigator.clipboard.writeText(txt + "\n" + url); $("#p-share-msg").textContent = "Lien du bilan copié : colle-le dans un message."; } catch (e) { $("#p-share-msg").textContent = "Partage indisponible sur cet appareil."; }
     };
+  }
+  // Bilan reçu par lien (mode parent) : lisible même sans profil sur ce téléphone.
+  async function viewBilan(main, arg) {
+    renderTabs(S().profile ? "moi" : ""); $(".hud") && ($(".hud").hidden = !S().profile);
+    main.innerHTML = `<p class="muted">Ouverture du bilan…</p>`;
+    let D; try { D = await unpackReport(arg); } catch (e) { main.innerHTML = `<section class="panel stack"><h1>Bilan illisible</h1><p>Le lien semble coupé. Demande-lui de renvoyer le bilan.</p></section>`; return; }
+    const age = Math.round((Date.now() - new Date(D.d + "T12:00").getTime()) / 86400000);
+    main.innerHTML = `<section class="stack"><p class="eyebrow">Bilan · mode parent</p><h1>${esc(D.n)}</h1><p class="small muted">Arrêté au ${new Date(D.d + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}${age > 0 ? ` (il y a ${age} jour${age > 1 ? "s" : ""})` : ""}. Ce bilan est une photo du moment : il ne se met pas à jour tout seul.</p></section>
+      <section class="panel stack">${reportHTML(D, false)}</section>
+      ${S().profile ? `<button class="btn" data-go="dojo">Retour à mon Dōjō</button>` : ""}`;
   }
 
   // ---------- Démarrage ----------

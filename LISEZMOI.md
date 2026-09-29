@@ -87,6 +87,7 @@ La boucle prévue :
 - **Mise en forme :** `**gras**`, `__souligné__`.
 - **Cartes :** `world`, `medit`, `europe`.
 - **Identifiants du programme :** ils sont listés dans `data/programme.js` et dans l'app sous *Moi → Programme officiel et couverture*.
+- **`messages`** (défis de papa) : `[{"id": "defi-2026-10-01", "from": "Papa", "text": "Bats le yōkai de la conjugaison !", "until": "2026-10-05", "boss": "fr-conjugaison", "reward": "une crêpe"}]`. Ren annonce le message une fois. Avec `boss` (chapitre dont il faut battre le yōkai) ou `revisions` (nombre de révisions à faire entre la date du pack et `until`), le message devient un défi affiché sur le Dōjō jusqu'à sa réussite ou son expiration. Le dépôt est public : le texte est lisible par tous.
 - **Réimport :** réimporter un pack de même `id` le remplace.
 - **Découpage :** les chapitres correspondent aux séquences de la prof, les leçons à une ou deux séances. Le plan des leçons à venir suit une progression type, non officielle. La leçon réelle de la prof fait foi, et on peut toujours en créer une nouvelle.
 

@@ -595,3 +595,20 @@ th { background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var
 .phard .btn { justify-self: start; }
 input[type="range"] { width: 100%; accent-color: var(--accent); }
 @media (max-width: 380px) { .pmet { grid-template-columns: 7rem minmax(0, 1fr) 3rem; } }
+
+/* Code parent et bilan */
+.pin-dots { display: flex; gap: 12px; justify-content: center; margin: 6px 0; }
+.pin-dots i { width: 14px; height: 14px; border-radius: 50%; background: var(--hair); box-shadow: inset 0 0 0 1.5px var(--hair); transition: background .15s, transform .15s; }
+.pin-dots i.on { background: var(--accent); transform: scale(1.15); }
+.pinpad { display: grid; grid-template-columns: repeat(3, minmax(0, 72px)); gap: 10px; justify-content: center; }
+.pinpad .btn { min-height: 56px; font-size: 1.3rem; border-radius: 99px; }
+.pin-msg { text-align: center; color: var(--bad); font-weight: 700; }
+.rescue { box-shadow: none; border: 0; background: transparent; }
+.rescue summary { justify-content: center; color: var(--ink2); }
+.rescue summary::after { content: ""; }
+.pkpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; text-align: center; }
+.pkpi b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.pkpi span { font-size: .68rem; color: var(--ink2); font-weight: 700; line-height: 1.2; display: block; }
+.defi { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; align-items: center; background: linear-gradient(135deg, color-mix(in srgb, #F59E0B 16%, var(--panel)), var(--panel) 70%); }
+.defi .who { font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #B45309; }
+.defi.done { background: linear-gradient(135deg, color-mix(in srgb, var(--good) 16%, var(--panel)), var(--panel) 70%); }
