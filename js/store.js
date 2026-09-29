@@ -168,6 +168,7 @@
         if (c.fiche && !un.has(c.fiche)) return;
         if (c.tab && c.tab.fiches) { const ok = Object.keys(c.tab.verbs).filter((v) => un.has(c.tab.fiches[v])); if (!ok.length) return; c = Object.assign({}, c, { _verbs: ok }); }
       }
+      if (l.remed) c = Object.assign({}, c, { bonus: true });
       if (c.k === "g") { const tag = c.tab ? ART.hash(c.tab.tense + Object.keys(c.tab.verbs).join()) + ":" : ""; for (let i = 0; i < (c.n || 3); i++) out.push(Object.assign({ id: `${ch.id}:g:${c.g}:${tag}${i}`, ch: ch.id, le: l.id }, c)); }
       else out.push(Object.assign({ id: cardId(ch, c), ch: ch.id, le: l.id }, c));
     });
@@ -179,12 +180,13 @@
   function allActiveCards(filter) { let cs = []; activeChapters().forEach((c) => { if (!filter || filter(c)) cs = cs.concat(cardList(c)); }); return cs; }
 
   // ---------- SRS (variante SM-2, 4 boutons) ----------
-  function grade(cardId, g) {
+  function grade(cardId, g, bonus) {
     const now = Date.now();
     const c = S.cards[cardId] || { ivl: 0, ease: 2.5, reps: 0, lapses: 0, first: today() };
     c.tries = (c.tries || 0) + 1; c.last = today();
     // Carte difficile (déjà ratée, ou facilité basse) réussie : compte pour les défis « cartes difficiles »
-    if (g >= 2 && (c.lapses > 0 || c.ease < 2.3)) { S.hw = S.hw || {}; S.hw[today()] = (S.hw[today()] || 0) + 1; }
+    // Les cartes « revanche » (erreurs d'interro) comptent double, même la première fois
+    if (g >= 2 && (bonus || c.lapses > 0 || c.ease < 2.3)) { S.hw = S.hw || {}; S.hw[today()] = (S.hw[today()] || 0) + (bonus ? 2 : 1); }
     if (g === 0) { c.lapses++; c.reps = 0; c.ivl = 0; c.due = now + 10 * 60000; c.ease = Math.max(1.3, c.ease - 0.2); }
     else {
       if (c.reps === 0) c.ivl = g === 3 ? 3 : 1;
@@ -213,7 +215,8 @@
     const byL = {}; pool.filter((c) => isNew(c.id)).forEach((c) => (byL[c.le] = byL[c.le] || []).push(c));
     const since = (lid) => (S.lessons[lid] && S.lessons[lid].since) || "0000";
     const byDay = {}; Object.keys(byL).forEach((lid) => (byDay[since(lid)] = byDay[since(lid)] || []).push(byL[lid]));
-    let fresh = [];
+    let fresh = pool.filter((c) => isNew(c.id) && c.bonus);
+    Object.keys(byL).forEach((lid) => (byL[lid] = byL[lid].filter((c) => !c.bonus)));
     Object.keys(byDay).sort().reverse().forEach((d) => { const groups = byDay[d]; let more = true; while (more) { more = false; groups.forEach((arr) => { if (arr.length) { fresh.push(arr.shift()); more = true; } }); } });
     fresh = fresh.slice(0, room);
     let list = due.slice(0, max).concat(fresh.slice(0, Math.max(0, max - Math.min(due.length, max))));
@@ -259,6 +262,18 @@
     const act = allActiveCards().filter((c) => S.cards[c.id]);
     const score = (c) => { const st = S.cards[c.id]; return (st.lapses || 0) * 2 + (2.5 - st.ease) * 4 + (st.ivl < 3 ? 1 : 0); };
     return act.sort((a, b) => score(b) - score(a)).slice(0, n);
+  }
+  // ---------- Notes (saisies dans l'Espace parent, jamais publiées) ----------
+  function grades() { return (S.grades || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1)); }
+  const on20 = (g) => (g.note / (g.sur || 20)) * 20;
+  function gradeAverages() {
+    const out = {}; grades().forEach((g) => { const o = (out[g.s] = out[g.s] || { sum: 0, w: 0, n: 0 }); const w = g.coef || 1; o.sum += on20(g) * w; o.w += w; o.n++; });
+    Object.values(out).forEach((o) => (o.avg = o.w ? o.sum / o.w : null)); return out;
+  }
+  // Leçons « revanche » liées à une note (même matière, même date)
+  function remedFor(g) {
+    const ls = []; CH.forEach((c) => c.s === g.s && c.lessons.forEach((l) => { if (l.remed && l.remed.date === g.date) ls.push([c, l]); }));
+    return ls.map(([c, l]) => { const cs = lessonCards(c, l), k = countsOf(cs); return { l, total: cs.length, won: cs.filter((x) => S.cards[x.id] && S.cards[x.id].ivl >= 7).length, seen: k.seen }; });
   }
   // ---------- Suivi parent ----------
   function report() {
@@ -377,6 +392,6 @@
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
-    levelInfo, report, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
+    levelInfo, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();

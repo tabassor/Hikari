@@ -21,7 +21,10 @@
     document.body.appendChild(t); FX.sfx("stamp"); FX.buzz(30); setTimeout(() => t.remove(), 3200);
   }
   function fxText(text, x, y) { const f = document.createElement("div"); f.className = "fx"; f.textContent = text; if (x != null) { f.style.left = x + "px"; f.style.top = y + "px"; } document.body.appendChild(f); setTimeout(() => f.remove(), 950); }
-  function celebrate(title, body, cta = "Continuer", sound = "win") {
+  // Une seule fenêtre à la fois : les annonces se suivent au lieu de s'empiler.
+  let celQueue = Promise.resolve();
+  function celebrate(title, body, cta, sound) { const run = () => celebrateNow(title, body, cta, sound); const pr = celQueue.then(run, run); celQueue = pr.then(() => new Promise((r) => setTimeout(r, 250))); return pr; }
+  function celebrateNow(title, body, cta = "Continuer", sound = "win") {
     return new Promise((res) => {
       const c = document.createElement("div"); c.className = "celebrate";
       c.innerHTML = `<div class="burst"></div><div class="panel"><div class="title">${title}</div>${body}<button class="btn primary big" id="cel-ok">${cta}</button></div>`;
@@ -408,7 +411,7 @@
   }
   function mountCard(host, card, { selfGrade = true, onDone } = {}) {
     const ch = STORE.CHI[card.ch], s = ch && sub(ch.s), le = card.le && STORE.LEI[card.le];
-    const head = s ? `<div class="src">${ART.seal(s.kanji, s.color, 22)}<span>${esc(le ? le.title : ch.title)}</span></div>` : "";
+    const head = s ? `<div class="src">${ART.seal(s.kanji, s.color, 22)}<span>${esc(le ? le.title : ch.title)}</span>${card.bonus ? `<span class="revanche" title="Carte tirée d'une erreur d'interro : XP ×3">⚔ Revanche ×3</span>` : ""}</div>` : "";
     const q = card;
     const expl = () => (q.x ? `<p class="x">${md(q.x)}</p>` : "");
     const body = document.createElement("div"); body.className = "panel card enter"; body.style.setProperty("--accent", s ? s.color : "");
@@ -598,9 +601,10 @@
       mountCard($("#stage"), card, {
         onDone: ({ ok, grade }) => {
           const firstTime = !requeued.has(card.id);
-          if (firstTime) { STORE.grade(card.id, grade); if (STORE.countReview()) setTimeout(() => { toast("Objectif du jour atteint : ta flamme brille ! 炎"); FX.sfx("level"); }, 300); done++; }
+          if (firstTime) { STORE.grade(card.id, grade, card.bonus); if (STORE.countReview()) setTimeout(() => { toast("Objectif du jour atteint : ta flamme brille ! 炎"); FX.sfx("level"); }, 300); done++; }
           if (ok) good++;
-          const gain = ([2, 6, 10, 12][grade] || 2) * (1 + Math.min(combo, 10) * 0.05) * (firstTime ? 1 : 0.5);
+          const gain = ([2, 6, 10, 12][grade] || 2) * (1 + Math.min(combo, 10) * 0.05) * (firstTime ? 1 : 0.5) * (card.bonus && ok ? 3 : 1);
+          if (card.bonus && ok && firstTime) setTimeout(() => fxText("REVANCHE ×3 !"), 350);
           xp += gain; const up = STORE.addXP(gain); if (up) lvlUp = up;
           if (grade === 0 && firstTime) { requeued.add(card.id); queue.splice(Math.min(queue.length, 3 + Math.floor(Math.random() * 3)), 0, STORE.allActiveCards().find((c) => c.id === card.id) || card); }
           $(".prog > i").style.width = (100 * done / total).toFixed(1) + "%";
@@ -775,6 +779,7 @@
       <section class="panel stack"><div class="stats-row"><div class="stat"><b>${L.level}</b><span>niveau</span></div><div class="stat"><b>${S().streak.best}</b><span>record de flamme</span></div><div class="stat"><b>${mast}</b><span>cartes maîtrisées</span></div></div>
         <div><p class="eyebrow">Activité des 5 dernières semaines</p><div class="heat">${days.map(([d, n], i) => `<i class="${n >= g ? "l3" : n >= g / 2 ? "l2" : n > 0 ? "l1" : ""} ${i === days.length - 1 ? "today" : ""}" title="${d} : ${n} révisions" style="--i:${i}"></i>`).join("")}</div></div>
         <div class="grid2">${PROGRAMME.subjects.map((s) => { const k = STORE.counts((c) => c.s === s.id); return `<div class="row">${ring(k.total ? k.mastered / k.total : 0, s.color, 44)}<span class="small"><b>${s.name}</b><br>${k.seen}/${k.total} vues · ${k.mastered} maîtrisées</span></div>`; }).join("")}</div></section>
+      ${notesPanel()}
       <details id="d-nl" ${arg === "nouvelle" ? "open" : ""}><summary>Nouvelle leçon photo</summary><div class="in" id="nl"></div></details>
       <details><summary>Réglages</summary><div class="in">
         <label class="stack"><span class="small"><b>Objectif du jour</b> (révisions pour remplir le Ki)</span><select id="st-goal">${[10, 15, 20, 30, 40].map((n) => `<option ${n === g ? "selected" : ""}>${n}</option>`).join("")}</select></label>
@@ -791,6 +796,7 @@
         <div id="p-lock"></div>
         <div id="p-zone" class="stack" hidden>
           <p class="eyebrow">Suivi</p><div id="parent" class="stack"></div>
+          <p class="eyebrow">Notes</p><div id="p-notes" class="stack"></div>
           <p class="eyebrow">Réglages</p>
         <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum : <b id="st-new-v">${S().settings.newPerDay}</b></span><input type="range" id="st-new" min="5" max="50" step="5" value="${S().settings.newPerDay}"><span class="tiny muted">Plus haut = découvre plus vite les nouvelles leçons, mais les révisions des jours suivants seront plus longues.</span></label>
         <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone">${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
@@ -919,7 +925,7 @@
   // Bons d'échange et trophées (Trésors)
   function defisSection() {
     const ms = STORE.messages().map((m) => [m, STORE.defiState(m)]).filter(([, st]) => st.isDefi && (st.done || !st.expired));
-    if (!ms.length) return "";
+    if (!ms.length) return `<section class="stack"><h2>Défis et bons d'échange</h2><div class="ticket todo"><div class="tk-l"><span class="trophy dim">🏆</span></div><div class="tk-r"><p class="small muted">Aucun défi pour l'instant. Quand ton père t'en lance un, Ren te l'apporte : réussis-le pour gagner un trophée et un bon d'échange.</p></div></div></section>`;
     return `<section class="stack"><div class="row" style="justify-content:space-between"><h2>Défis et bons d'échange</h2><span class="small muted">${ms.filter(([, st]) => st.done).length} trophée${ms.filter(([, st]) => st.done).length > 1 ? "s" : ""}</span></div>
       ${ms.map(([m, st]) => st.done ? `<div class="ticket ${st.used ? "used" : ""}"><div class="tk-l">${m.reward ? prize(m, st, 54) : `<span class="trophy">🏆</span>`}</div><div class="tk-r stack" style="gap:3px">
           <span class="who">Trophée · défi de ${esc(m.from)}</span><b>${m.reward ? esc(m.reward.text) : "Défi réussi"}</b><span class="tiny muted">${md(esc(m.text))} · gagné le ${new Date(st.won + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</span>
@@ -933,6 +939,34 @@
       if (!(await pinPrompt(`Échanger le bon « ${m.reward.text} » : code parent`))) return;
       S().msgs[id].used = STORE.today(); STORE.save(); FX.sfx("stamp"); toast("Bon échangé. Profite bien !"); render();
     }));
+  }
+
+  // ---------- Notes ----------
+  const fmtN = (x) => (Math.round(x * 10) / 10).toString().replace(".", ",");
+  function notesPanel() {
+    const G = STORE.grades(); if (!G.length) return "";
+    const A = STORE.gradeAverages();
+    return `<section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Mes notes</h2><span class="tiny muted">moyennes sur 20</span></div>
+      <div class="avgs">${PROGRAMME.subjects.filter((x) => A[x.id]).map((x) => `<div class="avg" style="--c:${x.color}"><b>${fmtN(A[x.id].avg)}</b><span>${esc(x.short || x.name)}</span></div>`).join("")}</div>
+      <div class="stack" style="gap:6px">${G.slice(0, 6).map((g) => { const x = sub(g.s), R = STORE.remedFor(g);
+        return `<div class="grade-row" style="--c:${x ? x.color : "#888"}"><span class="gn">${fmtN(g.note)}<small>/${g.sur || 20}</small></span><span class="gt"><b>${esc(g.title)}</b><span class="tiny muted">${esc(x ? x.name : g.s)} · ${new Date(g.date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}</span>
+          ${R.map((r) => `<button class="rev-link" data-go="le~${r.l.id}">⚔ Revanche : ${r.won}/${r.total} erreurs reconquises</button>`).join("")}</span></div>`; }).join("")}</div></section>`;
+  }
+  function drawNotesEditor() {
+    const box = $("#p-notes"); if (!box) return; const G = STORE.grades(), today = STORE.today();
+    box.innerHTML = `<div class="note-form"><select id="n-s">${PROGRAMME.subjects.map((x) => `<option value="${x.id}">${x.name}</option>`).join("")}</select>
+      <input type="text" id="n-t" placeholder="Intitulé (ex. Interro nombres décimaux)" maxlength="60">
+      <label class="stack" style="gap:4px"><span class="tiny muted">Date de l'évaluation</span><input type="date" id="n-d" value="${today}"></label>
+      <div class="nf-row"><label><span class="tiny muted">Note</span><input type="text" id="n-n" placeholder="ex. 14,5" inputmode="decimal" autocomplete="off"></label><label><span class="tiny muted">sur</span><input type="number" id="n-u" value="20" min="1" inputmode="numeric"></label><label><span class="tiny muted">coef.</span><input type="number" id="n-c" value="1" min="0.5" step="0.5" inputmode="decimal"></label></div>
+      <span class="tiny muted">Les notes restent sur ce téléphone : elles ne sont jamais publiées.</span>
+      <button class="btn primary" id="n-add">Ajouter la note</button></div>
+      ${G.map((g) => `<div class="grade-row" style="--c:${(sub(g.s) || {}).color || "#888"}"><span class="gn">${fmtN(g.note)}<small>/${g.sur || 20}</small></span><span class="gt"><b>${esc(g.title)}</b><span class="tiny muted">${esc((sub(g.s) || {}).name || g.s)} · ${g.date}${g.coef && g.coef !== 1 ? ` · coef ${fmtN(g.coef)}` : ""}</span></span><button class="btn ghost sm" data-del="${esc(g.id)}" aria-label="Supprimer">✕</button></div>`).join("")}`;
+    $("#n-add").onclick = () => {
+      const t = $("#n-t").value.trim(), n = parseFloat(String($("#n-n").value).replace(",", ".")), u = parseFloat($("#n-u").value) || 20, c = parseFloat($("#n-c").value) || 1, d = $("#n-d").value || today;
+      if (!t) return toast("Donne un intitulé à l'évaluation."); if (isNaN(n) || n < 0 || n > u) return toast(`La note doit être entre 0 et ${u}.`);
+      S().grades = (S().grades || []).concat([{ id: "g" + Date.now(), s: $("#n-s").value, date: d, title: t, note: n, sur: u, coef: c }]); STORE.save(); FX.sfx("stamp"); toast("Note ajoutée."); drawNotesEditor();
+    };
+    $$("[data-del]", box).forEach((b) => (b.onclick = () => { if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Supprimer ?"; return; } S().grades = S().grades.filter((g) => g.id !== b.dataset.del); STORE.save(); drawNotesEditor(); }));
   }
 
   // ---------- Code parent ----------
@@ -958,7 +992,7 @@
     const lock = $("#p-lock"), zone = $("#p-zone"); if (!lock) return;
     const set = !!S().settings.parentPin, open = parentUntil > Date.now();
     zone.hidden = !open; lock.hidden = open;
-    if (open) { drawParent(); return; }
+    if (open) { drawParent(); drawNotesEditor(); return; }
     let mode = set ? "enter" : "create", first = "", code = "";
     const paint = (msg) => {
       lock.innerHTML = `<p class="small">${mode === "create" ? "Choisis un <b>code parent à 4 chiffres</b>. Il protège le suivi, le nombre de nouvelles cartes, la zone de vacances, l'import de packs et la remise à zéro." : mode === "confirm" ? "Tape le code une seconde fois." : "Réservé aux parents : tape le code parent."}</p>
@@ -995,6 +1029,7 @@
     const R = STORE.report(), L = STORE.levelInfo();
     const act = []; for (let i = 34; i >= 0; i--) { const d = STORE.today(new Date(Date.now() - i * 86400000)); act.push((S().days[d] || { n: 0 }).n); }
     return { v: 1, n: S().profile.name, d: STORE.today(), lv: L.level, fl: STORE.streakAlive(), g: S().settings.goal, a: act, f: R.fresh, p: R.perDay, dy: R.days,
+      nt: STORE.grades().slice(0, 12).map((g) => [g.s, g.date, g.title, g.note, g.sur || 20]),
       s: R.subs.map((x) => [x.s.id, x.lOpen, x.lTot, x.refs, x.refsAll, x.k.seen, x.k.total, x.k.mastered]),
       h: R.hard.map((H) => [STORE.LEI[H.le] ? STORE.LEI[H.le].title : H.le, STORE.CHI[H.ch].s, H.lapses, H.tries, H.cards.map((c) => [String(c.q).slice(0, 140), c.lapses]), H.le]) };
   }
@@ -1017,6 +1052,8 @@
     const goal = D.g || 20, act = D.a || [], week = act.slice(-7).reduce((a, b) => a + b, 0), daysOn = act.slice(-7).filter((n) => n > 0).length;
     return `<div class="pkpi"><div><b>${D.lv}</b><span>niveau</span></div><div><b>${D.fl}</b><span>jours de flamme</span></div><div><b>${week}</b><span>révisions sur 7 j</span></div><div><b>${daysOn}/7</b><span>jours actifs</span></div></div>
       <div class="heat">${act.map((n, i) => `<i class="${n >= goal ? "l3" : n >= goal / 2 ? "l2" : n > 0 ? "l1" : ""} ${i === act.length - 1 ? "today" : ""}" title="${n} révisions" style="--i:${i}"></i>`).join("")}</div>
+      ${(D.nt || []).length ? `<p class="eyebrow">Notes</p><div class="stack" style="gap:6px">${(() => { const A = {}; D.nt.forEach(([sid, , , n, u]) => { A[sid] = A[sid] || []; A[sid].push((n / u) * 20); }); return `<div class="avgs">${Object.entries(A).map(([sid, v]) => `<div class="avg" style="--c:${SB(sid).color}"><b>${fmtN(v.reduce((a, b) => a + b, 0) / v.length)}</b><span>${esc(SB(sid).short || SB(sid).name)}</span></div>`).join("")}</div>`; })()}
+        ${D.nt.map(([sid, d, t, n, u]) => `<div class="grade-row" style="--c:${SB(sid).color}"><span class="gn">${fmtN(n)}<small>/${u}</small></span><span class="gt"><b>${esc(t)}</b><span class="tiny muted">${esc(SB(sid).name)} · ${d}</span></span></div>`).join("")}</div>` : ""}
       <div class="ptab">${D.s.map(([id, lOpen, lTot, refs, refsAll, seen, total, mast]) => { const x = SB(id); return `<div class="prow" style="--c:${x.color}"><div class="pname">${ART.seal(x.kanji, x.color, 30, !lOpen)}<b>${esc(x.short || x.name)}</b></div>
         ${lOpen ? `<div class="pmet"><span>Programme abordé</span>${bar(pct(refs, refsAll), x.color)}<b>${refs}/${refsAll}</b></div>
         <div class="pmet"><span>Cartes découvertes</span>${bar(pct(seen, total), x.color)}<b>${seen}/${total}</b></div>
