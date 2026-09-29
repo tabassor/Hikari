@@ -14,7 +14,8 @@ window.REPO_PACKS.push({
    "until": "2026-10-03",
    "reward": {
     "text": "Un bubble tea devant le film de ton choix",
-    "emoji": "🧋"
+    "emoji": "🧋",
+    "image": "img/reward-bubbletea.webp"
    }
   }
  ]
