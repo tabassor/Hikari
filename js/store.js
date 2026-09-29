@@ -183,6 +183,8 @@
     const now = Date.now();
     const c = S.cards[cardId] || { ivl: 0, ease: 2.5, reps: 0, lapses: 0, first: today() };
     c.tries = (c.tries || 0) + 1; c.last = today();
+    // Carte difficile (déjà ratée, ou facilité basse) réussie : compte pour les défis « cartes difficiles »
+    if (g >= 2 && (c.lapses > 0 || c.ease < 2.3)) { S.hw = S.hw || {}; S.hw[today()] = (S.hw[today()] || 0) + 1; }
     if (g === 0) { c.lapses++; c.reps = 0; c.ivl = 0; c.due = now + 10 * 60000; c.ease = Math.max(1.3, c.ease - 0.2); }
     else {
       if (c.reps === 0) c.ivl = g === 3 ? 3 : 1;
@@ -219,17 +221,44 @@
   }
   const GEN_LABEL = { tab: "conjugaison", enNum: "nombres en anglais", enDays: "jours et mois en anglais", enColor: "couleurs en anglais", enDate: "dates en anglais", esNum: "nombres en espagnol", esDays: "jours et mois en espagnol", esColor: "couleurs en espagnol", esDate: "dates en espagnol", words: "nombres en lettres", placeInt: "chiffres des grands nombres", nbOf: "nombre de dizaines, centaines…", placeDec: "chiffres des décimaux", decFrac: "fractions décimales", rayon: "rayon et diamètre", cmpDec: "comparer des décimaux", convLen: "conversions de longueurs", double: "doubles et moitiés", durees: "durées", encadre: "encadrements", fracQty: "fraction d'une quantité", numline: "droite graduée", round: "arrondis", tables: "tables de multiplication", convVol: "conversions de volumes", grossissement: "grossissement du microscope" };
   // ---------- Messages et défis de papa (champ « messages » des packs) ----------
-  // { id, from, text, date, until?, boss?: idChapitre, revisions?: n, reward? }
+  // { id, from, text, date, until?, reward?: { text, emoji, surprise } | "texte",
+  //   et un type de défi : boss: idChapitre | revisions: n | hard: n (cartes difficiles réussies)
+  //   | streak: n (jours de flamme) | epreuve: { n, pass, cards: [...] | "hard" } }
   function messages() {
-    const out = []; (window.REPO_PACKS || []).forEach((p) => (p.messages || []).forEach((m) => { if (m && m.id && m.text) out.push(Object.assign({ from: "Papa", date: p.created || today() }, m)); }));
+    const out = []; (window.REPO_PACKS || []).forEach((p) => (p.messages || []).forEach((m) => {
+      if (!m || !m.id || !m.text) return;
+      const r = typeof m.reward === "string" ? { text: m.reward } : m.reward || null;
+      out.push(Object.assign({ from: "Papa", date: p.created || today() }, m, { reward: r }));
+    }));
     return out;
   }
+  const sumSince = (obj, from, to) => Object.entries(obj || {}).filter(([d]) => d >= from && (!to || d <= to)).reduce((a, [, v]) => a + (typeof v === "number" ? v : v.n || 0), 0);
   function defiState(m) {
-    const t = today(); let done = false, prog = null;
-    if (m.boss) { const b = S.bosses[m.boss]; done = !!(b && b.won && (!b.date || b.date >= m.date)); }
-    if (m.revisions) { const n = Object.entries(S.days).filter(([d]) => d >= m.date && (!m.until || d <= m.until)).reduce((a, [, v]) => a + (v.n || 0), 0); prog = [Math.min(n, m.revisions), m.revisions]; done = done || n >= m.revisions; }
-    const isDefi = !!(m.boss || m.revisions), expired = !!(m.until && t > m.until);
-    return { isDefi, done, expired, prog };
+    const t = today(), rec = S.msgs[m.id] || {};
+    let done = !!rec.won, p = 0, prog = null, type = null;
+    if (m.boss) { type = "boss"; const b = S.bosses[m.boss], ch = CHI[m.boss]; const won = !!(b && b.won && (!b.date || b.date >= m.date)); done = done || won;
+      if (ch) { const k = countsOf(cardList(ch)); p = won ? 1 : Math.min(0.9, k.total ? k.seen / k.total : 0); } }
+    else if (m.revisions) { type = "revisions"; const n = sumSince(S.days, m.date, m.until); prog = [Math.min(n, m.revisions), m.revisions]; }
+    else if (m.hard) { type = "hard"; const n = sumSince(S.hw, m.date, m.until); prog = [Math.min(n, m.hard), m.hard]; }
+    else if (m.streak) { type = "streak"; const n = Math.max(rec.bestStreak || 0, streakAlive()); prog = [Math.min(n, m.streak), m.streak]; }
+    else if (m.epreuve) { type = "epreuve"; const e = m.epreuve, pass = e.pass || Math.ceil((e.n || 10) * 0.8); prog = [Math.min(rec.best || 0, pass), pass]; }
+    if (prog) { p = prog[0] / prog[1]; done = done || prog[0] >= prog[1]; }
+    if (done) p = 1;
+    const isDefi = !!type, expired = !done && !!(m.until && t > m.until);
+    return { isDefi, type, done, expired, p, prog, won: rec.won || null, used: rec.used || null };
+  }
+  // À appeler après chaque action : enregistre les défis réussis (et les bons gagnés).
+  function checkDefis() {
+    const newly = [];
+    messages().forEach((m) => { const rec = (S.msgs[m.id] = S.msgs[m.id] || {}); if (m.streak) rec.bestStreak = Math.max(rec.bestStreak || 0, streakAlive());
+      const st = defiState(m); if (st.isDefi && st.done && !rec.won && !(m.until && today() > m.until && !st.done)) { rec.won = today(); newly.push(m); } });
+    return newly;
+  }
+  // Cartes difficiles de l'élève, pour les épreuves « hard »
+  function hardCards(n) {
+    const act = allActiveCards().filter((c) => S.cards[c.id]);
+    const score = (c) => { const st = S.cards[c.id]; return (st.lapses || 0) * 2 + (2.5 - st.ease) * 4 + (st.ivl < 3 ? 1 : 0); };
+    return act.sort((a, b) => score(b) - score(a)).slice(0, n);
   }
   // ---------- Suivi parent ----------
   function report() {
@@ -348,6 +377,6 @@
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
-    levelInfo, report, messages, defiState, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
+    levelInfo, report, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();

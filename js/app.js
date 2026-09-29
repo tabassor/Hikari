@@ -40,6 +40,7 @@
   function applyAccent() { document.documentElement.style.setProperty("--accent", el().c); }
   function afterAction() {
     const won = STORE.checkBadges(); STORE.save();
+    STORE.checkDefis().forEach((m, i) => { const r = (S().msgs[m.id] = S().msgs[m.id] || {}); if (r.cheered) return; r.cheered = STORE.today(); STORE.save(); setTimeout(() => revealDefi(m), 700 + i * 2800); });
     won.forEach((id, i) => { const b = STORE.BADGES.find((x) => x[0] === id); setTimeout(() => stampToast(b[1], b[2]), 500 + i * 3300); });
     const lv = STORE.levelInfo().level, t = ART.tierOf(lv);
     if (S().profile && (S().sealTier ?? 0) < t) {
@@ -87,9 +88,9 @@
     if (!S().profile) { renderTabs(""); renderHUD(); return viewOnboarding(main); }
     renderHUD();
     const [name, ...rest] = route.split("~"); const arg = rest.join("~");
-    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
+    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
     renderTabs(tab);
-    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
+    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
   }
   document.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b && !b.disabled) { e.preventDefault(); go(b.dataset.go); } });
   window.addEventListener("popstate", (e) => { leaveGuard = null; const d = (e.state && e.state.d) || 0; navDir = d < depth ? "back" : "fwd"; depth = d; render(); });
@@ -757,10 +758,12 @@
       <section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Rang</h2><span class="small muted">${S().xp} XP au total</span></div>
         <div class="ladder">${STORE.RANKS.map((r) => `<div class="r ${L.rank === r ? "cur" : ""}"><span class="jp">${r[1]}</span><span><b>${r[2]}</b></span><span class="small muted">niv. ${r[0]}</span></div>`).join("")}</div>
         ${L.next ? `<p class="small muted">Prochain rang, ${L.next[2]}, au niveau ${L.next[0]}.</p>` : ""}</section>
+      ${defisSection()}
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Yōkai alliés</h2><span class="small muted">${Object.values(S().bosses).filter((b) => b.won).length} / ${bossChs.length}</span></div>
         <div class="allies">${bossChs.length ? bossChs.map((c) => { const w = S().bosses[c.id] && S().bosses[c.id].won; return `<button class="ally ${w ? "" : "lock"}" data-go="ch~${c.id}">${ART.yokai(c.id, { size: 84, ally: w })}<span>${w ? esc(c.boss.name.split(",")[0]) : "???"}</span></button>`; }).join("") : `<p class="muted small" style="grid-column:1/-1">Ouvre des leçons pour réveiller les yōkai gardiens de leurs chapitres.</p>`}</div></section>
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Emblèmes</h2><span class="small muted">${won} / ${STORE.BADGES.length}</span></div>
         <div class="badges">${STORE.BADGES.map(([id, k, n, d], i) => { const got = S().badges[id]; return `<div class="badge ${got ? "got" : "lock"}" style="--i:${i}">${ART.seal(k, got ? "var(--seal)" : "var(--mute)", 54, !got)}<span class="t">${n}</span><span class="d">${d}</span></div>`; }).join("")}</div></section>`;
+    bindUse(main);
   }
 
   // ---------- Moi ----------
@@ -857,22 +860,79 @@
 
 
   // ---------- Messages et défis de papa ----------
+  // Récompense : visible, ou « surprise » (silhouette qui se remplit avec la progression, dévoilée à la fin).
+  function prize(m, st, size = 64) {
+    const r = m.reward; if (!r) return "";
+    const em = esc(r.emoji || "🎁"), hidden = r.surprise && !st.done, pct = Math.round(100 * st.p);
+    if (!hidden) return `<span class="prize" style="--sz:${size}px"><span class="pz-full">${em}</span></span>`;
+    return `<span class="prize surprise${st.p > 0 ? "" : " none"}" style="--sz:${size}px;--fill:${100 - pct}%" title="Récompense surprise : ${pct} %"><span class="pz-shadow">${em}</span><span class="pz-full">${em}</span><span class="pz-q">?</span></span>`;
+  }
+  const defiGoal = (m, st) => st.type === "boss" ? `Bats ${esc(STORE.CHI[m.boss] ? STORE.CHI[m.boss].boss.name : "le yōkai")}` : st.type === "revisions" ? `${st.prog[0]} / ${st.prog[1]} révisions`
+    : st.type === "hard" ? `${st.prog[0]} / ${st.prog[1]} cartes difficiles réussies` : st.type === "streak" ? `${st.prog[0]} / ${st.prog[1]} jours de flamme`
+    : `Épreuve : meilleur score ${(S().msgs[m.id] || {}).best || 0}, il faut ${st.prog[1]}`;
+  const rewardTxt = (m, st) => !m.reward ? "" : m.reward.surprise && !st.done ? `Récompense surprise : ${Math.round(100 * st.p)} % dévoilée` : `Récompense : ${esc(m.reward.text)}`;
+  function revealDefi(m) {
+    const r = m.reward;
+    return celebrate("達成！", `${r ? `<div class="reveal">${prize(m, { done: true, p: 1 }, 110)}</div>` : ART.sensei("fire", 100)}<p><b>Défi de ${esc(m.from)} réussi !</b></p><p class="small">${md(esc(m.text))}</p>
+      ${r ? `<p>${r.surprise ? "La surprise était…" : "Tu gagnes :"} <b>${esc(r.text)}</b></p><p class="tiny muted">Ton bon d'échange t'attend dans Trésors. Montre-le à ${esc(m.from)} !</p>` : ""}`, "Génial !", "level");
+  }
   function drawDefis() {
     const box = $("#defis"); if (!box) return;
+    STORE.checkDefis(); STORE.save();
     const ms = STORE.messages(), seen = S().msgs;
     const live = ms.filter((m) => { const st = STORE.defiState(m); return st.isDefi && !st.expired && !(st.done && seen[m.id] && seen[m.id].cheered); });
-    box.innerHTML = live.map((m) => { const st = STORE.defiState(m), ch = m.boss && STORE.CHI[m.boss];
+    box.innerHTML = live.map((m) => { const st = STORE.defiState(m);
       const until = m.until ? new Date(m.until + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "";
-      return `<section class="panel defi ${st.done ? "done" : ""}">${ART.sensei(st.done ? "fire" : "wow", 56)}<div class="stack" style="gap:4px"><span class="who">Défi de ${esc(m.from)}</span><b>${md(esc(m.text))}</b>
-        <span class="tiny muted">${st.done ? "Réussi !" : st.prog ? `${st.prog[0]} / ${st.prog[1]} révisions` : ch ? `Yōkai : ${esc(ch.boss.name)}` : ""}${until && !st.done ? ` · jusqu'à ${until}` : ""}</span>
-        ${ch && !st.done ? `<button class="btn sm primary" data-go="ch~${m.boss}" style="justify-self:start">Aller au chapitre</button>` : ""}</div></section>`; }).join("");
-    // Annonces : nouveau message, puis défi réussi (une seule fois chacun)
-    const fresh = ms.filter((m) => !seen[m.id] && !(m.until && STORE.today() > m.until));
-    const won = ms.filter((m) => { const st = STORE.defiState(m); return st.isDefi && st.done && seen[m.id] && !seen[m.id].cheered; });
+      return `<section class="panel defi ${st.done ? "done" : ""}">${m.reward ? prize(m, st, 58) : ART.sensei(st.done ? "fire" : "wow", 56)}<div class="stack" style="gap:4px"><span class="who">Défi de ${esc(m.from)}</span><b>${md(esc(m.text))}</b>
+        <div class="dbar"><i style="width:${Math.round(100 * st.p)}%"></i></div>
+        <span class="tiny muted">${st.done ? "Réussi !" : defiGoal(m, st)}${until && !st.done ? ` · jusqu'à ${until}` : ""}</span>${m.reward ? `<span class="tiny">${rewardTxt(m, st)}</span>` : ""}
+        ${st.type === "boss" && !st.done ? `<button class="btn sm primary" data-go="ch~${m.boss}" style="justify-self:start">Aller au chapitre</button>` : ""}
+        ${st.type === "epreuve" && !st.done ? `<button class="btn sm primary" data-go="epreuve~${m.id}" style="justify-self:start">Passer l'épreuve</button>` : ""}</div></section>`; }).join("");
+    const fresh = ms.filter((m) => !seen[m.id] || !seen[m.id].seen).filter((m) => !(m.until && STORE.today() > m.until));
+    const won = ms.filter((m) => { const st = STORE.defiState(m); return st.isDefi && st.done && seen[m.id] && seen[m.id].seen && !seen[m.id].cheered; });
     let delay = 900;
-    fresh.forEach((m) => { seen[m.id] = { seen: STORE.today() }; setTimeout(() => celebrate("お便り！", `${ART.sensei("wow", 100)}<p class="small muted">Ren t'apporte un message de <b>${esc(m.from)}</b> :</p><p class="big" style="font-size:1.1rem">${md(esc(m.text))}</p>${m.reward ? `<p class="small">Récompense promise : <b>${esc(m.reward)}</b></p>` : ""}`, STORE.defiState(m).isDefi ? "Défi accepté !" : "Merci !", "level"), delay); delay += 2600; });
-    won.forEach((m) => { seen[m.id].cheered = STORE.today(); setTimeout(() => celebrate("達成！", `${ART.sensei("fire", 100)}<p><b>Défi de ${esc(m.from)} réussi !</b></p><p class="small">${md(esc(m.text))}</p>${m.reward ? `<p>Réclame ta récompense : <b>${esc(m.reward)}</b></p>` : ""}`, "Génial !", "win"), delay); delay += 2600; });
+    fresh.forEach((m) => { const st = STORE.defiState(m); seen[m.id] = Object.assign(seen[m.id] || {}, { seen: STORE.today() });
+      setTimeout(() => celebrate("お便り！", `${m.reward ? `<div>${prize(m, st, 96)}</div>` : ART.sensei("wow", 100)}<p class="small muted">Ren t'apporte un message de <b>${esc(m.from)}</b> :</p><p class="big" style="font-size:1.1rem">${md(esc(m.text))}</p>
+        ${m.reward ? (m.reward.surprise ? `<p class="small">Une <b>récompense surprise</b> se cache dans cette ombre. Elle se dévoile au fil de tes réussites…</p>` : `<p class="small">Récompense : <b>${esc(m.reward.text)}</b></p>`) : ""}`, st.isDefi ? "Défi accepté !" : "Merci !", "level"), delay); delay += 2600; });
+    won.forEach((m) => { seen[m.id].cheered = STORE.today(); setTimeout(() => revealDefi(m), delay); delay += 2600; });
     if (fresh.length || won.length) STORE.save();
+  }
+  // Épreuve : série de questions (choisies dans le pack, ou ses cartes les plus difficiles)
+  function viewEpreuve(main, id) {
+    const m = STORE.messages().find((x) => x.id === id); if (!m || !m.epreuve) return go("dojo", true);
+    const e = m.epreuve, n = e.n || 10, pass = e.pass || Math.ceil(n * 0.8);
+    let list = Array.isArray(e.cards) ? shuffle(e.cards.map((c, i) => Object.assign({ id: `defi:${id}:${i}`, ch: "defi", le: "defi" }, c))).slice(0, n) : shuffle(STORE.hardCards(n));
+    if (list.length < 3) { toast("Pas encore assez de cartes difficiles : révise un peu, puis reviens !"); return go("dojo", true); }
+    let i = 0, good = 0; combo = 0; sessionShell(main); $("#quit").onclick = () => go("dojo", true);
+    const next = async () => {
+      if (i >= list.length) {
+        const rec = (S().msgs[id] = S().msgs[id] || {}); rec.best = Math.max(rec.best || 0, good); STORE.save();
+        const ok = good >= pass;
+        if (ok) { STORE.checkDefis(); rec.cheered = STORE.today(); STORE.save(); await revealDefi(m); }
+        else await celebrate("まだまだ…", `${ART.sensei("think", 100)}<p><b>${good} / ${list.length}</b> : il en fallait ${pass}.</p><p class="small">${m.reward && m.reward.surprise ? "La surprise se précise… " : ""}Revois ces cartes, puis retente l'épreuve : tu peux la repasser autant que tu veux.</p>`, "Retour au Dōjō", "lose");
+        afterAction(); return go("dojo", true);
+      }
+      mountCard($("#stage"), instantiate(list[i]), { selfGrade: false, onDone: ({ ok }) => { if (ok) good++; i++; $(".prog > i").style.width = (100 * i / list.length) + "%"; next(); } });
+    };
+    next();
+  }
+  // Bons d'échange et trophées (Trésors)
+  function defisSection() {
+    const ms = STORE.messages().map((m) => [m, STORE.defiState(m)]).filter(([, st]) => st.isDefi && (st.done || !st.expired));
+    if (!ms.length) return "";
+    return `<section class="stack"><div class="row" style="justify-content:space-between"><h2>Défis et bons d'échange</h2><span class="small muted">${ms.filter(([, st]) => st.done).length} trophée${ms.filter(([, st]) => st.done).length > 1 ? "s" : ""}</span></div>
+      ${ms.map(([m, st]) => st.done ? `<div class="ticket ${st.used ? "used" : ""}"><div class="tk-l">${m.reward ? prize(m, st, 54) : `<span class="trophy">🏆</span>`}</div><div class="tk-r stack" style="gap:3px">
+          <span class="who">Trophée · défi de ${esc(m.from)}</span><b>${m.reward ? esc(m.reward.text) : "Défi réussi"}</b><span class="tiny muted">${md(esc(m.text))} · gagné le ${new Date(st.won + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</span>
+          ${m.reward ? (st.used ? `<span class="stamp-used">Échangé le ${new Date(st.used + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</span>` : `<button class="btn sm primary" data-use="${esc(m.id)}" style="justify-self:start">Échanger avec ${esc(m.from)}</button>`) : ""}</div></div>`
+        : `<div class="ticket todo"><div class="tk-l">${m.reward ? prize(m, st, 54) : `<span class="trophy dim">🏆</span>`}</div><div class="tk-r stack" style="gap:3px"><span class="who">En cours · défi de ${esc(m.from)}</span><b>${md(esc(m.text))}</b><div class="dbar"><i style="width:${Math.round(100 * st.p)}%"></i></div><span class="tiny muted">${defiGoal(m, st)}</span></div></div>`).join("")}
+    </section>`;
+  }
+  function bindUse(root) {
+    $$("[data-use]", root).forEach((b) => (b.onclick = async () => {
+      const id = b.dataset.use, m = STORE.messages().find((x) => x.id === id);
+      if (!(await pinPrompt(`Échanger le bon « ${m.reward.text} » : code parent`))) return;
+      S().msgs[id].used = STORE.today(); STORE.save(); FX.sfx("stamp"); toast("Bon échangé. Profite bien !"); render();
+    }));
   }
 
   // ---------- Code parent ----------
@@ -881,6 +941,19 @@
   let parentUntil = 0;
   const RESCUE = "b3d4cb4fcb9b6210368d0638929a2f760b28e4712ef4b6878c07fb4ebab106eb";
   async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  function pinPrompt(title) {
+    return new Promise((res) => {
+      const P = S().settings.parentPin;
+      if (!P) { celebrate("Code parent", `<p>Le parent doit d'abord créer son code dans <b>Moi → Espace parent</b>.</p>`, "Compris", "lose").then(() => res(false)); return; }
+      const o = document.createElement("div"); o.className = "celebrate"; let code = "";
+      const paint = (msg) => { o.innerHTML = `<div class="panel stack" style="align-items:center"><p class="small"><b>${esc(title)}</b></p><div class="pin-dots">${[0, 1, 2, 3].map((i) => `<i class="${i < code.length ? "on" : ""}"></i>`).join("")}</div>${msg ? `<p class="small pin-msg">${msg}</p>` : ""}
+        <div class="pinpad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((k) => k === "" ? "<span></span>" : `<button class="btn" data-k="${k}">${k}</button>`).join("")}</div><button class="btn ghost sm" id="pp-x">Annuler</button></div>`;
+        $$("[data-k]", o).forEach((b) => (b.onclick = () => press(b.dataset.k))); $("#pp-x", o).onclick = () => { o.remove(); res(false); }; };
+      const press = async (k) => { FX.sfx("tap"); if (k === "⌫") { code = code.slice(0, -1); return paint(); } if (code.length >= 4) return; code += k; paint(); if (code.length < 4) return;
+        if ((await sha(P.salt + ":" + code)) === P.h) { o.remove(); parentUntil = Date.now() + 10 * 60000; res(true); } else { code = ""; FX.buzz(80); paint("Code incorrect."); } };
+      paint(); document.body.appendChild(o);
+    });
+  }
   function drawLock() {
     const lock = $("#p-lock"), zone = $("#p-zone"); if (!lock) return;
     const set = !!S().settings.parentPin, open = parentUntil > Date.now();
