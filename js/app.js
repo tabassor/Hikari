@@ -869,7 +869,7 @@
   // Récompense : visible, ou « surprise » (silhouette qui se remplit avec la progression, dévoilée à la fin).
   function prize(m, st, size = 64) {
     const r = m.reward; if (!r) return "";
-    const em = esc(r.emoji || "🎁"), hidden = r.surprise && !st.done, pct = Math.round(100 * st.p);
+    const em = r.image ? `<img src="${esc(r.image)}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px;object-fit:contain">` : esc(r.emoji || "🎁"), hidden = r.surprise && !st.done, pct = Math.round(100 * st.p);
     if (!hidden) return `<span class="prize" style="--sz:${size}px"><span class="pz-full">${em}</span></span>`;
     return `<span class="prize surprise${st.p > 0 ? "" : " none"}" style="--sz:${size}px;--fill:${100 - pct}%" title="Récompense surprise : ${pct} %"><span class="pz-shadow">${em}</span><span class="pz-full">${em}</span><span class="pz-q">?</span></span>`;
   }
