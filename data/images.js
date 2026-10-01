@@ -34,5 +34,21 @@ window.IMAGES = {
     "sc-boisjoli": "img/boss-sc-boisjoli.webp",
     "sc-matiere": "img/boss-sc-matiere.webp",
     "sc-vivant": "img/boss-sc-vivant.webp"
+  },
+  "garden": {
+    "ajisai": "img/garden-ajisai.webp",
+    "arbre": "img/garden-arbre.webp",
+    "asagao": "img/garden-asagao.webp",
+    "ayame": "img/garden-ayame.webp",
+    "bg": "img/garden-bg.webp",
+    "etang": "img/garden-etang.webp",
+    "hasu": "img/garden-hasu.webp",
+    "kiku": "img/garden-kiku.webp",
+    "lanterne": "img/garden-lanterne.webp",
+    "papillons": "img/garden-papillons.webp",
+    "sakura": "img/garden-sakura.webp",
+    "tanpopo": "img/garden-tanpopo.webp",
+    "torii": "img/garden-torii.webp",
+    "tsubaki": "img/garden-tsubaki.webp"
   }
 };

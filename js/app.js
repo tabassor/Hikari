@@ -952,8 +952,10 @@
   }
   function gardenHTML(list, month) {
     const G = (window.IMAGES && IMAGES.garden) || {};
-    const deco = FOYER.DECOS.filter(([n]) => list.length >= n).map(([n, k, em, x, y]) => `<span class="flower deco" style="left:${x}%;top:${y}%;z-index:${y}" title="Débloqué à ${n} bienfaits">${G[k] ? `<img src="${G[k]}" alt="">` : em}</span>`).join("");
-    const fl = deco + list.map((b, i) => `<span class="flower" style="left:${b.x}%;top:${b.y}%;--i:${i};z-index:${Math.round(b.y)}" title="${esc(b.txt)}">${G[b.fl] ? `<img src="${G[b.fl]}" alt="">` : FOYER.FLOWER_EMOJI[b.fl] || "🌸"}</span>`).join("");
+    // Profondeur : plus une fleur est haute dans la prairie (loin), plus elle est petite
+    const depth = (y) => (0.6 + Math.max(0, Math.min(1, (y - 44) / 50)) * 0.55).toFixed(2);
+    const deco = FOYER.DECOS.filter(([n]) => list.length >= n).map(([n, k, em, x, y, sc]) => `<span class="flower deco" style="left:${x}%;top:${y}%;--s:${(sc * depth(y)).toFixed(2)};z-index:${k === "arbre" ? 1 : y}" title="Débloqué à ${n} bienfaits">${G[k] ? `<img src="${G[k]}" alt="">` : em}</span>`).join("");
+    const fl = deco + list.map((b, i) => `<span class="flower" style="left:${b.x}%;top:${b.y}%;--i:${i};--s:${depth(b.y)};z-index:${Math.round(b.y)}" title="${esc(b.txt)}">${G[b.fl] ? `<img src="${G[b.fl]}" alt="">` : FOYER.FLOWER_EMOJI[b.fl] || "🌸"}</span>`).join("");
     return `<div class="garden ${G.bg ? "has-bg" : ""}" ${G.bg ? `style="background-image:url(${G.bg})"` : ""}>${G.bg ? "" : `<div class="g-sky"></div><div class="g-hill"></div><div class="g-path"></div>`}${fl}${list.length ? "" : `<p class="g-empty">Ton jardin de ${month} attend sa première fleur.</p>`}</div>`;
   }
   function foyerJardin(box, monthSel) {
@@ -964,7 +966,7 @@
         ${gardenHTML(list, mName(m).split(" ")[0])}<p class="small muted">${list.length} bienfait${list.length > 1 ? "s" : ""} ${isCur ? "ce mois-ci" : `en ${mName(m)}`}. Chaque geste fait éclore une fleur ; les jardins des mois passés restent.</p></section>
       ${isCur ? `<section class="panel stack"><b>Noter un bienfait</b><textarea id="bf-t" maxlength="160" placeholder="Ex. J'ai aidé Maman à porter les courses." style="min-height:70px;font-family:inherit;font-size:1rem"></textarea>
         <div class="row wrap"><button class="btn primary" id="bf-me" style="flex:1">C'est moi qui l'ai fait</button><button class="btn ghost sm" id="bf-par">Ajouté par un parent</button></div></section>` : ""}
-      <section class="stack"><h2>Carnet</h2>${list.length ? list.slice().reverse().map((b) => `<div class="bf-row"><span class="bf-f">${FOYER.FLOWER_EMOJI[b.fl] || "🌸"}</span><span class="stack" style="gap:2px"><span>${esc(b.txt)}</span><span class="tiny muted">${dShort(b.d)} · ${b.by === "moi" ? "noté par moi" : `noté par ${esc(b.by)}`}</span></span></div>`).join("") : `<p class="small muted">Rien encore ce mois-ci.</p>`}</section>`;
+      <section class="stack"><h2>Carnet</h2>${list.length ? list.slice().reverse().map((b) => `<div class="bf-row"><span class="bf-f">${(window.IMAGES && IMAGES.garden && IMAGES.garden[b.fl]) ? `<img src="${IMAGES.garden[b.fl]}" alt="" width="32" height="32">` : FOYER.FLOWER_EMOJI[b.fl] || "🌸"}</span><span class="stack" style="gap:2px"><span>${esc(b.txt)}</span><span class="tiny muted">${dShort(b.d)} · ${b.by === "moi" ? "noté par moi" : `noté par ${esc(b.by)}`}</span></span></div>`).join("") : `<p class="small muted">Rien encore ce mois-ci.</p>`}</section>`;
     $("#g-m").onchange = (e) => foyerJardin(box, e.target.value);
     const add = (by) => { const v = $("#bf-t").value.trim(); if (!v) return toast("Écris ton bienfait en une phrase."); FOYER.addBienfait(v, by); FX.sfx("level"); fxText("花 !"); foyerJardin(box); };
     if (isCur) {

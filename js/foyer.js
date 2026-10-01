@@ -98,6 +98,7 @@
   }
 
   // Décors qui apparaissent au fil des bienfaits du mois
-  const DECOS = [[5, "papillons", "🦋", 18, 34], [10, "lanterne", "🏮", 84, 46], [15, "etang", "🐟", 22, 82], [20, "torii", "⛩️", 50, 40], [30, "arbre", "🌳", 88, 40]];
+  // [seuil, clé, emoji de repli, x %, y % (pied), échelle]
+  const DECOS = [[5, "papillons", "🦋", 22, 32, 2], [10, "lanterne", "🏮", 80, 66, 1.5], [15, "etang", "🐟", 24, 88, 2.2], [20, "torii", "⛩️", 50, 44, 1.8], [30, "arbre", "🌳", 88, 50, 2.8]];
   window.FOYER = { DECOS, syncClock, now, paris, addDays, mondayOf, DOW, missions, voieList, due, atMin, doneOf, tick, untick, week, checkTokens, monthOf, voiePoints, levelOf, voieDoneThisWeek, bestMonth, addBienfait, LEVELS, FLOWERS, FLOWER_EMOJI, F, MISSIONS, VOIE };
 })();
