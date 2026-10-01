@@ -15,6 +15,7 @@
     { id: "eps", n: "EPS", c: "#E0336E", ic: "🏃" }, { id: "arts", n: "Arts plastiques", c: "#0A9FD8", ic: "🎨" },
     { id: "mus", n: "Musique", c: "#A0662A", ic: "🎵" }, { id: "tech", n: "Technologie", c: "#58707E", ic: "⚙️" },
     { id: "vdc", n: "Vie de classe", c: "#7D8A1F", ic: "💬" }, { id: "etude", n: "Étude", c: "#8B8B99", ic: "📘" },
+    { id: "past", n: "Temps pastoral", c: "#9C3D7A", ic: "🤝" },
     { id: "autre", n: "Autre", c: "#5D6B8A", ic: "⭐" }
   ];
   function E() { const S = STORE.S; S.edt = S.edt || {}; const e = S.edt; e.slots = e.slots || []; e.icons = e.icons || {}; return e; }

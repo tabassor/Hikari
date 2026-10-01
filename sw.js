@@ -1,5 +1,5 @@
 /* Service worker : réseau d'abord (mises à jour immédiates quand elle est connectée), cache en secours (hors ligne). */
-const CACHE = "hikari-v22";
+const CACHE = "hikari-v23";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "css/app.css", "css/kaisei-kanji.woff2", "js/gen.js", "js/art.js", "js/fx.js", "js/store.js", "js/foyer.js", "js/agenda.js", "js/app.js",
   "data/programme.js", "data/c-fr.js", "data/c-ma.js", "data/c-hg.js", "data/c-sc.js", "data/c-lv-emc.js", "data/maps.js",
   "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"];
