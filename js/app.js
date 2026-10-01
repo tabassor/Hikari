@@ -891,7 +891,29 @@
   const dLong = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
   const whenTxt = (iso) => { const n = AGENDA.daysTo(iso); return n === 0 ? "aujourd'hui" : n === 1 ? "demain" : n < 7 ? `${new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })} (dans ${n} j)` : `le ${new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" })}`; };
   function focusWhen(it) { const sj = AGENDA.subj(it.s); return `${AGENDA.TYPES[it.type] ? AGENDA.TYPES[it.type][0] : "Échéance"} de ${sj.n} ${whenTxt(it.date)}`; }
-  const sjChip = (sl) => { const sj = AGENDA.subj(sl.s); return `<span class="sj-chip" style="--c:${sj.c}">${sj.ic} ${esc(sl.lab || sj.n)}</span>`; };
+  // Icône d'une matière : la mascotte dessinée par l'élève si elle existe, sinon l'emoji
+  const sjIc = (sj, px = 22) => sj.img ? `<img class="sj-img" src="${sj.img}" width="${px}" height="${px}" alt="">` : sj.ic;
+  const sjChip = (sl) => { const sj = AGENDA.subj(sl.s); return `<span class="sj-chip ${sj.img ? "has-img" : ""}" style="--c:${sj.c}">${sjIc(sj, 30)} ${esc(sl.lab || sj.n)}</span>`; };
+  // Mascotte importée depuis la galerie : fond clair uni rendu transparent (depuis les bords), recadrée, 160 px
+  async function mascotFromFile(file) {
+    const url = URL.createObjectURL(file), im = new Image();
+    await new Promise((r, j) => { im.onload = r; im.onerror = () => j(new Error("Image illisible.")); im.src = url; });
+    const sc = Math.min(1, 512 / Math.max(im.width, im.height)), w = Math.max(1, Math.round(im.width * sc)), h = Math.max(1, Math.round(im.height * sc));
+    const cv = document.createElement("canvas"); cv.width = w; cv.height = h; const cx = cv.getContext("2d"); cx.drawImage(im, 0, 0, w, h); URL.revokeObjectURL(url);
+    const d = cx.getImageData(0, 0, w, h), p = d.data, bg = [p[0], p[1], p[2]];
+    if (bg[0] + bg[1] + bg[2] > 560) {
+      const seen = new Uint8Array(w * h), st = [], close = (i) => Math.abs(p[i * 4] - bg[0]) + Math.abs(p[i * 4 + 1] - bg[1]) + Math.abs(p[i * 4 + 2] - bg[2]) <= 40;
+      for (let x = 0; x < w; x++) st.push(x, (h - 1) * w + x); for (let y = 0; y < h; y++) st.push(y * w, y * w + w - 1);
+      while (st.length) { const i = st.pop(); if (seen[i] || !close(i)) continue; seen[i] = 1; p[i * 4 + 3] = 0; const x = i % w, y = (i / w) | 0; if (x > 0) st.push(i - 1); if (x < w - 1) st.push(i + 1); if (y > 0) st.push(i - w); if (y < h - 1) st.push(i + w); }
+      cx.putImageData(d, 0, 0);
+    }
+    let x0 = w, y0 = h, x1 = 0, y1 = 0; for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (p[(y * w + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < x0) { x0 = 0; y0 = 0; x1 = w - 1; y1 = h - 1; }
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1, side = Math.max(bw, bh) * 1.08, out = document.createElement("canvas"); out.width = out.height = 160;
+    const k = 160 / side; out.getContext("2d").drawImage(cv, x0, y0, bw, bh, (160 - bw * k) / 2, (160 - bh * k) / 2, bw * k, bh * k);
+    let u = out.toDataURL("image/webp", 0.85); if (!u.startsWith("data:image/webp")) u = out.toDataURL("image/png");
+    return u;
+  }
   const nowHM = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
   // Carte du Dōjō : le cartable (aujourd'hui le matin, le lendemain ensuite) et les échéances proches
   function drawCartable() {
@@ -902,7 +924,7 @@
     box.innerHTML = `<section class="panel stack cartable" data-go="agenda">
       ${e.slots.length ? `<div class="row" style="justify-content:space-between"><span class="eyebrow">${morning ? "Aujourd'hui" : day ? (AGENDA.daysTo(day) === 1 ? "Demain dans ton sac" : `Dans ton sac pour ${new Date(day + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })}`) : "Vacances !"}</span>${AGENDA.E().ref ? `<span class="tiny muted">semaine ${AGENDA.weekNo(day || t)}</span>` : ""}</div>
         <div class="row wrap" style="gap:6px">${bag.map(sjChip).join("") || `<span class="small muted">Pas de cours.</span>`}</div>` : ""}
-      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b><span class="tiny muted">${x.lessons.length ? "Ces leçons passent en tête de tes révisions." : esc(x.title || "")}</span></span></div>`; }).join("") : ""}
+      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${sj.img ? sjIc(sj, 40) : AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${sj.img ? AGENDA.TYPES[x.type][1] + " " : ""}${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b><span class="tiny muted">${x.lessons.length ? "Ces leçons passent en tête de tes révisions." : esc(x.title || "")}</span></span></div>`; }).join("") : ""}
     </section>`;
   }
   function viewAgenda(main, arg) {
@@ -925,7 +947,7 @@
         <div class="edt-hours">${hours.map((h) => `<span style="top:${(h * 60 - lo) * K + 26}px">${h}h</span>`).join("")}</div>
         ${Array.from({ length: days }, (_, d) => `<div class="edt-col ${d === todayCol ? "today" : ""}"><span class="edt-day">${AGENDA.DAYS[d].slice(0, 3)}</span>
           ${sl.filter((s) => s.d === d).map((s) => { const sj = AGENDA.subj(s.s), top = (toMin(s.start) - lo) * K + 26, h = (toMin(s.end) - toMin(s.start)) * K - 3, now = d === todayCol && nm >= toMin(s.start) && nm < toMin(s.end);
-            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sj.ic}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
+            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sjIc(sj, h > 44 ? 30 : 20)}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
           ${d === todayCol && nm > lo && nm < hi ? `<i class="edt-now" style="top:${(nm - lo) * K + 26}px"></i>` : ""}</div>`).join("")}
       </div>
       <div class="row wrap"><button class="btn" data-go="edt">Modifier mon emploi du temps</button><button class="btn ghost sm" id="wk-fix">On n'est pas en semaine ${cur} ?</button></div>
@@ -936,7 +958,7 @@
   }
   // ---------- Saisie de l'emploi du temps (par l'élève) ----------
   function viewEdtEdit(main) {
-    const e = AGENDA.E(), slots = JSON.parse(JSON.stringify(e.slots)), icons = Object.assign({}, e.icons); let ref = e.ref ? AGENDA.weekNo() : 0, sat = slots.some((s) => s.d === 5);
+    const e = AGENDA.E(), slots = JSON.parse(JSON.stringify(e.slots)), icons = Object.assign({}, e.icons), imgs = Object.assign({}, e.imgs); let ref = e.ref ? AGENDA.weekNo() : 0, sat = slots.some((s) => s.d === 5);
     const SJ = () => AGENDA.subjects();
     const paint = () => {
       const days = sat ? 6 : 5;
@@ -949,7 +971,7 @@
             <div class="row">${s.s === "autre" ? `<input data-f="lab" value="${esc(s.lab || "")}" placeholder="Nom (ex. Chorale)" maxlength="30" style="flex:1">` : ""}<input data-f="room" value="${esc(s.room || "")}" placeholder="Salle" maxlength="12" style="width:6em"></div></div>`).join("") || `<p class="small muted">Pas de cours.</p>`}
           <button class="btn sm" data-sadd="${d}">+ Ajouter un cours</button></section>`).join("")}
         <label class="row small" style="gap:8px"><input type="checkbox" id="sat" ${sat ? "checked" : ""}> J'ai cours le samedi</label>
-        <details><summary>Les icônes de mes matières</summary><div class="in stack">${SJ().map((x) => `<label class="row" style="gap:8px"><input class="prep-ic" data-ic="${x.id}" value="${esc(x.ic)}" maxlength="4"><span class="sj-chip" style="--c:${x.c}">${esc(x.n)}</span></label>`).join("")}<p class="tiny muted">Choisis un emoji sur ton clavier pour chaque matière.</p></div></details>
+        <details ${location.hash.endsWith("mascottes") ? "open" : ""} id="masc"><summary>Mes mascottes de matières</summary><div class="in stack"><p class="small">Pour chaque matière, un emoji ou ton propre personnage : dessine-le avec Gemini, enregistre l'image, puis choisis-la ici. Le fond blanc est retiré tout seul.</p>${SJ().map((x) => `<div class="masc-row" style="--c:${x.c}"><span class="masc-pv">${imgs[x.id] ? `<img src="${imgs[x.id]}" alt="">` : esc(icons[x.id] || x.ic)}</span><span class="sj-chip" style="--c:${x.c}">${esc(x.n)}</span><input class="prep-ic" data-ic="${x.id}" value="${esc(icons[x.id] || x.ic)}" maxlength="4" aria-label="Emoji"><label class="btn sm">Image<input type="file" accept="image/*" data-img="${x.id}" hidden></label>${imgs[x.id] ? `<button class="btn ghost sm" data-imgx="${x.id}" aria-label="Retirer l'image">✕</button>` : ""}</div>`).join("")}</div></details>
         <div class="row wrap"><button class="btn primary" id="edt-save" style="flex:1">Enregistrer</button><button class="btn ghost" data-go="agenda">Annuler</button></div>`;
       const read = () => { $$("[data-si]", main).forEach((r) => { const s = slots[+r.dataset.si]; $$("[data-f]", r).forEach((x) => (s[x.dataset.f] = x.dataset.f === "w" ? (+x.value || 0) : x.value.trim())); }); $$("[data-ic]", main).forEach((x) => { if (x.value.trim()) icons[x.dataset.ic] = x.value.trim(); }); };
       $$("[data-ref]", main).forEach((b) => (b.onclick = () => { read(); ref = +b.dataset.ref; paint(); }));
@@ -959,10 +981,13 @@
       $$("[data-sdel]", main).forEach((b) => (b.onclick = () => { read(); slots.splice(+b.dataset.sdel, 1); paint(); }));
       $$("[data-f=s]", main).forEach((x) => (x.onchange = () => { read(); paint(); }));
       $("#sat").onchange = (ev) => { read(); sat = ev.target.checked; paint(); };
+      const keepOpen = () => { const m = $("#masc"); if (m) m.open = true; };
+      $$("[data-img]", main).forEach((x) => (x.onchange = async () => { const f = x.files[0]; if (!f) return; read(); try { imgs[x.dataset.img] = await mascotFromFile(f); FX.sfx("good"); } catch (err) { toast(err.message || "Image illisible."); } const y = scrollY; paint(); keepOpen(); scrollTo(0, y); }));
+      $$("[data-imgx]", main).forEach((b) => (b.onclick = () => { read(); delete imgs[b.dataset.imgx]; const y = scrollY; paint(); keepOpen(); scrollTo(0, y); }));
       $("#edt-save").onclick = () => { read();
         const bad = slots.find((s) => !(s.start < s.end)); if (bad) return toast(`${AGENDA.DAYS[bad.d]} : l'heure de fin doit être après l'heure de début.`);
         if (slots.some((s) => s.w) && !ref) return toast("Dis-moi si cette semaine est une semaine 1 ou 2.");
-        e.slots = slots.filter((s) => sat || s.d < 5); e.icons = icons; if (ref && ref !== (e.ref ? AGENDA.weekNo() : 0)) AGENDA.setWeek(ref); else if (!e.ref && ref) AGENDA.setWeek(ref);
+        e.slots = slots.filter((s) => sat || s.d < 5); e.icons = icons; e.imgs = imgs; if (ref && ref !== (e.ref ? AGENDA.weekNo() : 0)) AGENDA.setWeek(ref); else if (!e.ref && ref) AGENDA.setWeek(ref);
         STORE.save(); FX.sfx("stamp"); toast("Emploi du temps enregistré."); go("agenda", true); };
     };
     paint();
@@ -971,7 +996,7 @@
   function drawAgendaList(box) {
     const up = AGENDA.upcoming(), past = AGENDA.past().slice(0, 10);
     const row = (x, old) => { const sj = AGENDA.subj(x.s), ty = AGENDA.TYPES[x.type] || AGENDA.TYPES.ctrl, n = STORE.buildSession({ agenda: x.id }).length;
-      return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${esc(ty[0])} · ${sj.ic} ${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
+      return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${sj.img ? sjIc(sj, 44) : ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${sj.img ? ty[1] + " " : ""}${esc(ty[0])} · ${sj.img ? "" : sj.ic + " "}${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
         ${x.lessons.length ? `<span class="tiny muted">${x.lessons.map((l) => STORE.LEI[l] ? esc(STORE.LEI[l].title) : "").filter(Boolean).join(" · ")}</span>` : `<span class="tiny muted">Aucune leçon liée dans Hikari.</span>`}</span><button class="btn ghost sm" data-adel="${x.id}" aria-label="Supprimer">✕</button></div>
         ${!old && n ? `<button class="btn sm primary" data-go="seance~a:${x.id}">S'entraîner maintenant · ${n}</button>` : ""}</div>`; };
     box.innerHTML = `<button class="btn primary" id="ag-new">+ Noter une interro ou une leçon</button>

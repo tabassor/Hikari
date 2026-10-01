@@ -17,12 +17,12 @@
     { id: "vdc", n: "Vie de classe", c: "#7D8A1F", ic: "💬" }, { id: "etude", n: "Étude", c: "#8B8B99", ic: "📘" },
     { id: "autre", n: "Autre", c: "#5D6B8A", ic: "⭐" }
   ];
-  function E() { const S = STORE.S; S.edt = S.edt || {}; const e = S.edt; e.slots = e.slots || []; e.icons = e.icons || {}; return e; }
+  function E() { const S = STORE.S; S.edt = S.edt || {}; const e = S.edt; e.slots = e.slots || []; e.icons = e.icons || {}; e.imgs = e.imgs || {}; return e; }
   function A() { const S = STORE.S; S.agenda = S.agenda || []; return S.agenda; }
   function subjects() {
-    const ic = E().icons;
-    return PROGRAMME.subjects.map((s) => ({ id: s.id, n: s.short || s.name, c: s.color, k: s.kanji, hk: true, ic: ic[s.id] || DEF_IC[s.id] || "⭐" }))
-      .concat(EXTRA.map((x) => Object.assign({}, x, { ic: ic[x.id] || x.ic })));
+    const ic = E().icons, im = E().imgs;
+    return PROGRAMME.subjects.map((s) => ({ id: s.id, n: s.short || s.name, c: s.color, k: s.kanji, hk: true, ic: ic[s.id] || DEF_IC[s.id] || "⭐", img: im[s.id] || "" }))
+      .concat(EXTRA.map((x) => Object.assign({}, x, { ic: ic[x.id] || x.ic, img: im[x.id] || "" })));
   }
   const subj = (id) => subjects().find((s) => s.id === id) || subjects().find((s) => s.id === "autre");
 

@@ -33,7 +33,7 @@ def main():
     repo = sys.argv[1]
     os.makedirs(os.path.join(repo, "img"), exist_ok=True)
     js = os.path.join(repo, "data/images.js"); src = open(js, encoding="utf8").read()
-    data = json.loads(re.search(r"window\.IMAGES = (\{.*\});", src, re.S).group(1).replace("ren:", '"ren":').replace("boss:", '"boss":').replace("garden:", '"garden":'))
+    data = json.loads(re.search(r"window\.IMAGES = (\{.*\});", src, re.S).group(1).replace("ren:", '"ren":').replace("boss:", '"boss":').replace("garden:", '"garden":').replace("subj:", '"subj":'))
     for arg in sys.argv[2:]:
         key, path = arg.split("=", 1)
         kind, name = key.split("-", 1)
