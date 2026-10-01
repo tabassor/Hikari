@@ -723,3 +723,13 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .bf-row { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--panel); box-shadow: var(--shadow-sm); }
 .bf-f { font-size: 1.5rem; text-align: center; }
 @media (max-width: 380px) { .tabs button { font-size: .62rem; } .tabs button .k { font-size: 1.2rem; } }
+/* Foyer : préparation par les parents */
+.prep-it { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--hair); border-radius: 14px; background: var(--panel2); }
+.prep-it .row { gap: 6px; align-items: center; }
+.prep-ic { width: 3.2em !important; text-align: center; font-size: 1.1rem; padding-inline: 4px !important; }
+.prep-days { gap: 5px !important; }
+.pday { border: 1px solid var(--hair); background: var(--panel); color: var(--ink); border-radius: 99px; padding: 5px 9px; font: 800 .82rem var(--f-body, inherit); cursor: pointer; }
+.pday.on { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.pday.all { background: transparent; }
+.prep-sugg { gap: 6px !important; }
+.prep-sugg .pday { font-weight: 600; }

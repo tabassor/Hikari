@@ -24,40 +24,51 @@
   const mondayOf = (iso) => addDays(iso, -((new Date(iso + "T12:00:00Z").getUTCDay() + 6) % 7));
   const DOW = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
 
-  // ---------- Contenu par défaut (modifiable par le parent) ----------
-  const MISSIONS = [
-    { id: "bac", n: "Vider le bac des recyclables dans la poubelle dehors", days: [0, 1, 2, 3, 4, 5, 6], at: "19:00", ic: "♻️" },
-    { id: "menagers", n: "Sortir le conteneur des déchets ménagers", days: [0, 3], at: "19:00", ic: "🗑️" },
-    { id: "recyclables", n: "Sortir le conteneur des recyclables", days: [1], at: "19:00", ic: "📦" },
-    { id: "verre", n: "Sortir le conteneur de verre", days: [2], at: "19:00", ic: "🍾" },
-    { id: "vegetaux", n: "Sortir les déchets végétaux", days: [6], at: "19:00", ic: "🍂" }
-  ];
-  const VOIE = [
-    { id: "sac", n: "Préparer mon sac la veille", p: 1, freq: "jour", ic: "🎒" },
-    { id: "chambre", n: "Ranger ma chambre", p: 1, freq: "jour", ic: "🛏️" },
-    { id: "chaussures", n: "Ranger mes chaussures", p: 1, freq: "jour", ic: "👟" },
-    { id: "linge", n: "Mettre mon linge au sale", p: 1, freq: "jour", ic: "🧺" },
-    { id: "lumiere", n: "Éteindre la lumière à l'heure convenue", p: 1, freq: "jour", ic: "🌙" },
-    { id: "ecran", n: "Rester sous mon budget d'écran", p: 1, freq: "jour", ic: "📱" },
-    { id: "biblio", n: "Ranger ma bibliothèque", p: 3, freq: "semaine", ic: "📚" },
-    { id: "sdb", n: "Ranger ma salle de bain", p: 3, freq: "semaine", ic: "🪥" },
-    { id: "spot", n: "Aider à ranger un coin de la maison", p: 3, freq: "semaine", ic: "🧹" },
-    { id: "pommes", n: "Mission pommes de pin dans le jardin", p: 3, freq: "semaine", ic: "🌲" }
-  ];
-  const LEVELS = [[0, "Graine", "種"], [60, "Bronze", "銅"], [110, "Argent", "銀"], [160, "Or", "金"], [200, "Légende", "伝"]];
+  // ---------- Contenu : préparé par les parents dans l'appli (Moi → Espace parent → Foyer) ----------
+  // Rien de personnel dans le code public : missions et défis vivent uniquement sur le téléphone (S.foyer.cfg).
+  // cfg = { hist: [{from, list}], voie: [...] (off = retiré, gardé pour les points passés), parents: [...], tokenWith }
+  const FRACTIONS = [0, 0.26, 0.48, 0.7, 0.87];
+  const LV = [["Graine", "種"], ["Bronze", "銅"], ["Argent", "銀"], ["Or", "金"], ["Légende", "伝"]];
+  // Suggestions génériques proposées dans l'éditeur
+  const SUGG_M = [["🗑️", "Sortir les poubelles"], ["♻️", "Vider le bac de tri"], ["🍽️", "Mettre la table"], ["🧽", "Débarrasser la table"], ["🥣", "Vider le lave-vaisselle"], ["🐾", "Nourrir l'animal"], ["👕", "Étendre le linge"], ["🪴", "Arroser les plantes"]];
+  const SUGG_V = [["🎒", "Préparer mon sac la veille", "jour"], ["🛏️", "Ranger ma chambre", "jour"], ["👟", "Ranger mes chaussures", "jour"], ["🧺", "Mettre mon linge au sale", "jour"], ["🌙", "Éteindre la lumière à l'heure convenue", "jour"], ["📱", "Rester sous mon budget d'écran", "jour"], ["📖", "Lire 20 minutes", "jour"], ["📚", "Ranger ma bibliothèque", "semaine"], ["🪥", "Ranger ma salle de bain", "semaine"], ["🧹", "Aider à ranger un coin de la maison", "semaine"]];
   const FLOWERS = ["sakura", "tsubaki", "ajisai", "ayame", "kiku", "asagao", "hasu", "tanpopo"];
   const FLOWER_EMOJI = { sakura: "🌸", tsubaki: "🌺", ajisai: "💠", ayame: "🪻", kiku: "🌼", asagao: "🌷", hasu: "🪷", tanpopo: "🌻" };
 
   function F() { const S = STORE.S; S.foyer = S.foyer || {}; const f = S.foyer; f.log = f.log || {}; f.tokens = f.tokens || {}; f.voie = f.voie || {}; f.records = f.records || {}; f.bienfaits = f.bienfaits || []; return f; }
-  const missions = () => F().missions || MISSIONS;
-  const voieList = () => F().voieList || VOIE;
-  const due = (iso) => { const dow = (new Date(iso + "T12:00:00Z").getUTCDay() + 6) % 7; return missions().filter((m) => m.days.includes(dow)); };
+  const cfg = () => F().cfg || null;
+  const ready = () => !!cfg();
+  const hist = () => (cfg() && cfg().hist) || [];
+  const listAt = (iso) => { let L = []; hist().forEach((h) => { if (h.from <= iso) L = h.list; }); return L; };
+  const missions = () => listAt(paris().iso);
+  const voieAll = () => (cfg() && cfg().voie) || [];
+  const voieList = () => voieAll().filter((v) => !v.off);
+  const parents = () => (cfg() && cfg().parents && cfg().parents.length ? cfg().parents : ["Papa", "Maman"]);
+  const tokenWith = () => (cfg() && cfg().tokenWith) || parents()[0];
+  const due = (iso) => { const dow = (new Date(iso + "T12:00:00Z").getUTCDay() + 6) % 7; return listAt(iso).filter((m) => m.days.includes(dow)); };
   const atMin = (m) => { const [h, mm] = (m.at || "19:00").split(":"); return +h * 60 + +mm; };
   const doneOf = (iso, id) => (F().log[iso] || {})[id];
+  // Points possibles sur un mois et niveaux proportionnels (Bronze ≈ 26 %, Argent 48 %, Or 70 %, Légende 87 %)
+  const maxMonth = (list = voieList()) => Math.round(list.reduce((a, v) => a + (v.freq === "semaine" ? v.p * 4.3 : v.p * 30.4), 0));
+  function levels(list) { const mx = maxMonth(list) || 230; return LV.map((l, i) => [i ? Math.max(i * 5, Math.round((mx * FRACTIONS[i]) / 5) * 5) : 0, l[0], l[1]]); }
+  const uid = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  // Enregistre la configuration à partir d'une date (aujourd'hui par défaut) : les jours d'avant gardent leurs anciennes missions
+  function saveCfg(c, from) {
+    const f = F(), old = f.cfg || {}, start = from || paris().iso;
+    const ms = (c.missions || []).filter((m) => m.n && m.days && m.days.length).map((m) => ({ id: m.id || uid("m"), n: String(m.n).slice(0, 80), ic: m.ic || "⭐", days: m.days.slice().sort(), at: /^\d\d:\d\d$/.test(m.at || "") ? m.at : "19:00" }));
+    const h = (old.hist || []).filter((x) => x.from < start); h.push({ from: start, list: ms });
+    const vs = (c.voie || []).filter((v) => v.n).map((v) => ({ id: v.id || uid("v"), n: String(v.n).slice(0, 80), ic: v.ic || "⭐", freq: v.freq === "semaine" ? "semaine" : "jour", p: v.freq === "semaine" ? 3 : 1 }));
+    (old.voie || []).forEach((v) => { if (!vs.some((x) => x.id === v.id)) vs.push(Object.assign({}, v, { off: true })); });
+    const ps = (c.parents || parents()).map((x) => String(x).trim()).filter(Boolean).slice(0, 4);
+    f.cfg = { hist: h, voie: vs, parents: ps.length ? ps : ["Papa", "Maman"], tokenWith: ps.includes(c.tokenWith) ? c.tokenWith : ps[0] || "Papa" };
+    STORE.save();
+  }
+  // Configuration actuelle sous forme éditable / transportable par lien
+  const exportCfg = () => ({ missions: missions().map((m) => Object.assign({}, m)), voie: voieList().map((v) => Object.assign({}, v)), parents: parents(), tokenWith: tokenWith() });
 
   // Coche une mission (aujourd'hui seulement ; les jours passés se corrigent avec le code parent)
   function tick(id, byParent, iso) {
-    const t = paris(), day = iso || t.iso, m = missions().find((x) => x.id === id); if (!m) return null;
+    const t = paris(), day = iso || t.iso, m = due(day).find((x) => x.id === id) || missions().find((x) => x.id === id); if (!m) return null;
     const late = day < t.iso || (day === t.iso && t.hm >= atMin(m));
     const rec = { t: byParent ? "parent" : late ? "silver" : "gold", at: now().toISOString() };
     (F().log[day] = F().log[day] || {})[id] = rec; STORE.save(); return rec;
@@ -80,10 +91,10 @@
   // Voie du mois
   const monthOf = (iso) => iso.slice(0, 7);
   function voiePoints(month) {
-    let pts = 0; Object.entries(F().voie).forEach(([d, set]) => { if (d.slice(0, 7) !== month) return; Object.keys(set).forEach((id) => { const v = voieList().find((x) => x.id === id); if (v) pts += v.p; }); });
+    let pts = 0; Object.entries(F().voie).forEach(([d, set]) => { if (d.slice(0, 7) !== month) return; Object.keys(set).forEach((id) => { const v = voieAll().find((x) => x.id === id); if (v) pts += v.p; }); });
     return pts;
   }
-  const levelOf = (pts) => { let L = LEVELS[0], next = null; LEVELS.forEach((l, i) => { if (pts >= l[0]) { L = l; next = LEVELS[i + 1] || null; } }); return { L, next }; };
+  const levelOf = (pts) => { const LS = levels(); let L = LS[0], next = null; LS.forEach((l, i) => { if (pts >= l[0]) { L = l; next = LS[i + 1] || null; } }); return { L, next }; };
   function voieDoneThisWeek(id, iso) { const mon = mondayOf(iso); for (let i = 0; i < 7; i++) { const d = addDays(mon, i); if (d !== iso && F().voie[d] && F().voie[d][id]) return d; } return null; }
   function bestMonth() { const f = F(), byM = {}; Object.keys(f.voie).forEach((d) => (byM[d.slice(0, 7)] = 1)); let best = null; Object.keys(byM).forEach((m) => { const p = voiePoints(m); if (!best || p > best.p) best = { m, p }; }); return best; }
 
@@ -100,5 +111,5 @@
   // Décors qui apparaissent au fil des bienfaits du mois
   // [seuil, clé, emoji de repli, x %, y % (pied), échelle]
   const DECOS = [[5, "papillons", "🦋", 22, 32, 2], [10, "lanterne", "🏮", 80, 66, 1.5], [15, "etang", "🐟", 24, 88, 2.2], [20, "torii", "⛩️", 50, 44, 1.8], [30, "arbre", "🌳", 88, 50, 2.8]];
-  window.FOYER = { DECOS, syncClock, now, paris, addDays, mondayOf, DOW, missions, voieList, due, atMin, doneOf, tick, untick, week, checkTokens, monthOf, voiePoints, levelOf, voieDoneThisWeek, bestMonth, addBienfait, LEVELS, FLOWERS, FLOWER_EMOJI, F, MISSIONS, VOIE };
+  window.FOYER = { DECOS, syncClock, now, paris, addDays, mondayOf, DOW, missions, voieList, due, atMin, doneOf, tick, untick, week, checkTokens, monthOf, voiePoints, levelOf, voieDoneThisWeek, bestMonth, addBienfait, levels, maxMonth, FLOWERS, FLOWER_EMOJI, F, cfg, ready, saveCfg, exportCfg, voieAll, parents, tokenWith, SUGG_M, SUGG_V };
 })();

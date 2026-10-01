@@ -92,9 +92,9 @@
     if (!S().profile) { renderTabs(""); renderHUD(); return viewOnboarding(main); }
     renderHUD();
     const [name, ...rest] = route.split("~"); const arg = rest.join("~");
-    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", foyer: "foyer", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
+    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", foyer: "foyer", fprep: "moi", fcfg: "moi", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
     renderTabs(tab);
-    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, foyer: viewFoyer, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
+    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, foyer: viewFoyer, fprep: viewFoyerPrep, fcfg: viewFoyerImport, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
   }
   document.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b && !b.disabled) { e.preventDefault(); go(b.dataset.go); } });
   window.addEventListener("popstate", (e) => { leaveGuard = null; const d = (e.state && e.state.d) || 0; navDir = d < depth ? "back" : "fwd"; depth = d; render(); });
@@ -817,6 +817,7 @@
         <div id="p-zone" class="stack" hidden>
           <p class="eyebrow">Suivi</p><div id="parent" class="stack"></div>
           <p class="eyebrow">Notes</p><div id="p-notes" class="stack"></div>
+          <p class="eyebrow">Foyer</p><p class="small">Missions de la maison, défis de la Voie du mois et prénoms des parents. Tout reste sur ce téléphone.</p><button class="btn" data-go="fprep">Préparer le Foyer</button>
           <p class="eyebrow">Réglages</p>
         <label class="stack"><span class="small"><b>Nouvelles cartes par jour</b> au maximum : <b id="st-new-v">${S().settings.newPerDay}</b></span><input type="range" id="st-new" min="5" max="50" step="5" value="${S().settings.newPerDay}"><span class="tiny muted">Plus haut = découvre plus vite les nouvelles leçons, mais les révisions des jours suivants seront plus longues.</span></label>
         <label class="stack"><span class="small"><b>Zone de vacances scolaires</b> (pour le calendrier de la conjugaison)</span><select id="st-zone">${["A", "B", "C"].map((z) => `<option ${S().settings.zone === z ? "selected" : ""}>${z}</option>`).join("")}</select></label>
@@ -898,6 +899,7 @@
     const tab = arg || "missions";
     main.innerHTML = `<div class="foyer-head"><h1>Foyer</h1><p class="small muted">La vie de la maison. Ça ne compte pas pour tes révisions, et tes révisions ne comptent pas ici.</p></div>
       <div class="seg foyer-seg">${[["missions", "Missions"], ["voie", "Voie du mois"], ["jardin", "Jardin"]].map(([id, n]) => `<button aria-pressed="${tab === id}" data-go="foyer~${id}">${n}</button>`).join("")}</div><div id="fy"></div>`;
+    if (!FOYER.ready() && tab !== "jardin") { $("#fy").innerHTML = `<section class="panel stack" style="align-items:center;text-align:center">${ART.sensei("think", 96)}<p><b>Le Foyer n'est pas encore préparé.</b></p><p class="small">Demande à tes parents : ils choisissent tes missions et tes défis dans <b>Moi → Espace parent → Foyer</b>.</p><button class="btn" data-go="fprep">Espace parent</button></section>`; return; }
     ({ missions: foyerMissions, voie: foyerVoie, jardin: foyerJardin })[tab]($("#fy"));
   }
   const dShort = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", timeZone: "UTC" });
@@ -907,18 +909,18 @@
     const beforeDeadline = (m) => t.hm < FOYER.atMin(m);
     box.innerHTML = `<section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Aujourd'hui</h2><span class="small muted">${FOYER.DOW[t.dow]}</span></div>
         ${today.map((m) => { const r = FOYER.doneOf(t.iso, m.id); return `<button class="mission ${r ? "done" : ""} ${!r && !beforeDeadline(m) ? "late" : ""}" data-m="${m.id}"><span class="mi">${m.ic}</span><span class="mt"><b>${esc(m.n)}</b><span class="tiny muted">${r ? (r.t === "gold" ? "Faite d'elle-même : médaille d'or" : r.t === "silver" ? "Faite après le rappel : médaille d'argent" : "Validée par un parent") : beforeDeadline(m) ? `avant ${m.at}` : `il est l'heure : à faire maintenant`}</span></span>${r ? medal(r) : `<span class="check" aria-hidden="true"></span>`}</button>`; }).join("")}
-        <p class="tiny muted">Coche avant ${today[0] ? today[0].at : "19:00"} pour la médaille d'or 金. Après, c'est la médaille d'argent 銀.</p></section>
+        ${today.length ? `<p class="tiny muted">Coche avant l'heure indiquée pour la médaille d'or 金. Après, c'est la médaille d'argent 銀.</p>` : `<p class="small muted">Pas de mission aujourd'hui : profite !</p>`}</section>
       <section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Ma semaine</h2><span class="small muted">${w.done} / ${w.total}</span></div>
         <div class="wk">${w.days.map((d) => `<div class="wd ${d.iso === t.iso ? "today" : ""}"><span class="tiny">${dShort(d.iso)}</span>${d.ms.map((x) => `<span class="wm ${x.r ? "ok" : d.iso < t.iso ? "miss" : ""}" title="${esc(x.m.n)}">${x.r ? medal(x.r) : x.m.ic}</span>`).join("")}</div>`).join("")}</div>
         <div class="dbar"><i style="width:${w.total ? Math.round((100 * w.done) / w.total) : 0}%"></i></div>
-        <p class="small">${w.complete ? `Semaine complète : ton jeton est gagné${w.allGold ? ", et tout en or !" : " !"}` : `Toutes les missions de la semaine = un jeton à échanger avec Papa le dimanche.`}</p>
+        <p class="small">${w.complete ? `Semaine complète : ton jeton est gagné${w.allGold ? ", et tout en or !" : " !"}` : `Toutes les missions de la semaine = un jeton à échanger avec ${esc(FOYER.tokenWith())} en fin de semaine.`}</p>
         <button class="btn ghost sm" id="fy-fix" style="justify-self:start">Corriger un jour (parent)</button></section>
       <section class="stack"><h2>Mes jetons</h2>${Object.keys(f.tokens).length ? Object.entries(f.tokens).sort((a, b) => (a[0] < b[0] ? 1 : -1)).map(([mon, tk]) => `<div class="ticket ${tk.used ? "used" : ""}"><div class="tk-l token-face ${tk.gold ? "gold" : ""}"><span>家</span></div><div class="tk-r stack" style="gap:3px"><span class="who">Jeton de la semaine${tk.gold ? " · tout en or" : ""}</span><b>Semaine du ${new Date(mon + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" })}</b>
-          ${tk.used ? `<span class="stamp-used">Échangé le ${new Date(tk.used + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" })}</span>` : `<button class="btn sm primary" data-tok="${mon}" style="justify-self:start">Échanger avec Papa</button>`}</div></div>`).join("") : `<p class="small muted">Pas encore de jeton : termine toutes les missions d'une semaine.</p>`}</section>`;
+          ${tk.used ? `<span class="stamp-used">Échangé le ${new Date(tk.used + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" })}</span>` : `<button class="btn sm primary" data-tok="${mon}" style="justify-self:start">Échanger avec ${esc(FOYER.tokenWith())}</button>`}</div></div>`).join("") : `<p class="small muted">Pas encore de jeton : termine toutes les missions d'une semaine.</p>`}</section>`;
     $$("[data-m]", box).forEach((b) => (b.onclick = () => {
       const id = b.dataset.m; if (FOYER.doneOf(t.iso, id)) { if (!b.dataset.sure) { b.dataset.sure = 1; toast("Touche encore pour décocher."); return; } FOYER.untick(id); return foyerMissions(box); }
       const r = FOYER.tick(id); FX.sfx(r.t === "gold" ? "level" : "good"); const [x, y] = FX.center(b); FX.burst(x, y, { n: r.t === "gold" ? 40 : 20, colors: r.t === "gold" ? ["#E8B923", "#FFD36E", "#fff"] : ["#C0C7D1", "#fff"] });
-      fxText(r.t === "gold" ? "金 BRAVO !" : "銀 FAIT !"); setTimeout(() => { foyerMissions(box); renderTabs("foyer"); const nw = FOYER.checkTokens(); if (nw.length) celebrate("家の印！", `<div class="token-face big ${FOYER.F().tokens[nw[0]].gold ? "gold" : ""}"><span>家</span></div><p><b>Semaine complète !</b></p><p class="small">Ton jeton t'attend : montre-le à Papa pour ton argent de poche.</p>`, "Génial !", "level"); }, 650);
+      fxText(r.t === "gold" ? "金 BRAVO !" : "銀 FAIT !"); setTimeout(() => { foyerMissions(box); renderTabs("foyer"); const nw = FOYER.checkTokens(); if (nw.length) celebrate("家の印！", `<div class="token-face big ${FOYER.F().tokens[nw[0]].gold ? "gold" : ""}"><span>家</span></div><p><b>Semaine complète !</b></p><p class="small">Ton jeton t'attend : montre-le à ${esc(FOYER.tokenWith())}.</p>`, "Génial !", "level"); }, 650);
     }));
     $$("[data-tok]", box).forEach((b) => (b.onclick = async () => { if (!(await pinPrompt("Échanger le jeton de la semaine : code parent"))) return; FOYER.F().tokens[b.dataset.tok].used = FOYER.paris().iso; STORE.save(); FX.sfx("stamp"); toast("Jeton échangé. Merci pour ton aide !"); foyerMissions(box); }));
     $("#fy-fix").onclick = async () => {
@@ -938,9 +940,9 @@
     const row = (v, iso) => { const on = !!(f.voie[iso] && f.voie[iso][v.id]), other = v.freq === "semaine" && FOYER.voieDoneThisWeek(v.id, iso);
       return `<button class="voie-it ${on ? "on" : ""}" data-v="${v.id}" data-d="${iso}" ${other && !on ? "disabled" : ""}><span class="mi">${v.ic}</span><span class="mt"><b>${esc(v.n)}</b><span class="tiny muted">${v.freq === "semaine" ? `+${v.p} · une fois par semaine${other && !on ? " : déjà fait cette semaine" : ""}` : `+${v.p}`}</span></span><span class="check ${on ? "on" : ""}" aria-hidden="true"></span></button>`; };
     box.innerHTML = `<section class="panel stack voie-head"><div class="lvl"><span class="lvl-k">${L[2]}</span><div><span class="eyebrow">Voie de ${monthName}</span><b class="lvl-n">${L[1]}</b><span class="small muted">${pts} points${next ? ` · encore ${next[0] - pts} pour ${next[1]}` : " · niveau maximal !"}</span></div></div>
-        <div class="lvl-bar">${FOYER.LEVELS.slice(1).map((l) => `<span class="${pts >= l[0] ? "on" : ""}" style="--w:${l[0]}"><i>${l[2]}</i><small>${l[0]}</small></span>`).join("")}<b style="width:${Math.min(100, (pts / FOYER.LEVELS[FOYER.LEVELS.length - 1][0]) * 100)}%"></b></div>
+        <div class="lvl-bar">${FOYER.levels().slice(1).map((l) => `<span class="${pts >= l[0] ? "on" : ""}" style="--w:${l[0]}"><i>${l[2]}</i><small>${l[0]}</small></span>`).join("")}<b style="width:${Math.min(100, (pts / FOYER.levels()[4][0]) * 100)}%"></b></div>
         <p class="tiny muted">Tout repart de zéro le 1er du mois.${best && best.m !== m ? ` Ton record : ${best.p} points (${new Date(best.m + "-15T12:00:00Z").toLocaleDateString("fr-FR", { month: "long", timeZone: "UTC" })}).` : ""}</p></section>
-      <section class="stack"><h2>Aujourd'hui</h2>${FOYER.voieList().map((v) => row(v, t.iso)).join("")}</section>
+      <section class="stack"><h2>Aujourd'hui</h2>${FOYER.voieList().length ? FOYER.voieList().map((v) => row(v, t.iso)).join("") : `<p class="small muted">Pas encore de défi ce mois-ci.</p>`}</section>
       <details><summary>Hier (${FOYER.DOW[(t.dow + 6) % 7]}) : j'ai oublié de cocher</summary><div class="in">${FOYER.monthOf(y) === m ? FOYER.voieList().map((v) => row(v, y)).join("") : `<p class="small muted">Hier, c'était le mois dernier : on repart de zéro.</p>`}</div></details>`;
     $$("[data-v]", box).forEach((b) => (b.onclick = () => {
       const d = b.dataset.d, id = b.dataset.v; f.voie[d] = f.voie[d] || {};
@@ -972,7 +974,7 @@
     if (isCur) {
       $("#bf-me").onclick = () => add("moi");
       $("#bf-par").onclick = async () => { if (!$("#bf-t").value.trim()) return toast("Écris d'abord le bienfait."); if (!(await pinPrompt("Bienfait noté par un parent : code parent"))) return;
-        const o = document.createElement("div"); o.className = "celebrate"; o.innerHTML = `<div class="panel stack" style="align-items:center"><b>Qui le note ?</b><div class="row"><button class="btn primary" data-by="Papa">Papa</button><button class="btn primary" data-by="Maman">Maman</button></div></div>`;
+        const o = document.createElement("div"); o.className = "celebrate"; o.innerHTML = `<div class="panel stack" style="align-items:center"><b>Qui le note ?</b><div class="row wrap" style="justify-content:center">${FOYER.parents().map((p) => `<button class="btn primary" data-by="${esc(p)}">${esc(p)}</button>`).join("")}</div></div>`;
         document.body.appendChild(o); $$("[data-by]", o).forEach((b) => (b.onclick = () => { o.remove(); add(b.dataset.by); })); };
     }
   }
@@ -1137,6 +1139,56 @@
 
   // ---------- Suivi parent ----------
   // Données compactes du bilan (aussi transportées dans le lien envoyé au parent).
+  // ---------- Foyer : préparation par les parents ----------
+  const DAYS1 = ["L", "Ma", "Me", "J", "V", "S", "D"];
+  async function viewFoyerPrep(main) {
+    if (parentUntil <= Date.now() && !(await pinPrompt("Préparer le Foyer : code parent"))) return go("moi", true);
+    const c = JSON.parse(JSON.stringify(FOYER.exportCfg()));
+    const paint = () => {
+      const lv = FOYER.levels(c.voie), mx = FOYER.maxMonth(c.voie);
+      main.innerHTML = `<section class="stack"><p class="eyebrow">Espace parent</p><h1>Préparer le Foyer</h1><p class="small muted">Les changements s'appliquent à partir d'aujourd'hui : les jours passés gardent leurs anciennes missions, les points déjà gagnés restent.</p></section>
+      <section class="panel stack"><h2>Missions de la maison</h2><p class="tiny muted">Chaque mission a ses jours et son heure limite. Avant l'heure : médaille d'or, aucun rappel. Après : rappel de Ren et médaille d'argent. Toutes les missions de la semaine = un jeton.</p>
+        ${c.missions.map((m, i) => `<div class="prep-it" data-mi="${i}"><div class="row"><input class="prep-ic" data-f="ic" value="${esc(m.ic)}" maxlength="4" aria-label="Icône"><input data-f="n" value="${esc(m.n)}" maxlength="80" placeholder="Nom de la mission" style="flex:1"><button class="btn ghost sm" data-del="m${i}" aria-label="Supprimer">✕</button></div>
+          <div class="row wrap prep-days">${DAYS1.map((d, k) => `<button class="pday ${m.days.includes(k) ? "on" : ""}" data-day="${k}" aria-pressed="${m.days.includes(k)}">${d}</button>`).join("")}<button class="pday all" data-day="all">Tous</button><label class="small row" style="gap:4px;margin-left:auto">avant <input type="time" data-f="at" value="${esc(m.at)}" style="width:auto"></label></div></div>`).join("") || `<p class="small muted">Aucune mission pour l'instant.</p>`}
+        <button class="btn" id="pm-add">+ Ajouter une mission</button>
+        <div class="row wrap prep-sugg"><span class="tiny muted">Idées :</span>${FOYER.SUGG_M.map(([ic, n], k) => c.missions.some((m) => m.n === n) ? "" : `<button class="pday" data-sm="${k}">${ic} ${esc(n)}</button>`).join("")}</div></section>
+      <section class="panel stack"><h2>Voie du mois</h2><p class="tiny muted">Défis quotidiens : +1 par jour. Défis de la semaine : +3, une fois par semaine. Les niveaux s'ajustent tout seuls au nombre de points possibles.</p>
+        ${c.voie.map((v, i) => `<div class="prep-it" data-vi="${i}"><div class="row"><input class="prep-ic" data-f="ic" value="${esc(v.ic)}" maxlength="4" aria-label="Icône"><input data-f="n" value="${esc(v.n)}" maxlength="80" placeholder="Nom du défi" style="flex:1"><button class="btn ghost sm" data-del="v${i}" aria-label="Supprimer">✕</button></div>
+          <div class="row"><select data-f="freq" style="width:auto"><option value="jour" ${v.freq !== "semaine" ? "selected" : ""}>Chaque jour · +1</option><option value="semaine" ${v.freq === "semaine" ? "selected" : ""}>Une fois par semaine · +3</option></select></div></div>`).join("") || `<p class="small muted">Aucun défi pour l'instant.</p>`}
+        <button class="btn" id="pv-add">+ Ajouter un défi</button>
+        <div class="row wrap prep-sugg"><span class="tiny muted">Idées :</span>${FOYER.SUGG_V.map(([ic, n], k) => c.voie.some((v) => v.n === n) ? "" : `<button class="pday" data-sv="${k}">${ic} ${esc(n)}</button>`).join("")}</div>
+        <p class="small">${mx ? `Jusqu'à environ <b>${mx} points</b> par mois. Niveaux : ${lv.slice(1).map((l) => `${l[1]} ${l[0]}`).join(" · ")}.` : "Ajoute des défis pour voir les niveaux."}</p></section>
+      <section class="panel stack"><h2>Parents</h2><label class="stack"><span class="small">Prénoms ou noms affichés (séparés par des virgules), pour signer les bienfaits</span><input id="pp-n" value="${esc(c.parents.join(", "))}"></label>
+        <label class="stack"><span class="small">Le jeton de la semaine s'échange avec</span><select id="pp-t" style="width:auto">${c.parents.map((p) => `<option ${p === c.tokenWith ? "selected" : ""}>${esc(p)}</option>`).join("")}</select></label></section>
+      <div class="row wrap"><button class="btn primary" id="pf-save" style="flex:1">Enregistrer</button><button class="btn ghost" data-go="moi~parent">Annuler</button></div>`;
+      // lecture des champs avant chaque action
+      const read = () => {
+        $$("[data-mi]", main).forEach((r) => { const m = c.missions[+r.dataset.mi]; $$("[data-f]", r).forEach((x) => (m[x.dataset.f] = x.value.trim())); });
+        $$("[data-vi]", main).forEach((r) => { const v = c.voie[+r.dataset.vi]; $$("[data-f]", r).forEach((x) => (v[x.dataset.f] = x.value.trim())); });
+        c.parents = $("#pp-n").value.split(",").map((x) => x.trim()).filter(Boolean); c.tokenWith = $("#pp-t").value;
+      };
+      $$("[data-day]", main).forEach((b) => (b.onclick = () => { read(); const m = c.missions[+b.closest("[data-mi]").dataset.mi]; const k = b.dataset.day;
+        if (k === "all") m.days = m.days.length === 7 ? [] : [0, 1, 2, 3, 4, 5, 6]; else m.days = m.days.includes(+k) ? m.days.filter((d) => d !== +k) : m.days.concat(+k); paint(); }));
+      $$("[data-del]", main).forEach((b) => (b.onclick = () => { read(); const k = b.dataset.del; (k[0] === "m" ? c.missions : c.voie).splice(+k.slice(1), 1); paint(); }));
+      $("#pm-add").onclick = () => { read(); c.missions.push({ ic: "⭐", n: "", days: [0, 1, 2, 3, 4, 5, 6], at: "19:00" }); paint(); $$("[data-mi] [data-f=n]", main).pop().focus(); };
+      $("#pv-add").onclick = () => { read(); c.voie.push({ ic: "⭐", n: "", freq: "jour" }); paint(); $$("[data-vi] [data-f=n]", main).pop().focus(); };
+      $$("[data-sm]", main).forEach((b) => (b.onclick = () => { read(); const [ic, n] = FOYER.SUGG_M[+b.dataset.sm]; c.missions.push({ ic, n, days: [0, 1, 2, 3, 4, 5, 6], at: "19:00" }); paint(); }));
+      $$("[data-sv]", main).forEach((b) => (b.onclick = () => { read(); const [ic, n, freq] = FOYER.SUGG_V[+b.dataset.sv]; c.voie.push({ ic, n, freq }); paint(); }));
+      $("#pp-n").onchange = () => { read(); paint(); };
+      $("#pf-save").onclick = () => { read();
+        const bad = c.missions.find((m) => m.n && !m.days.length); if (bad) return toast(`Choisis au moins un jour pour « ${bad.n} ».`);
+        FOYER.saveCfg(c); FX.sfx("stamp"); toast("Foyer enregistré."); go("foyer", true); };
+    };
+    paint();
+  }
+  // Configuration reçue par lien (#fcfg~…) : appliquée sur ce téléphone après le code parent
+  async function viewFoyerImport(main, arg) {
+    let c; try { c = await unpackReport(arg); if (!c || !Array.isArray(c.missions)) throw 0; } catch (e) { main.innerHTML = `<section class="panel stack"><h1>Lien illisible</h1><p>Le lien de configuration semble coupé.</p></section>`; return; }
+    main.innerHTML = `<section class="stack"><p class="eyebrow">Espace parent</p><h1>Configuration du Foyer</h1><p class="small">Ce lien prépare ${c.missions.length} mission${c.missions.length > 1 ? "s" : ""} et ${c.voie.length} défi${c.voie.length > 1 ? "s" : ""}. ${FOYER.ready() ? "Il remplace la configuration actuelle à partir d'aujourd'hui." : ""}</p>
+      <div class="panel stack small">${c.missions.map((m) => `<div>${esc(m.ic)} ${esc(m.n)} <span class="muted">· ${m.days.length === 7 ? "tous les jours" : m.days.map((d) => FOYER.DOW[d]).join(", ")} · avant ${esc(m.at)}</span></div>`).join("")}<hr style="border:0;border-top:1px solid var(--hair);width:100%">${c.voie.map((v) => `<div>${esc(v.ic)} ${esc(v.n)} <span class="muted">· ${v.freq === "semaine" ? "+3 par semaine" : "+1 par jour"}</span></div>`).join("")}</div>
+      <button class="btn primary" id="fc-ok">Appliquer (code parent)</button><button class="btn ghost" data-go="dojo">Ignorer</button></section>`;
+    $("#fc-ok").onclick = async () => { if (!(await pinPrompt("Appliquer la configuration du Foyer : code parent"))) return; FOYER.saveCfg(c, c.from && c.from < FOYER.paris().iso && !FOYER.ready() ? c.from : undefined); FX.sfx("stamp"); toast("Foyer préparé."); history.replaceState({ d: depth }, "", "#foyer"); render(); };
+  }
   function reportData() {
     const R = STORE.report(), L = STORE.levelInfo();
     const act = []; for (let i = 34; i >= 0; i--) { const d = STORE.today(new Date(Date.now() - i * 86400000)); act.push((S().days[d] || { n: 0 }).n); }
