@@ -1021,22 +1021,31 @@
         ${Array.from({ length: days }, (_, d) => `<section class="panel stack"><h2>${AGENDA.DAYS[d]}</h2>
           ${slots.map((s, i) => [s, i]).filter(([s]) => s.d === d).sort((a, b) => (a[0].start < b[0].start ? -1 : 1)).map(([s, i]) => `<div class="prep-it" data-si="${i}" style="border-left:5px solid ${AGENDA.subj(s.s).c}">
             <div class="row"><input type="time" data-f="start" value="${s.start}" style="width:auto"><span class="small">à</span><input type="time" data-f="end" value="${s.end}" style="width:auto"><button class="btn ghost sm" data-sdel="${i}" style="margin-left:auto" aria-label="Supprimer">✕</button></div>
-            <div class="row"><select data-f="s" style="flex:1">${SJ().map((x) => `<option value="${x.id}" ${x.id === s.s ? "selected" : ""}>${x.ic} ${esc(x.n)}</option>`).join("")}</select><select data-f="w" style="width:auto">${[["", "Sem. 1 et 2"], ["1", "Sem. 1"], ["2", "Sem. 2"]].map(([v, n]) => `<option value="${v}" ${String(s.w || "") === v ? "selected" : ""}>${n}</option>`).join("")}</select></div>
+            <div class="row"><select data-f="s" style="flex:1">${s.s ? "" : `<option value="" selected>Choisis la matière…</option>`}${SJ().map((x) => `<option value="${x.id}" ${x.id === s.s ? "selected" : ""}>${x.ic} ${esc(x.n)}</option>`).join("")}</select><select data-f="w" style="width:auto">${[["", "Sem. 1 et 2"], ["1", "Sem. 1"], ["2", "Sem. 2"]].map(([v, n]) => `<option value="${v}" ${String(s.w || "") === v ? "selected" : ""}>${n}</option>`).join("")}</select></div>
             <div class="row">${s.s === "autre" ? `<input data-f="lab" value="${esc(s.lab || "")}" placeholder="Nom (ex. Chorale)" maxlength="30" style="flex:1">` : ""}<input data-f="room" value="${esc(s.room || "")}" placeholder="Salle" maxlength="12" style="width:6em"></div></div>`).join("") || `<p class="small muted">Pas de cours.</p>`}
+          ${(() => { if (slots.some((s) => s.d === d)) return ""; const src = [0, 1, 2, 3, 4, 5].filter((k) => k !== d && slots.some((s) => s.d === k)).sort((a, c) => slots.filter((s) => s.d === c).length - slots.filter((s) => s.d === a).length)[0]; return src == null ? "" : `<button class="btn sm primary" data-scopy="${d}:${src}">Reprendre les horaires du ${AGENDA.DAYS[src].toLowerCase()}</button>`; })()}
           <button class="btn sm" data-sadd="${d}">+ Ajouter un cours</button></section>`).join("")}
         <label class="row small" style="gap:8px"><input type="checkbox" id="sat" ${sat ? "checked" : ""}> J'ai cours le samedi</label>
         ${SJ().some((x) => !x.img) ? `<details><summary>Les icônes de mes matières</summary><div class="in stack">${SJ().filter((x) => !x.img).map((x) => `<label class="row" style="gap:8px"><input class="prep-ic" data-ic="${x.id}" value="${esc(x.ic)}" maxlength="4"><span class="sj-chip" style="--c:${x.c}">${esc(x.n)}</span></label>`).join("")}<p class="tiny muted">Choisis un emoji sur ton clavier pour chaque matière, en attendant son personnage.</p></div></details>` : ""}
         <div class="row wrap"><button class="btn primary" id="edt-save" style="flex:1">Enregistrer</button><button class="btn ghost" data-go="agenda">Annuler</button></div>`;
       const read = () => { $$("[data-si]", main).forEach((r) => { const s = slots[+r.dataset.si]; $$("[data-f]", r).forEach((x) => (s[x.dataset.f] = x.dataset.f === "w" ? (+x.value || 0) : x.value.trim())); }); $$("[data-ic]", main).forEach((x) => { if (x.value.trim()) icons[x.dataset.ic] = x.value.trim(); }); };
       $$("[data-ref]", main).forEach((b) => (b.onclick = () => { read(); ref = +b.dataset.ref; paint(); }));
+      // Horaires déjà saisis les autres jours (calque) : le cours suivant reprend le créneau qui suit
+      const ranges = (d) => { const seen = new Set(), out = []; slots.filter((s) => s.d !== d).forEach((s) => { const k = s.start + "-" + s.end; if (!seen.has(k)) { seen.add(k); out.push({ start: s.start, end: s.end }); } }); return out.sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : a.end < b.end ? -1 : 1)); };
+      const newId = () => "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
       $$("[data-sadd]", main).forEach((b) => (b.onclick = () => { read(); const d = +b.dataset.sadd, same = slots.filter((s) => s.d === d).sort((a, c) => (a.end < c.end ? 1 : -1))[0];
-        const start = same ? same.end : "08:00", [h, m] = start.split(":").map(Number), end = String(h + 1).padStart(2, "0") + ":" + String(m).padStart(2, "0");
-        slots.push({ id: "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4), d, start, end, s: "fr", w: 0 }); paint(); }));
+        const after = same ? same.end : "00:00", tpl = ranges(d).find((r) => r.start >= after);
+        let start, end; if (tpl) ({ start, end } = tpl); else { start = same ? same.end : "08:00"; const [h, m] = start.split(":").map(Number); end = String(h + 1).padStart(2, "0") + ":" + String(m).padStart(2, "0"); }
+        slots.push({ id: newId(), d, start, end, s: "", w: 0 }); paint(); }));
+      // Journée vide : reprendre d'un coup les horaires d'une journée déjà saisie, il ne reste qu'à choisir les matières
+      $$("[data-scopy]", main).forEach((b) => (b.onclick = () => { read(); const [d, from] = b.dataset.scopy.split(":").map(Number);
+        const seen = new Set(); slots.filter((s) => s.d === from).sort((a, c) => (a.start < c.start ? -1 : 1)).forEach((s) => { const k = s.start + "-" + s.end; if (seen.has(k)) return; seen.add(k); slots.push({ id: newId(), d, start: s.start, end: s.end, s: "", w: 0 }); }); paint(); }));
       $$("[data-sdel]", main).forEach((b) => (b.onclick = () => { read(); slots.splice(+b.dataset.sdel, 1); paint(); }));
       $$("[data-f=s]", main).forEach((x) => (x.onchange = () => { read(); paint(); }));
       $("#sat").onchange = (ev) => { read(); sat = ev.target.checked; paint(); };
       $("#edt-save").onclick = () => { read();
         const bad = slots.find((s) => !(s.start < s.end)); if (bad) return toast(`${AGENDA.DAYS[bad.d]} : l'heure de fin doit être après l'heure de début.`);
+        const noS = slots.find((s) => !s.s); if (noS) return toast(`${AGENDA.DAYS[noS.d]} ${noS.start} : choisis la matière (ou supprime le créneau).`);
         if (slots.some((s) => s.w) && !ref) return toast("Dis-moi si cette semaine est une semaine 1 ou 2.");
         e.slots = slots.filter((s) => sat || s.d < 5); e.icons = icons; if (ref && ref !== (e.ref ? AGENDA.weekNo() : 0)) AGENDA.setWeek(ref); else if (!e.ref && ref) AGENDA.setWeek(ref);
         STORE.save(); FX.sfx("stamp"); toast("Emploi du temps enregistré."); go("agenda", true); };
