@@ -927,7 +927,7 @@
         <div class="edt-hours">${hours.map((h) => `<span style="top:${(h * 60 - lo) * K + 26}px">${h}h</span>`).join("")}</div>
         ${Array.from({ length: days }, (_, d) => `<div class="edt-col ${d === todayCol ? "today" : ""}"><span class="edt-day">${AGENDA.DAYS[d].slice(0, 3)}</span>
           ${sl.filter((s) => s.d === d).map((s) => { const sj = AGENDA.subj(s.s), top = (toMin(s.start) - lo) * K + 26, h = (toMin(s.end) - toMin(s.start)) * K - 3, now = d === todayCol && nm >= toMin(s.start) && nm < toMin(s.end);
-            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sjIc(sj, h > 44 ? 30 : 20)}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
+            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sjIc(sj, h > 44 ? 38 : 24)}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
           ${d === todayCol && nm > lo && nm < hi ? `<i class="edt-now" style="top:${(nm - lo) * K + 26}px"></i>` : ""}</div>`).join("")}
       </div>
       <div class="row wrap"><button class="btn" data-go="edt">Modifier mon emploi du temps</button><button class="btn ghost sm" id="wk-fix">On n'est pas en semaine ${cur} ?</button></div>

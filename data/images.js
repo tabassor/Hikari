@@ -50,5 +50,23 @@ window.IMAGES = {
     "tanpopo": "img/garden-tanpopo.webp",
     "torii": "img/garden-torii.webp",
     "tsubaki": "img/garden-tsubaki.webp"
+  },
+  "subj": {
+    "arts": "img/subj-arts.webp",
+    "cantine": "img/subj-cantine.webp",
+    "emc": "img/subj-emc.webp",
+    "en": "img/subj-en.webp",
+    "eps": "img/subj-eps.webp",
+    "es": "img/subj-es.webp",
+    "etude": "img/subj-etude.webp",
+    "fr": "img/subj-fr.webp",
+    "hg": "img/subj-hg.webp",
+    "ma": "img/subj-ma.webp",
+    "mus": "img/subj-mus.webp",
+    "past": "img/subj-past.webp",
+    "recre": "img/subj-recre.webp",
+    "sc": "img/subj-sc.webp",
+    "tech": "img/subj-tech.webp",
+    "vdc": "img/subj-vdc.webp"
   }
 };
