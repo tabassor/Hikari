@@ -46,6 +46,9 @@
     return E().slots.filter((s) => s.d === d && (!s.w || s.w === w)).sort((a, b) => (a.start < b.start ? -1 : 1));
   }
   function nextSchoolDay(iso = today()) { for (let i = 1; i < 21; i++) { const d = addDays(iso, i); if (slotsOn(d).length) return d; } return null; }
+  // Prochaine date (aujourd'hui compris) d'un créneau précis, en tenant compte des semaines 1 et 2 et des vacances
+  function nextSlotDate(sl, iso = today()) { const n = new Date(), hm = String(n.getHours()).padStart(2, "0") + ":" + String(n.getMinutes()).padStart(2, "0");
+    for (let i = 0; i < 35; i++) { const d = addDays(iso, i); if (i === 0 && iso === today() && sl.end <= hm) continue; if (slotsOn(d).some((x) => x.id === sl.id)) return d; } return null; }
   // Prochain cours d'une matière (pour dater une interro « au prochain cours »)
   function nextClass(sid, iso = today()) { for (let i = 1; i < 28; i++) { const d = addDays(iso, i); if (slotsOn(d).some((s) => s.s === sid)) return d; } return null; }
   const NOBAG = ["cantine", "recre", "etude"]; // pas des matières à mettre dans le sac
@@ -64,5 +67,5 @@
     const m = {}; upcoming(iso).forEach((x) => { if (daysTo(x.date, iso) > WINDOW) return; (x.lessons || []).forEach((l) => { if (!m[l]) m[l] = x; }); });
     return m;
   }
-  window.AGENDA = { DAYS, TYPES, WINDOW, FOCUS_MAX, E, A, subjects, subj, weekNo, setWeek, isHoliday, slotsOn, nextSchoolDay, nextClass, bag, add, del, upcoming, past, daysTo, focusLessons, mondayOf, addDays, dowOf };
+  window.AGENDA = { DAYS, TYPES, WINDOW, FOCUS_MAX, E, A, subjects, subj, weekNo, setWeek, isHoliday, slotsOn, nextSchoolDay, nextClass, nextSlotDate, bag, add, del, upcoming, past, daysTo, focusLessons, mondayOf, addDays, dowOf };
 })();

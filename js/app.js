@@ -934,7 +934,29 @@
       <p class="tiny muted">L'alternance saute les vacances scolaires (zone ${esc(S().settings.zone)}). Si le collège compte autrement, corrige la semaine en cours : la suite se recale.</p></section>`;
     $$("[data-w]", box).forEach((b) => (b.onclick = () => drawEdt(box, +b.dataset.w)));
     $("#wk-fix").onclick = () => { AGENDA.setWeek(cur === 1 ? 2 : 1); toast(`C'est noté : cette semaine est une semaine ${cur === 1 ? 2 : 1}.`); drawEdt(box); };
-    $$("[data-sl]", box).forEach((b) => (b.onclick = () => { const s = e.slots.find((x) => x.id === b.dataset.sl), sj = AGENDA.subj(s.s); toast(`${sj.ic} ${s.lab || sj.n} · ${AGENDA.DAYS[s.d].toLowerCase()} ${s.start}–${s.end}${s.room ? " · salle " + s.room : ""}${s.w ? " · semaine " + s.w + " seulement" : ""}`); }));
+    $$("[data-sl]", box).forEach((b) => (b.onclick = () => slotSheet(e.slots.find((x) => x.id === b.dataset.sl))));
+  }
+  // Toucher un cours : son prochain créneau et ce qui est attendu pour ce jour-là (agenda)
+  function slotSheet(s) {
+    const sj = AGENDA.subj(s.s), when = AGENDA.nextSlotDate(s), items = when ? AGENDA.A().filter((x) => x.s === s.s && x.date === when) : [];
+    const soon = AGENDA.upcoming().filter((x) => x.s === s.s && x.date !== when).slice(0, 2), noAg = ["cantine", "recre", "etude", "vdc"].includes(s.s);
+    const o = document.createElement("div"); o.className = "celebrate";
+    o.innerHTML = `<div class="panel stack slot-sheet" style="--c:${sj.c}">${sj.img ? `<img class="ss-img" src="${sj.img}" alt="">` : `<span class="ss-em">${sj.ic}</span>`}
+      <b class="ss-t">${esc(s.lab || sj.n)}</b><span class="small muted">${AGENDA.DAYS[s.d]} · ${s.start}–${s.end}${s.room ? " · salle " + esc(s.room) : ""}${s.w ? ` · semaine ${s.w}` : ""}</span>
+      ${when ? `<span class="small">Prochain cours : <b>${whenTxt(when)}</b></span>` : `<span class="small muted">Pas de cours prévu dans les 4 semaines (vacances ?).</span>`}
+      ${noAg ? "" : items.length ? items.map((x) => `<div class="due-row" style="--c:${sj.c};text-align:left"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])}${x.title ? " · " + esc(x.title) : ""}</b><span class="tiny muted">${x.lessons.length ? `${x.lessons.length} leçon${x.lessons.length > 1 ? "s" : ""} à réviser` : "Aucune leçon liée"}</span></span></div>${x.lessons.length ? `<button class="btn primary" data-go="seance~a:${x.id}">S'entraîner maintenant</button>` : ""}`).join("") : `<p class="small">Rien de noté pour ce cours.</p>`}
+      ${!noAg && soon.length ? `<p class="tiny muted">Plus tard : ${soon.map((x) => `${esc(AGENDA.TYPES[x.type][0].toLowerCase())} ${whenTxt(x.date)}`).join(" · ")}</p>` : ""}
+      ${!noAg && when ? `<button class="btn" id="ss-add">+ Noter une interro pour ce cours</button>` : ""}<button class="btn ghost" id="ss-x">Fermer</button></div>`;
+    document.body.appendChild(o);
+    const close = () => o.remove(); $("#ss-x", o).onclick = close; o.onclick = (ev) => { if (ev.target === o || ev.target.closest("[data-go]")) close(); };
+    const add = $("#ss-add", o); if (add) add.onclick = () => { close(); go("agenda~agenda"); setTimeout(() => { const b = $("#ag"); if (b) agendaForm(b, { s: s.s, date: when }); }, 60); };
+  }
+  // Nouvelle échéance : l'apprenti de la matière vient la confirmer
+  function apprentiSays(it) {
+    const sj = AGENDA.subj(it.s), ty = AGENDA.TYPES[it.type], n = AGENDA.daysTo(it.date);
+    const line = it.lessons.length ? (n > AGENDA.WINDOW ? `Je mettrai ces leçons en tête de tes révisions 7 jours avant. On sera prêts !` : `Ces leçons passent dès aujourd'hui en tête de tes révisions. On s'y met ensemble ?`) : `C'est noté ! Pense à me dire quelle leçon réviser, ou demande à Papa d'envoyer la photo du cours.`;
+    FX.sfx("stamp");
+    celebrate("記録！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : `<div style="font-size:4rem">${sj.ic}</div>`}<p><b>${esc(ty[0])} de ${esc(sj.n)} ${whenTxt(it.date)}</b>${it.title ? `<br><span class="small">${esc(it.title)}</span>` : ""}</p><p class="small">${line}</p>`, it.lessons.length && n <= AGENDA.WINDOW ? "On s'y met !" : "Compris", "level").then(() => { if (it.lessons.length && n <= AGENDA.WINDOW) go("seance~a:" + it.id); });
   }
   // ---------- Saisie de l'emploi du temps (par l'élève) ----------
   function viewEdtEdit(main) {
@@ -982,8 +1004,8 @@
     $("#ag-new").onclick = () => agendaForm(box);
     $$("[data-adel]", box).forEach((b) => (b.onclick = () => { if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Sûr ?"; return; } AGENDA.del(b.dataset.adel); drawAgendaList(box); }));
   }
-  function agendaForm(box) {
-    const st = { type: "ctrl", s: "ma", date: "", lessons: [], title: "" };
+  function agendaForm(box, pre) {
+    const st = Object.assign({ type: "ctrl", s: "ma", date: "", lessons: [], title: "" }, pre || {});
     const paint = () => {
       const sj = AGENDA.subj(st.s), nc = AGENDA.nextClass(st.s), hk = sj.hk;
       const ls = []; if (hk) STORE.CH.forEach((c) => { if (c.s !== st.s) return; c.lessons.forEach((l) => { if (STORE.lessonOpen(l.id)) ls.push({ l, c, since: (S().lessons[l.id] && S().lessons[l.id].since) || "" }); }); });
@@ -1002,8 +1024,7 @@
       $("#af-s").onchange = (ev) => { read(); st.s = ev.target.value; st.lessons = []; paint(); };
       $("#af-x").onclick = () => drawAgendaList(box);
       $("#af-ok").onclick = () => { read(); if (!st.date) return toast("Choisis la date."); if (st.date < STORE.today()) return toast("Cette date est déjà passée.");
-        AGENDA.add({ type: st.type, s: st.s, date: st.date, title: st.title, lessons: st.lessons }); FX.sfx("stamp");
-        toast(st.lessons.length ? "Noté ! Ces leçons passeront en tête de tes révisions 7 jours avant." : "Noté !"); drawAgendaList(box); };
+        const it = AGENDA.add({ type: st.type, s: st.s, date: st.date, title: st.title, lessons: st.lessons }); drawAgendaList(box); apprentiSays(it); };
     };
     paint();
   }
