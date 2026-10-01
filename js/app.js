@@ -160,7 +160,7 @@
         <div id="clans"></div>${(() => { const g = STORE.stagesOf(STORE.allActiveCards()); return `<div class="stages"><div><b>${g.seen}</b><span>étudiées</span></div><div><b>${g.solid}</b><span>solides<br><i>tenues 1 sem.</i></span></div><div><b>${g.mastered}</b><span>maîtrisées<br><i>tenues 3 sem.</i></span></div><div><b>${c.total}</b><span>cartes<br><i>ouvertes</i></span></div></div>`; })()}</section>`;
     $("#flash").onclick = () => startFlashQuiz();
     const mn = $("#more-new"); if (mn) mn.onclick = () => { const t = STORE.today(); S().extraNew = { d: t, n: ((S().extraNew && S().extraNew.d === t) ? S().extraNew.n : 0) + 10 }; STORE.save(); go("seance"); };
-    drawCartable(); drawDefis(); setTimeout(foyerReminder, 3600); if (window.AGENDA) setTimeout(checkReady, 1200);
+    drawCartable(); drawDefis(); setTimeout(foyerReminder, 3600); if (window.AGENDA) setTimeout(() => { checkReady(); quizInvite(); }, 1200);
     const nw = S().newWeek;
     if (nw && STORE.CHI[nw.ch]) {
       S().newWeek = null; STORE.save();
@@ -901,13 +901,49 @@
     if (compact) return `<span class="gauge-mini ${done ? "done" : ""}"><i style="width:${pc(P.ok)}%"></i></span><span class="tiny ${done ? "" : "muted"}">${done ? "Prête ✓" : `Prête à ${pc(P.ok)} % · vu ${P.seen}/${P.total}`}</span>`;
     return `<div class="gauge ${done ? "done" : ""}"><div class="g-row"><span class="tiny">Vu</span><span class="g-bar"><i style="width:${pc(P.seen)}%"></i></span><b class="tiny">${P.seen} / ${P.total}</b></div>
       <div class="g-row"><span class="tiny">Prête</span><span class="g-bar ok"><i style="width:${pc(P.ok)}%"></i></span><b class="tiny">${P.ok} / ${P.total}</b></div>
-      <span class="tiny muted">${done ? "Tout est vu et réussi : prête pour ce que Hikari connaît de ce contrôle !" : "Prête = dernière réponse juste."}${P.comp ? ` Dont ${P.comp} cartes du programme.` : ""} Hikari ne connaît que les leçons qu'il contient.</span></div>`;
+      <span class="tiny muted">${done ? "Tout est réussi 2 jours d'affilée : prête pour ce que Hikari connaît de ce contrôle !" : "Prête = carte réussie 2 jours différents d'affilée."}${P.comp ? ` Dont ${P.comp} cartes du programme.` : ""} Hikari ne connaît que les leçons qu'il contient.</span></div>`;
+  }
+  // ---------- Quiz de dernière minute (avant-veille et veille) ----------
+  const quizOpen = (x) => { const n = AGENDA.daysTo(x.date); return x.lessons.length && n >= 1 && n <= 2; };
+  const quizBtn = (x) => quizOpen(x) && STORE.itemCards(x).some((c) => c.k !== "f") ? `<button class="btn quiz-b" data-quiz="${x.id}">⚡ Quiz de dernière minute${(x.quiz || []).length ? ` · dernier : ${x.quiz[x.quiz.length - 1].pct} %` : ""}</button>` : "";
+  function bindQuiz(root) { $$("[data-quiz]", root).forEach((b) => (b.onclick = (ev) => { ev.stopPropagation(); const o = b.closest(".celebrate"), ok = o && $("#cel-ok", o); if (ok) ok.click(); else if (o) o.remove(); startExamQuiz(b.dataset.quiz); })); }
+  function startExamQuiz(id) {
+    const x = AGENDA.A().find((y) => y.id === id); if (!x) return;
+    // 15 questions corrigées automatiquement, réparties à tour de rôle entre les leçons
+    const byL = {}; shuffle(STORE.itemCards(x).filter((c) => c.k !== "f")).forEach((c) => (byL[c.le] = byL[c.le] || []).push(c));
+    const list = []; let more = true; while (more && list.length < 15) { more = false; Object.values(byL).forEach((a) => { if (a.length && list.length < 15) { list.push(a.shift()); more = true; } }); }
+    if (!list.length) return toast("Pas de question automatique pour ce contrôle.");
+    const sj = AGENDA.subj(x.s), main = $("main"); let i = 0; const res = []; combo = 0;
+    history.pushState({ d: ++depth }, "", "#agenda~agenda"); sessionShell(main);
+    $("#quit").onclick = () => go("agenda~agenda", true);
+    const next = async () => {
+      if (i >= list.length) return done();
+      mountCard($("#stage"), Object.assign(instantiate(list[i]), { focus: x }), { selfGrade: false, onDone: ({ ok }) => { const c = list[i]; res.push({ c, ok }); STORE.grade(c.id, ok ? 2 : 0, c.bonus, true); i++; $(".prog > i").style.width = (100 * i / list.length) + "%"; STORE.save(); next(); } });
+    };
+    const done = async () => {
+      const good = res.filter((r) => r.ok).length, pct = Math.round((100 * good) / res.length);
+      (x.quiz = x.quiz || []).push({ d: STORE.today(), pct, n: res.length }); STORE.save();
+      const miss = {}; res.forEach((r) => { if (!r.ok) miss[r.c.le] = (miss[r.c.le] || 0) + 1; });
+      const verdict = pct >= 90 ? ["Prête !", "fire"] : pct >= 70 ? ["Presque prête", "happy"] : ["À retravailler", "think"];
+      const lessons = Object.entries(miss).sort((a, b) => b[1] - a[1]).map(([l, n]) => `<li>${esc(STORE.LEI[l] ? STORE.LEI[l].title : l)} <span class="muted">(${n} erreur${n > 1 ? "s" : ""})</span></li>`).join("");
+      const tomorrow = AGENDA.daysTo(x.date) >= 2;
+      await celebrate("最終確認！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : ART.sensei(verdict[1], 100)}<p class="big"><b>${good} / ${res.length}</b> · ${pct} %</p><p><b>${verdict[0]}</b></p>
+        ${lessons ? `<div class="small" style="text-align:left"><p>À revoir :</p><ul>${lessons}</ul></div><p class="small">${tomorrow ? "Les cartes ratées passent en tête de tes révisions de demain." : "Relis ces passages dans ton cahier ce soir, puis refais un tour de cartes."}</p>` : `<p class="small">Aucune erreur. Repose-toi bien avant ${whenTxt(x.date) === "demain" ? "demain" : "le jour J"} !</p>`}`, "Terminer", pct >= 70 ? "win" : "lose");
+      afterAction(); go("agenda~agenda", true);
+    };
+    next();
+  }
+  // L'avant-veille (ou la veille si elle n'a pas ouvert l'appli), une seule invitation au quiz
+  function quizInvite() {
+    AGENDA.upcoming().forEach((x) => { if (!quizOpen(x) || x.quizAsked || (x.quiz || []).length) return; x.quizAsked = STORE.today(); STORE.save(); const sj = AGENDA.subj(x.s);
+      celebrate("最終確認！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : `<div style="font-size:4rem">${sj.ic}</div>`}<p><b>${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}.</b></p><p class="small">Un quiz de 15 questions pour voir si tu es prête : ce que tu rates repasse en tête de tes révisions.</p>${quizBtn(x)}`, "Plus tard", "level");
+      setTimeout(() => bindQuiz(document.body), 50); });
   }
   // Annonce une fois, par l'apprenti de la matière, quand une échéance à venir est entièrement prête
   function checkReady() {
     AGENDA.upcoming().forEach((x) => { if (x.readyAt) return; const P = STORE.itemProgress(x); if (!P.total || P.ok < P.total) return;
       x.readyAt = STORE.today(); STORE.save(); const sj = AGENDA.subj(x.s);
-      celebrate("準備完了！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : `<div style="font-size:4rem">${sj.ic}</div>`}<p><b>Prête pour ${{ ctrl: "ton contrôle", interro: "ton interro", lecon: "ta leçon", oral: "ton oral" }[x.type] || "ton échéance"} de ${esc(sj.n)}&nbsp;!</b></p><p class="small">Les ${P.total} cartes sont vues et réussies. Continue tes révisions du jour jusqu'à ${whenTxt(x.date)} pour que ça tienne.</p>`, "Génial !", "level"); });
+      celebrate("準備完了！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : `<div style="font-size:4rem">${sj.ic}</div>`}<p><b>Prête pour ${{ ctrl: "ton contrôle", interro: "ton interro", lecon: "ta leçon", oral: "ton oral" }[x.type] || "ton échéance"} de ${esc(sj.n)}&nbsp;!</b></p><p class="small">Les ${P.total} cartes sont réussies 2 jours d'affilée. Continue tes révisions du jour jusqu'à ${whenTxt(x.date)} pour que ça tienne.</p>`, "Génial !", "level"); });
   }
   const nowHM = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
   // Carte du Dōjō : le cartable (aujourd'hui le matin, le lendemain ensuite) et les échéances proches
@@ -919,8 +955,9 @@
     box.innerHTML = `<section class="panel stack cartable" data-go="agenda">
       ${e.slots.length ? `<div class="row" style="justify-content:space-between"><span class="eyebrow">${morning ? "Aujourd'hui" : day ? (AGENDA.daysTo(day) === 1 ? "Demain dans ton sac" : `Dans ton sac pour ${new Date(day + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })}`) : "Vacances !"}</span>${AGENDA.E().ref ? `<span class="tiny muted">semaine ${AGENDA.weekNo(day || t)}</span>` : ""}</div>
         <div class="row wrap" style="gap:6px">${bag.map(sjChip).join("") || `<span class="small muted">Pas de cours.</span>`}</div>` : ""}
-      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${sj.img ? sjIc(sj, 40) : AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${sj.img ? AGENDA.TYPES[x.type][1] + " " : ""}${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b>${x.lessons.length ? gaugeHTML(x, true) || `<span class="tiny muted">Ces leçons passent en tête de tes révisions.</span>` : `<span class="tiny muted">${esc(x.title || "")}</span>`}</span></div>`; }).join("") : ""}
+      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${sj.img ? sjIc(sj, 40) : AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${sj.img ? AGENDA.TYPES[x.type][1] + " " : ""}${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b>${x.lessons.length ? gaugeHTML(x, true) || `<span class="tiny muted">Ces leçons passent en tête de tes révisions.</span>` : `<span class="tiny muted">${esc(x.title || "")}</span>`}</span></div>${quizBtn(x)}`; }).join("") : ""}
     </section>`;
+    bindQuiz(box);
   }
   function viewAgenda(main, arg) {
     const tab = arg || "semaine";
@@ -959,10 +996,10 @@
     o.innerHTML = `<div class="panel stack slot-sheet" style="--c:${sj.c}">${sj.img ? `<img class="ss-img" src="${sj.img}" alt="">` : `<span class="ss-em">${sj.ic}</span>`}
       <b class="ss-t">${esc(s.lab || sj.n)}</b><span class="small muted">${AGENDA.DAYS[s.d]} · ${s.start}–${s.end}${s.room ? " · salle " + esc(s.room) : ""}${s.w ? ` · semaine ${s.w}` : ""}</span>
       ${when ? `<span class="small">Prochain cours : <b>${whenTxt(when)}</b></span>` : `<span class="small muted">Pas de cours prévu dans les 4 semaines (vacances ?).</span>`}
-      ${noAg ? "" : items.length ? items.map((x) => `<div class="due-row" style="--c:${sj.c};text-align:left"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])}${x.title ? " · " + esc(x.title) : ""}</b><span class="tiny muted">${x.lessons.length ? `${x.lessons.length} leçon${x.lessons.length > 1 ? "s" : ""} à réviser` : "Aucune leçon liée"}</span></span></div>${x.lessons.length ? gaugeHTML(x) : ""}${x.lessons.length ? `<button class="btn primary" data-go="seance~a:${x.id}">S'entraîner maintenant</button>` : ""}`).join("") : `<p class="small">Rien de noté pour ce cours.</p>`}
+      ${noAg ? "" : items.length ? items.map((x) => `<div class="due-row" style="--c:${sj.c};text-align:left"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])}${x.title ? " · " + esc(x.title) : ""}</b><span class="tiny muted">${x.lessons.length ? `${x.lessons.length} leçon${x.lessons.length > 1 ? "s" : ""} à réviser` : "Aucune leçon liée"}</span></span></div>${x.lessons.length ? gaugeHTML(x) : ""}${quizBtn(x)}${x.lessons.length ? `<button class="btn primary" data-go="seance~a:${x.id}">S'entraîner maintenant</button>` : ""}`).join("") : `<p class="small">Rien de noté pour ce cours.</p>`}
       ${!noAg && soon.length ? `<p class="tiny muted">Plus tard : ${soon.map((x) => `${esc(AGENDA.TYPES[x.type][0].toLowerCase())} ${whenTxt(x.date)}`).join(" · ")}</p>` : ""}
       ${!noAg && when ? `<button class="btn" id="ss-add">+ Noter une interro pour ce cours</button>` : ""}<button class="btn ghost" id="ss-x">Fermer</button></div>`;
-    document.body.appendChild(o);
+    document.body.appendChild(o); bindQuiz(o);
     const close = () => o.remove(); $("#ss-x", o).onclick = close; o.onclick = (ev) => { if (ev.target === o || ev.target.closest("[data-go]")) close(); };
     const add = $("#ss-add", o); if (add) add.onclick = () => { close(); go("agenda~agenda"); setTimeout(() => { const b = $("#ag"); if (b) agendaForm(b, { s: s.s, date: when }); }, 60); };
   }
@@ -1012,12 +1049,12 @@
     const row = (x, old) => { const sj = AGENDA.subj(x.s), ty = AGENDA.TYPES[x.type] || AGENDA.TYPES.ctrl, n = STORE.buildSession({ agenda: x.id }).length;
       return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${sj.img ? sjIc(sj, 44) : ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${sj.img ? ty[1] + " " : ""}${esc(ty[0])} · ${sj.img ? "" : sj.ic + " "}${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
         ${x.lessons.length ? `<span class="tiny muted">${x.lessons.map((l) => STORE.LEI[l] ? esc(STORE.LEI[l].title) : "").filter(Boolean).join(" · ")}</span>` : `<span class="tiny muted">Aucune leçon liée dans Hikari.</span>`}</span><button class="btn ghost sm" data-adel="${x.id}" aria-label="Supprimer">✕</button></div>
-        ${!old && x.lessons.length ? gaugeHTML(x) : ""}
+        ${!old && x.lessons.length ? gaugeHTML(x) : ""}${!old ? quizBtn(x) : ""}
         ${!old && n ? `<button class="btn sm primary" data-go="seance~a:${x.id}">S'entraîner maintenant · ${n}</button>` : ""}</div>`; };
     box.innerHTML = `<button class="btn primary" id="ag-new">+ Noter une interro ou une leçon</button>
       <section class="stack"><h2>À venir</h2>${up.length ? up.map((x) => row(x)).join("") : `<p class="small muted">Rien de prévu. Dès qu'une prof annonce une interro, note-la ici.</p>`}</section>
       ${past.length ? `<details><summary>Passées</summary><div class="in stack">${past.map((x) => row(x, true)).join("")}</div></details>` : ""}`;
-    $("#ag-new").onclick = () => agendaForm(box);
+    $("#ag-new").onclick = () => agendaForm(box); bindQuiz(box);
     $$("[data-adel]", box).forEach((b) => (b.onclick = () => { if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Sûr ?"; return; } AGENDA.del(b.dataset.adel); drawAgendaList(box); }));
   }
   function agendaForm(box, pre) {

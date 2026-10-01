@@ -776,3 +776,4 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .gauge-mini { display: block; height: 6px; width: 100%; margin: 4px 0 2px; border-radius: 99px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; }
 .gauge-mini i { display: block; height: 100%; background: var(--c, var(--accent)); border-radius: inherit; }
 .gauge-mini.done i { background: var(--good, #2E9E5B); }
+.quiz-b { width: 100%; background: color-mix(in srgb, var(--c, var(--accent)) 14%, var(--panel)); box-shadow: inset 0 0 0 2px var(--c, var(--accent)); font-weight: 900; }

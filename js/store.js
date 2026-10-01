@@ -180,10 +180,12 @@
   function allActiveCards(filter) { let cs = []; activeChapters().forEach((c) => { if (!filter || filter(c)) cs = cs.concat(cardList(c)); }); return cs; }
 
   // ---------- SRS (variante SM-2, 4 boutons) ----------
+  // Jours réussis d'affilée : +1 au plus par jour quand la réponse est juste, remis à zéro à la première erreur
+  function okStreak(k, g) { if (g === 0) { k.okDays = 0; k.okLast = today(); return; } if (k.okLast !== today() || !k.okDays) { k.okDays = (k.okLast === today() ? k.okDays || 0 : (k.okDays || 0)) + 1; k.okLast = today(); } }
   function grade(cardId, g, bonus, focus) {
     const now = Date.now();
     // Préparation d'une échéance : une carte pas encore due et réussie garde son calendrier (pas de bachotage qui fausse les intervalles)
-    if (focus && S.cards[cardId] && !isDue(cardId) && g >= 1) { const k = S.cards[cardId]; k.tries = (k.tries || 0) + 1; if (g >= 2 && (k.lapses > 0 || k.ease < 2.3)) { S.hw = S.hw || {}; S.hw[today()] = (S.hw[today()] || 0) + 1; } k.last = now; return k; }
+    if (focus && S.cards[cardId] && !isDue(cardId) && g >= 1) { const k = S.cards[cardId]; k.tries = (k.tries || 0) + 1; if (g >= 2 && (k.lapses > 0 || k.ease < 2.3)) { S.hw = S.hw || {}; S.hw[today()] = (S.hw[today()] || 0) + 1; } k.last = now; okStreak(k, g); return k; }
     const c = S.cards[cardId] || { ivl: 0, ease: 2.5, reps: 0, lapses: 0, first: today() };
     c.tries = (c.tries || 0) + 1; c.last = today();
     // Carte difficile (déjà ratée, ou facilité basse) réussie : compte pour les défis « cartes difficiles »
@@ -199,7 +201,7 @@
       c.reps++;
       const d = new Date(); d.setHours(4, 0, 0, 0); c.due = d.getTime() + c.ivl * DAY;
     }
-    c.last = now; S.cards[cardId] = c;
+    c.last = now; okStreak(c, g); S.cards[cardId] = c;
     return c;
   }
   const isDue = (id) => { const c = S.cards[id]; return c && c.due <= Date.now(); };
@@ -223,15 +225,17 @@
     main.forEach((l) => add(l, false)); comp.forEach((l) => add(l, true));
     return out;
   }
-  // Vu = carte déjà travaillée ; prêt = dernière réponse juste (une erreur remet reps à 0)
-  function itemProgress(it) { const cs = itemCards(it); let seen = 0, ok = 0; cs.forEach((c) => { const k = S.cards[c.id]; if (k) { seen++; if (k.reps > 0) ok++; } }); return { total: cs.length, seen, ok, comp: cs.filter((c) => c.comp).length }; }
+  // Vu = carte déjà travaillée ; prête = réussie 2 jours différents d'affilée (une erreur remet le compteur à zéro)
+  const READY_DAYS = 2;
+  const okDaysOf = (id) => (S.cards[id] && S.cards[id].okDays) || 0;
+  function itemProgress(it) { const cs = itemCards(it); let seen = 0, ok = 0, need = 0; cs.forEach((c) => { const k = S.cards[c.id]; if (k) seen++; const d = okDaysOf(c.id); if (d >= READY_DAYS) ok++; need += Math.max(0, READY_DAYS - d); }); return { total: cs.length, seen, ok, need, comp: cs.filter((c) => c.comp).length }; }
   const agendaCands = (items) => { const seen = new Set(), out = []; items.forEach((it) => itemCards(it).forEach((c) => { if (seen.has(c.id)) return; seen.add(c.id); out.push(Object.assign({}, c, { focus: it })); })); return out; };
   // Cartes à préparer pour les échéances de l'agenda (contrôle, interro, leçon à apprendre)
   function focusCards(cands, max) {
     const t0 = new Date(); t0.setHours(0, 0, 0, 0);
     const cand = cands.filter((c) => !(S.cards[c.id] && S.cards[c.id].last >= t0.getTime() && !isDue(c.id)));
     // d'abord les cartes jamais vues, puis les plus fragiles, puis les moins récemment revues
-    const score = (c) => { const k = S.cards[c.id]; if (!k) return -1e12; return -(k.lapses * 5 + (3 - k.ease) * 4) * 1e10 + (k.last || 0); };
+    const score = (c) => { const k = S.cards[c.id]; if (!k) return -1e15; if (k.lapses > 0 && !okDaysOf(c.id)) return -2e15 + (k.last || 0) / 1e3; /* ratée récemment : d'abord */ return Math.min(okDaysOf(c.id), READY_DAYS) * 1e14 - (k.lapses * 5 + (3 - k.ease) * 4) * 1e10 + (k.last || 0); };
     return cand.sort((a, b) => score(a) - score(b)).slice(0, max);
   }
   function buildSession({ subject, chapter, lesson, agenda, max = 30 } = {}) {
@@ -240,7 +244,9 @@
     if (agenda && window.AGENDA) { const it = AGENDA.A().find((x) => x.id === agenda); if (!it) return []; return shuffleOrder(focusCards(agendaCands([it]), 20)); }
     const items = !chapter && !lesson && window.AGENDA ? AGENDA.upcoming().filter((x) => AGENDA.daysTo(x.date) <= AGENDA.WINDOW) : [];
     const cands = agendaCands(items).filter((c) => !subject || (CHI[c.ch] && CHI[c.ch].s === subject));
-    const focus = focusCards(cands, window.AGENDA ? AGENDA.FOCUS_MAX : 15), fids = new Set(focus.map((c) => c.id));
+    let fmax = 0; items.forEach((it) => { const P = itemProgress(it); fmax += Math.ceil(P.need / Math.max(1, AGENDA.daysTo(it.date))); });
+    fmax = Math.min(30, Math.max(window.AGENDA ? AGENDA.FOCUS_MAX : 15, fmax));
+    const focus = focusCards(cands, fmax), fids = new Set(focus.map((c) => c.id));
     pool = pool.filter((c) => !fids.has(c.id));
     const due = pool.filter((c) => isDue(c.id)).sort((a, b) => S.cards[a.id].due - S.cards[b.id].due);
     const extra = (S.extraNew && S.extraNew.d === today()) ? S.extraNew.n : 0;
@@ -253,7 +259,7 @@
     let fresh = pool.filter((c) => isNew(c.id) && c.bonus);
     Object.keys(byL).forEach((lid) => (byL[lid] = byL[lid].filter((c) => !c.bonus)));
     Object.keys(byDay).sort().reverse().forEach((d) => { const groups = byDay[d]; let more = true; while (more) { more = false; groups.forEach((arr) => { if (arr.length) { fresh.push(arr.shift()); more = true; } }); } });
-    fresh = fresh.slice(0, room);
+    fresh = fresh.slice(0, Math.max(0, room - focus.length)); // la préparation d'un contrôle prend la place des nouvelles cartes du jour
     let list = due.slice(0, max).concat(fresh.slice(0, Math.max(0, max - Math.min(due.length, max))));
     return shuffleOrder(focus).concat(shuffleOrder(list));
   }
@@ -429,7 +435,7 @@
 
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
-    cardList, lessonCards, relatedLessons, itemCards, itemProgress, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
+    cardList, lessonCards, relatedLessons, itemCards, itemProgress, READY_DAYS, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
     levelInfo, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();
