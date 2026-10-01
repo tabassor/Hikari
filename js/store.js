@@ -207,20 +207,40 @@
   const mastered = (id) => { const c = S.cards[id]; return !!c && c.ivl >= 21; };
   const newSeenToday = () => Object.values(S.cards).filter((c) => c.first === today()).length;
 
+  // ---------- Échéances de l'agenda : cartes concernées et jauge ----------
+  // Compléments du programme : leçons de base (non issues du cours de la prof) du même chapitre,
+  // ou des chapitres qui couvrent les mêmes points du programme que la leçon choisie.
+  function relatedLessons(lid) {
+    const l = LEI[lid]; if (!l) return []; const c = CHI[l.ch], refs = new Set(l.refs || []), out = [];
+    CH.forEach((c2) => { if (c2.s !== c.s) return; if (c2.id !== c.id && !(c2.refs || []).some((r) => refs.has(r))) return;
+      c2.lessons.forEach((l2) => { if (l2.id === lid || l2.fromTeacher || l2.stub || l2.remed) return; if (lessonCards(c2, l2).length) out.push(l2.id); }); });
+    return out;
+  }
+  function itemCards(it) {
+    const main = new Set(it.lessons || []), comp = new Set(), out = [], seen = new Set();
+    if (it.prog !== false) main.forEach((lid) => relatedLessons(lid).forEach((x) => { if (!main.has(x)) comp.add(x); }));
+    const add = (lid, isComp) => { const l = LEI[lid]; if (!l) return; lessonCards(CHI[l.ch], l).forEach((c) => { if (seen.has(c.id)) return; seen.add(c.id); out.push(isComp ? Object.assign({}, c, { comp: true }) : c); }); };
+    main.forEach((l) => add(l, false)); comp.forEach((l) => add(l, true));
+    return out;
+  }
+  // Vu = carte déjà travaillée ; prêt = dernière réponse juste (une erreur remet reps à 0)
+  function itemProgress(it) { const cs = itemCards(it); let seen = 0, ok = 0; cs.forEach((c) => { const k = S.cards[c.id]; if (k) { seen++; if (k.reps > 0) ok++; } }); return { total: cs.length, seen, ok, comp: cs.filter((c) => c.comp).length }; }
+  const agendaCands = (items) => { const seen = new Set(), out = []; items.forEach((it) => itemCards(it).forEach((c) => { if (seen.has(c.id)) return; seen.add(c.id); out.push(Object.assign({}, c, { focus: it })); })); return out; };
   // Cartes à préparer pour les échéances de l'agenda (contrôle, interro, leçon à apprendre)
-  function focusCards(pool, lessonsMap, max) {
+  function focusCards(cands, max) {
     const t0 = new Date(); t0.setHours(0, 0, 0, 0);
-    const cand = pool.filter((c) => lessonsMap[c.le] && !(S.cards[c.id] && S.cards[c.id].last >= t0.getTime() && !isDue(c.id)));
+    const cand = cands.filter((c) => !(S.cards[c.id] && S.cards[c.id].last >= t0.getTime() && !isDue(c.id)));
     // d'abord les cartes jamais vues, puis les plus fragiles, puis les moins récemment revues
     const score = (c) => { const k = S.cards[c.id]; if (!k) return -1e12; return -(k.lapses * 5 + (3 - k.ease) * 4) * 1e10 + (k.last || 0); };
-    return cand.sort((a, b) => score(a) - score(b)).slice(0, max).map((c) => Object.assign({}, c, { focus: lessonsMap[c.le] }));
+    return cand.sort((a, b) => score(a) - score(b)).slice(0, max);
   }
   function buildSession({ subject, chapter, lesson, agenda, max = 30 } = {}) {
     let pool = allActiveCards((c) => (!subject || c.s === subject) && (!chapter || c.id === chapter));
     if (lesson) pool = pool.filter((c) => c.le === lesson);
-    if (agenda && window.AGENDA) { const it = AGENDA.A().find((x) => x.id === agenda); if (!it) return []; const m = {}; (it.lessons || []).forEach((l) => (m[l] = it)); return shuffleOrder(focusCards(pool, m, 20)); }
-    const fmap = !chapter && !lesson && window.AGENDA ? AGENDA.focusLessons() : {};
-    const focus = focusCards(pool, fmap, window.AGENDA ? AGENDA.FOCUS_MAX : 15), fids = new Set(focus.map((c) => c.id));
+    if (agenda && window.AGENDA) { const it = AGENDA.A().find((x) => x.id === agenda); if (!it) return []; return shuffleOrder(focusCards(agendaCands([it]), 20)); }
+    const items = !chapter && !lesson && window.AGENDA ? AGENDA.upcoming().filter((x) => AGENDA.daysTo(x.date) <= AGENDA.WINDOW) : [];
+    const cands = agendaCands(items).filter((c) => !subject || (CHI[c.ch] && CHI[c.ch].s === subject));
+    const focus = focusCards(cands, window.AGENDA ? AGENDA.FOCUS_MAX : 15), fids = new Set(focus.map((c) => c.id));
     pool = pool.filter((c) => !fids.has(c.id));
     const due = pool.filter((c) => isDue(c.id)).sort((a, b) => S.cards[a.id].due - S.cards[b.id].due);
     const extra = (S.extraNew && S.extraNew.d === today()) ? S.extraNew.n : 0;
@@ -409,7 +429,7 @@
 
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
-    cardList, lessonCards, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
+    cardList, lessonCards, relatedLessons, itemCards, itemProgress, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
     levelInfo, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();

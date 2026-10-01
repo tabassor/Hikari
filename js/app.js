@@ -160,7 +160,7 @@
         <div id="clans"></div>${(() => { const g = STORE.stagesOf(STORE.allActiveCards()); return `<div class="stages"><div><b>${g.seen}</b><span>étudiées</span></div><div><b>${g.solid}</b><span>solides<br><i>tenues 1 sem.</i></span></div><div><b>${g.mastered}</b><span>maîtrisées<br><i>tenues 3 sem.</i></span></div><div><b>${c.total}</b><span>cartes<br><i>ouvertes</i></span></div></div>`; })()}</section>`;
     $("#flash").onclick = () => startFlashQuiz();
     const mn = $("#more-new"); if (mn) mn.onclick = () => { const t = STORE.today(); S().extraNew = { d: t, n: ((S().extraNew && S().extraNew.d === t) ? S().extraNew.n : 0) + 10 }; STORE.save(); go("seance"); };
-    drawCartable(); drawDefis(); setTimeout(foyerReminder, 3600);
+    drawCartable(); drawDefis(); setTimeout(foyerReminder, 3600); if (window.AGENDA) setTimeout(checkReady, 1200);
     const nw = S().newWeek;
     if (nw && STORE.CHI[nw.ch]) {
       S().newWeek = null; STORE.save();
@@ -894,6 +894,21 @@
   // Icône d'une matière : le personnage dessiné s'il existe, sinon l'emoji
   const sjIc = (sj, px = 22) => sj.img ? `<img class="sj-img" src="${sj.img}" width="${px}" height="${px}" alt="">` : sj.ic;
   const sjChip = (sl) => { const sj = AGENDA.subj(sl.s); return `<span class="sj-chip ${sj.img ? "has-img" : ""}" style="--c:${sj.c}">${sjIc(sj, 30)} ${esc(sl.lab || sj.n)}</span>`; };
+  // Jauge d'une échéance : « vu » (déjà travaillée) et « prêt » (dernière réponse juste)
+  function gaugeHTML(x, compact) {
+    const P = STORE.itemProgress(x); if (!P.total) return "";
+    const pc = (n) => Math.round((100 * n) / P.total), done = P.ok === P.total;
+    if (compact) return `<span class="gauge-mini ${done ? "done" : ""}"><i style="width:${pc(P.ok)}%"></i></span><span class="tiny ${done ? "" : "muted"}">${done ? "Prête ✓" : `Prête à ${pc(P.ok)} % · vu ${P.seen}/${P.total}`}</span>`;
+    return `<div class="gauge ${done ? "done" : ""}"><div class="g-row"><span class="tiny">Vu</span><span class="g-bar"><i style="width:${pc(P.seen)}%"></i></span><b class="tiny">${P.seen} / ${P.total}</b></div>
+      <div class="g-row"><span class="tiny">Prête</span><span class="g-bar ok"><i style="width:${pc(P.ok)}%"></i></span><b class="tiny">${P.ok} / ${P.total}</b></div>
+      <span class="tiny muted">${done ? "Tout est vu et réussi : prête pour ce que Hikari connaît de ce contrôle !" : "Prête = dernière réponse juste."}${P.comp ? ` Dont ${P.comp} cartes du programme.` : ""} Hikari ne connaît que les leçons qu'il contient.</span></div>`;
+  }
+  // Annonce une fois, par l'apprenti de la matière, quand une échéance à venir est entièrement prête
+  function checkReady() {
+    AGENDA.upcoming().forEach((x) => { if (x.readyAt) return; const P = STORE.itemProgress(x); if (!P.total || P.ok < P.total) return;
+      x.readyAt = STORE.today(); STORE.save(); const sj = AGENDA.subj(x.s);
+      celebrate("準備完了！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : `<div style="font-size:4rem">${sj.ic}</div>`}<p><b>Prête pour ${{ ctrl: "ton contrôle", interro: "ton interro", lecon: "ta leçon", oral: "ton oral" }[x.type] || "ton échéance"} de ${esc(sj.n)}&nbsp;!</b></p><p class="small">Les ${P.total} cartes sont vues et réussies. Continue tes révisions du jour jusqu'à ${whenTxt(x.date)} pour que ça tienne.</p>`, "Génial !", "level"); });
+  }
   const nowHM = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
   // Carte du Dōjō : le cartable (aujourd'hui le matin, le lendemain ensuite) et les échéances proches
   function drawCartable() {
@@ -904,7 +919,7 @@
     box.innerHTML = `<section class="panel stack cartable" data-go="agenda">
       ${e.slots.length ? `<div class="row" style="justify-content:space-between"><span class="eyebrow">${morning ? "Aujourd'hui" : day ? (AGENDA.daysTo(day) === 1 ? "Demain dans ton sac" : `Dans ton sac pour ${new Date(day + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })}`) : "Vacances !"}</span>${AGENDA.E().ref ? `<span class="tiny muted">semaine ${AGENDA.weekNo(day || t)}</span>` : ""}</div>
         <div class="row wrap" style="gap:6px">${bag.map(sjChip).join("") || `<span class="small muted">Pas de cours.</span>`}</div>` : ""}
-      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${sj.img ? sjIc(sj, 40) : AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${sj.img ? AGENDA.TYPES[x.type][1] + " " : ""}${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b><span class="tiny muted">${x.lessons.length ? "Ces leçons passent en tête de tes révisions." : esc(x.title || "")}</span></span></div>`; }).join("") : ""}
+      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${sj.img ? sjIc(sj, 40) : AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${sj.img ? AGENDA.TYPES[x.type][1] + " " : ""}${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b>${x.lessons.length ? gaugeHTML(x, true) || `<span class="tiny muted">Ces leçons passent en tête de tes révisions.</span>` : `<span class="tiny muted">${esc(x.title || "")}</span>`}</span></div>`; }).join("") : ""}
     </section>`;
   }
   function viewAgenda(main, arg) {
@@ -944,7 +959,7 @@
     o.innerHTML = `<div class="panel stack slot-sheet" style="--c:${sj.c}">${sj.img ? `<img class="ss-img" src="${sj.img}" alt="">` : `<span class="ss-em">${sj.ic}</span>`}
       <b class="ss-t">${esc(s.lab || sj.n)}</b><span class="small muted">${AGENDA.DAYS[s.d]} · ${s.start}–${s.end}${s.room ? " · salle " + esc(s.room) : ""}${s.w ? ` · semaine ${s.w}` : ""}</span>
       ${when ? `<span class="small">Prochain cours : <b>${whenTxt(when)}</b></span>` : `<span class="small muted">Pas de cours prévu dans les 4 semaines (vacances ?).</span>`}
-      ${noAg ? "" : items.length ? items.map((x) => `<div class="due-row" style="--c:${sj.c};text-align:left"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])}${x.title ? " · " + esc(x.title) : ""}</b><span class="tiny muted">${x.lessons.length ? `${x.lessons.length} leçon${x.lessons.length > 1 ? "s" : ""} à réviser` : "Aucune leçon liée"}</span></span></div>${x.lessons.length ? `<button class="btn primary" data-go="seance~a:${x.id}">S'entraîner maintenant</button>` : ""}`).join("") : `<p class="small">Rien de noté pour ce cours.</p>`}
+      ${noAg ? "" : items.length ? items.map((x) => `<div class="due-row" style="--c:${sj.c};text-align:left"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])}${x.title ? " · " + esc(x.title) : ""}</b><span class="tiny muted">${x.lessons.length ? `${x.lessons.length} leçon${x.lessons.length > 1 ? "s" : ""} à réviser` : "Aucune leçon liée"}</span></span></div>${x.lessons.length ? gaugeHTML(x) : ""}${x.lessons.length ? `<button class="btn primary" data-go="seance~a:${x.id}">S'entraîner maintenant</button>` : ""}`).join("") : `<p class="small">Rien de noté pour ce cours.</p>`}
       ${!noAg && soon.length ? `<p class="tiny muted">Plus tard : ${soon.map((x) => `${esc(AGENDA.TYPES[x.type][0].toLowerCase())} ${whenTxt(x.date)}`).join(" · ")}</p>` : ""}
       ${!noAg && when ? `<button class="btn" id="ss-add">+ Noter une interro pour ce cours</button>` : ""}<button class="btn ghost" id="ss-x">Fermer</button></div>`;
     document.body.appendChild(o);
@@ -997,6 +1012,7 @@
     const row = (x, old) => { const sj = AGENDA.subj(x.s), ty = AGENDA.TYPES[x.type] || AGENDA.TYPES.ctrl, n = STORE.buildSession({ agenda: x.id }).length;
       return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${sj.img ? sjIc(sj, 44) : ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${sj.img ? ty[1] + " " : ""}${esc(ty[0])} · ${sj.img ? "" : sj.ic + " "}${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
         ${x.lessons.length ? `<span class="tiny muted">${x.lessons.map((l) => STORE.LEI[l] ? esc(STORE.LEI[l].title) : "").filter(Boolean).join(" · ")}</span>` : `<span class="tiny muted">Aucune leçon liée dans Hikari.</span>`}</span><button class="btn ghost sm" data-adel="${x.id}" aria-label="Supprimer">✕</button></div>
+        ${!old && x.lessons.length ? gaugeHTML(x) : ""}
         ${!old && n ? `<button class="btn sm primary" data-go="seance~a:${x.id}">S'entraîner maintenant · ${n}</button>` : ""}</div>`; };
     box.innerHTML = `<button class="btn primary" id="ag-new">+ Noter une interro ou une leçon</button>
       <section class="stack"><h2>À venir</h2>${up.length ? up.map((x) => row(x)).join("") : `<p class="small muted">Rien de prévu. Dès qu'une prof annonce une interro, note-la ici.</p>`}</section>
@@ -1015,16 +1031,17 @@
         <label class="stack"><span class="small"><b>Matière</b></span><select id="af-s">${AGENDA.subjects().filter((x) => !["etude", "vdc", "cantine", "recre"].includes(x.id)).map((x) => `<option value="${x.id}" ${x.id === st.s ? "selected" : ""}>${x.ic} ${esc(x.n)}</option>`).join("")}</select></label>
         <label class="stack"><span class="small"><b>Pour quand ?</b></span><div class="row wrap" style="gap:6px">${nc ? `<button class="pday ${st.date === nc ? "on" : ""}" data-dt="${nc}">Prochain cours : ${new Date(nc + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", timeZone: "UTC" })}</button>` : ""}<input type="date" id="af-d" value="${st.date}" min="${STORE.today()}" style="width:auto"></div></label>
         <label class="stack"><span class="small"><b>Sur quoi ?</b> (facultatif)</span><input id="af-t" value="${esc(st.title)}" maxlength="80" placeholder="Ex. les fractions, la poésie à réciter"></label>
-        ${hk ? `<div class="stack"><span class="small"><b>Les leçons de Hikari à réviser</b></span>${ls.length ? `<div class="fix-list">${ls.map(({ l, c }) => `<label class="fix-row"><input type="checkbox" data-l="${l.id}" ${st.lessons.includes(l.id) ? "checked" : ""}> <span class="small">${esc(l.title)} <span class="muted tiny">· ${esc(c.title)}</span></span></label>`).join("")}</div>` : `<p class="small muted">Aucune leçon ouverte dans cette matière.</p>`}<p class="tiny muted">La leçon n'y est pas ? Demande à Papa d'envoyer la photo de ton cours.</p></div>` : ""}
+        ${hk ? `<div class="stack"><span class="small"><b>Les leçons de Hikari à réviser</b></span>${ls.length ? `<div class="fix-list">${ls.map(({ l, c }) => `<label class="fix-row"><input type="checkbox" data-l="${l.id}" ${st.lessons.includes(l.id) ? "checked" : ""}> <span class="small">${esc(l.title)} <span class="muted tiny">· ${esc(c.title)}</span></span></label>`).join("")}</div>` : `<p class="small muted">Aucune leçon ouverte dans cette matière.</p>`}${st.lessons.length ? (() => { const n = STORE.itemCards({ lessons: st.lessons, prog: true }).filter((c) => c.comp).length; return n ? `<label class="fix-row"><input type="checkbox" id="af-prog" ${st.prog !== false ? "checked" : ""}> <span class="small">Ajouter les <b>${n} cartes du programme</b> sur le même thème <span class="muted tiny">(écrites d'après le programme officiel, pas d'après ton cours)</span></span></label>` : `<p class="tiny muted">Pas de carte du programme en plus pour ces leçons.</p>`; })() : ""}<p class="tiny muted">La leçon n'y est pas ? Demande à Papa d'envoyer la photo de ton cours.</p></div>` : ""}
         <div class="row wrap"><button class="btn primary" id="af-ok" style="flex:1">Enregistrer</button><button class="btn ghost" id="af-x">Annuler</button></div></section>`;
-      const read = () => { st.title = $("#af-t").value.trim(); if ($("#af-d").value) st.date = $("#af-d").value; st.lessons = $$("[data-l]", box).filter((c) => c.checked).map((c) => c.dataset.l); };
+      const read = () => { st.title = $("#af-t").value.trim(); if ($("#af-d").value) st.date = $("#af-d").value; st.lessons = $$("[data-l]", box).filter((c) => c.checked).map((c) => c.dataset.l); const pg = $("#af-prog"); if (pg) st.prog = pg.checked; };
+      $$("[data-l]", box).forEach((c) => (c.onchange = () => { read(); paint(); }));
       $$("[data-ty]", box).forEach((b) => (b.onclick = () => { read(); st.type = b.dataset.ty; paint(); }));
       $$("[data-dt]", box).forEach((b) => (b.onclick = () => { read(); st.date = b.dataset.dt; paint(); }));
       $("#af-d").onchange = () => { read(); paint(); };
       $("#af-s").onchange = (ev) => { read(); st.s = ev.target.value; st.lessons = []; paint(); };
       $("#af-x").onclick = () => drawAgendaList(box);
       $("#af-ok").onclick = () => { read(); if (!st.date) return toast("Choisis la date."); if (st.date < STORE.today()) return toast("Cette date est déjà passée.");
-        const it = AGENDA.add({ type: st.type, s: st.s, date: st.date, title: st.title, lessons: st.lessons }); drawAgendaList(box); apprentiSays(it); };
+        const it = AGENDA.add({ type: st.type, s: st.s, date: st.date, title: st.title, lessons: st.lessons, prog: st.prog !== false }); drawAgendaList(box); apprentiSays(it); };
     };
     paint();
   }
