@@ -33,13 +33,16 @@ def main():
     repo = sys.argv[1]
     os.makedirs(os.path.join(repo, "img"), exist_ok=True)
     js = os.path.join(repo, "data/images.js"); src = open(js, encoding="utf8").read()
-    data = json.loads(re.search(r"window\.IMAGES = (\{.*\});", src, re.S).group(1).replace("ren:", '"ren":').replace("boss:", '"boss":'))
+    data = json.loads(re.search(r"window\.IMAGES = (\{.*\});", src, re.S).group(1).replace("ren:", '"ren":').replace("boss:", '"boss":').replace("garden:", '"garden":'))
     for arg in sys.argv[2:]:
         key, path = arg.split("=", 1)
-        img = cutout(Image.open(path))
-        fn = f"img/{key}.webp"; img.save(os.path.join(repo, fn), "WEBP", quality=82, method=6)
         kind, name = key.split("-", 1)
-        data[kind][name] = fn
+        if key == "garden-bg":  # décor pleine image : pas de détourage
+            img = Image.open(path).convert("RGB"); img.thumbnail((1200, 1200))
+        else:
+            img = cutout(Image.open(path))
+        fn = f"img/{key}.webp"; img.save(os.path.join(repo, fn), "WEBP", quality=82, method=6)
+        data.setdefault(kind, {})[name] = fn
         print("ok", key, os.path.getsize(os.path.join(repo, fn)) // 1024, "Ko")
     body = json.dumps(data, ensure_ascii=False, indent=2)
     src = re.sub(r"window\.IMAGES = \{.*\};", "window.IMAGES = " + body + ";", src, flags=re.S)
