@@ -777,3 +777,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .gauge-mini i { display: block; height: 100%; background: var(--c, var(--accent)); border-radius: inherit; }
 .gauge-mini.done i { background: var(--good, #2E9E5B); }
 .quiz-b { width: 100%; background: color-mix(in srgb, var(--c, var(--accent)) 14%, var(--panel)); box-shadow: inset 0 0 0 2px var(--c, var(--accent)); font-weight: 900; }
+.palm-row { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--hair); }
+.palm-row:last-child { border-bottom: 0; }
+.palm-row.best b { color: var(--accent); }
+.lvl-k.sm { width: 38px; height: 38px; font-size: 1.1rem; }
+.palm-crown { font-size: 1.3rem; }

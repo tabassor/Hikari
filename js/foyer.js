@@ -96,6 +96,15 @@
   }
   const levelOf = (pts) => { const LS = levels(); let L = LS[0], next = null; LS.forEach((l, i) => { if (pts >= l[0]) { L = l; next = LS[i + 1] || null; } }); return { L, next }; };
   function voieDoneThisWeek(id, iso) { const mon = mondayOf(iso); for (let i = 0; i < 7; i++) { const d = addDays(mon, i); if (d !== iso && F().voie[d] && F().voie[d][id]) return d; } return null; }
+  // Palmarès : un instantané par mois terminé (points et niveau atteint, figés avec les défis de l'époque)
+  function palmares() {
+    const f = F(), cur = monthOf(paris().iso); f.palm = f.palm || {};
+    const months = new Set(Object.keys(f.voie).filter((d) => Object.keys(f.voie[d] || {}).length).map((d) => d.slice(0, 7)));
+    months.forEach((m) => { if (m < cur && !f.palm[m]) { const pts = voiePoints(m), lv = levelOf(pts).L; f.palm[m] = { pts, lv: lv[1], k: lv[2] }; STORE.save(); } });
+    const rows = Object.keys(f.palm).sort().reverse().map((m) => Object.assign({ m }, f.palm[m]));
+    const best = rows.reduce((b, r) => (!b || r.pts > b.pts ? r : b), null);
+    return { rows, best };
+  }
   function bestMonth() { const f = F(), byM = {}; Object.keys(f.voie).forEach((d) => (byM[d.slice(0, 7)] = 1)); let best = null; Object.keys(byM).forEach((m) => { const p = voiePoints(m); if (!best || p > best.p) best = { m, p }; }); return best; }
 
   // Bienfaits
@@ -111,5 +120,5 @@
   // Décors qui apparaissent au fil des bienfaits du mois
   // [seuil, clé, emoji de repli, x %, y % (pied), échelle]
   const DECOS = [[5, "papillons", "🦋", 22, 32, 2], [10, "lanterne", "🏮", 80, 66, 1.5], [15, "etang", "🐟", 24, 88, 2.2], [20, "torii", "⛩️", 50, 44, 1.8], [30, "arbre", "🌳", 88, 50, 2.8]];
-  window.FOYER = { DECOS, syncClock, now, paris, addDays, mondayOf, DOW, missions, voieList, due, atMin, doneOf, tick, untick, week, checkTokens, monthOf, voiePoints, levelOf, voieDoneThisWeek, bestMonth, addBienfait, levels, maxMonth, FLOWERS, FLOWER_EMOJI, F, cfg, ready, saveCfg, exportCfg, voieAll, parents, tokenWith, SUGG_M, SUGG_V };
+  window.FOYER = { DECOS, syncClock, now, paris, addDays, mondayOf, DOW, missions, voieList, due, atMin, doneOf, tick, untick, week, checkTokens, monthOf, voiePoints, levelOf, voieDoneThisWeek, bestMonth, palmares, addBienfait, levels, maxMonth, FLOWERS, FLOWER_EMOJI, F, cfg, ready, saveCfg, exportCfg, voieAll, parents, tokenWith, SUGG_M, SUGG_V };
 })();
