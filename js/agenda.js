@@ -16,6 +16,7 @@
     { id: "mus", n: "Musique", c: "#A0662A", ic: "🎵" }, { id: "tech", n: "Technologie", c: "#58707E", ic: "⚙️" },
     { id: "vdc", n: "Vie de classe", c: "#7D8A1F", ic: "💬" }, { id: "etude", n: "Étude", c: "#8B8B99", ic: "📘" },
     { id: "past", n: "Temps pastoral", c: "#9C3D7A", ic: "🤝" },
+    { id: "cantine", n: "Cantine", c: "#6FA82E", ic: "🍱" }, { id: "recre", n: "Récré", c: "#E8A800", ic: "🪁" },
     { id: "autre", n: "Autre", c: "#5D6B8A", ic: "⭐" }
   ];
   function E() { const S = STORE.S; S.edt = S.edt || {}; const e = S.edt; e.slots = e.slots || []; e.icons = e.icons || {}; return e; }
@@ -47,7 +48,8 @@
   function nextSchoolDay(iso = today()) { for (let i = 1; i < 21; i++) { const d = addDays(iso, i); if (slotsOn(d).length) return d; } return null; }
   // Prochain cours d'une matière (pour dater une interro « au prochain cours »)
   function nextClass(sid, iso = today()) { for (let i = 1; i < 28; i++) { const d = addDays(iso, i); if (slotsOn(d).some((s) => s.s === sid)) return d; } return null; }
-  const bag = (iso) => { const seen = new Set(), out = []; slotsOn(iso).forEach((s) => { const k = s.s + "|" + (s.lab || ""); if (!seen.has(k)) { seen.add(k); out.push(s); } }); return out; };
+  const NOBAG = ["cantine", "recre", "etude"]; // pas des matières à mettre dans le sac
+  const bag = (iso) => { const seen = new Set(), out = []; slotsOn(iso).forEach((s) => { if (NOBAG.includes(s.s)) return; const k = s.s + "|" + (s.lab || ""); if (!seen.has(k)) { seen.add(k); out.push(s); } }); return out; };
 
   // ---------- Agenda ----------
   const TYPES = { ctrl: ["Contrôle", "🎯"], interro: ["Interro", "⚡"], lecon: ["Leçon à apprendre", "📗"], oral: ["Oral / récitation", "🎤"] };
