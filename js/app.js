@@ -891,7 +891,9 @@
   const dLong = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
   const whenTxt = (iso) => { const n = AGENDA.daysTo(iso); return n === 0 ? "aujourd'hui" : n === 1 ? "demain" : n < 7 ? `${new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })} (dans ${n} j)` : `le ${new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" })}`; };
   function focusWhen(it) { const sj = AGENDA.subj(it.s); return `${AGENDA.TYPES[it.type] ? AGENDA.TYPES[it.type][0] : "Échéance"} de ${sj.n} ${whenTxt(it.date)}`; }
-  const sjChip = (sl) => { const sj = AGENDA.subj(sl.s); return `<span class="sj-chip" style="--c:${sj.c}">${sj.ic} ${esc(sl.lab || sj.n)}</span>`; };
+  // Icône d'une matière : le personnage dessiné s'il existe, sinon l'emoji
+  const sjIc = (sj, px = 22) => sj.img ? `<img class="sj-img" src="${sj.img}" width="${px}" height="${px}" alt="">` : sj.ic;
+  const sjChip = (sl) => { const sj = AGENDA.subj(sl.s); return `<span class="sj-chip ${sj.img ? "has-img" : ""}" style="--c:${sj.c}">${sjIc(sj, 30)} ${esc(sl.lab || sj.n)}</span>`; };
   const nowHM = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
   // Carte du Dōjō : le cartable (aujourd'hui le matin, le lendemain ensuite) et les échéances proches
   function drawCartable() {
@@ -902,7 +904,7 @@
     box.innerHTML = `<section class="panel stack cartable" data-go="agenda">
       ${e.slots.length ? `<div class="row" style="justify-content:space-between"><span class="eyebrow">${morning ? "Aujourd'hui" : day ? (AGENDA.daysTo(day) === 1 ? "Demain dans ton sac" : `Dans ton sac pour ${new Date(day + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })}`) : "Vacances !"}</span>${AGENDA.E().ref ? `<span class="tiny muted">semaine ${AGENDA.weekNo(day || t)}</span>` : ""}</div>
         <div class="row wrap" style="gap:6px">${bag.map(sjChip).join("") || `<span class="small muted">Pas de cours.</span>`}</div>` : ""}
-      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b><span class="tiny muted">${x.lessons.length ? "Ces leçons passent en tête de tes révisions." : esc(x.title || "")}</span></span></div>`; }).join("") : ""}
+      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${sj.img ? sjIc(sj, 40) : AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${sj.img ? AGENDA.TYPES[x.type][1] + " " : ""}${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b><span class="tiny muted">${x.lessons.length ? "Ces leçons passent en tête de tes révisions." : esc(x.title || "")}</span></span></div>`; }).join("") : ""}
     </section>`;
   }
   function viewAgenda(main, arg) {
@@ -925,7 +927,7 @@
         <div class="edt-hours">${hours.map((h) => `<span style="top:${(h * 60 - lo) * K + 26}px">${h}h</span>`).join("")}</div>
         ${Array.from({ length: days }, (_, d) => `<div class="edt-col ${d === todayCol ? "today" : ""}"><span class="edt-day">${AGENDA.DAYS[d].slice(0, 3)}</span>
           ${sl.filter((s) => s.d === d).map((s) => { const sj = AGENDA.subj(s.s), top = (toMin(s.start) - lo) * K + 26, h = (toMin(s.end) - toMin(s.start)) * K - 3, now = d === todayCol && nm >= toMin(s.start) && nm < toMin(s.end);
-            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sj.ic}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
+            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sjIc(sj, h > 44 ? 30 : 20)}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
           ${d === todayCol && nm > lo && nm < hi ? `<i class="edt-now" style="top:${(nm - lo) * K + 26}px"></i>` : ""}</div>`).join("")}
       </div>
       <div class="row wrap"><button class="btn" data-go="edt">Modifier mon emploi du temps</button><button class="btn ghost sm" id="wk-fix">On n'est pas en semaine ${cur} ?</button></div>
@@ -949,7 +951,7 @@
             <div class="row">${s.s === "autre" ? `<input data-f="lab" value="${esc(s.lab || "")}" placeholder="Nom (ex. Chorale)" maxlength="30" style="flex:1">` : ""}<input data-f="room" value="${esc(s.room || "")}" placeholder="Salle" maxlength="12" style="width:6em"></div></div>`).join("") || `<p class="small muted">Pas de cours.</p>`}
           <button class="btn sm" data-sadd="${d}">+ Ajouter un cours</button></section>`).join("")}
         <label class="row small" style="gap:8px"><input type="checkbox" id="sat" ${sat ? "checked" : ""}> J'ai cours le samedi</label>
-        <details><summary>Les icônes de mes matières</summary><div class="in stack">${SJ().map((x) => `<label class="row" style="gap:8px"><input class="prep-ic" data-ic="${x.id}" value="${esc(x.ic)}" maxlength="4"><span class="sj-chip" style="--c:${x.c}">${esc(x.n)}</span></label>`).join("")}<p class="tiny muted">Choisis un emoji sur ton clavier pour chaque matière.</p></div></details>
+        ${SJ().some((x) => !x.img) ? `<details><summary>Les icônes de mes matières</summary><div class="in stack">${SJ().filter((x) => !x.img).map((x) => `<label class="row" style="gap:8px"><input class="prep-ic" data-ic="${x.id}" value="${esc(x.ic)}" maxlength="4"><span class="sj-chip" style="--c:${x.c}">${esc(x.n)}</span></label>`).join("")}<p class="tiny muted">Choisis un emoji sur ton clavier pour chaque matière, en attendant son personnage.</p></div></details>` : ""}
         <div class="row wrap"><button class="btn primary" id="edt-save" style="flex:1">Enregistrer</button><button class="btn ghost" data-go="agenda">Annuler</button></div>`;
       const read = () => { $$("[data-si]", main).forEach((r) => { const s = slots[+r.dataset.si]; $$("[data-f]", r).forEach((x) => (s[x.dataset.f] = x.dataset.f === "w" ? (+x.value || 0) : x.value.trim())); }); $$("[data-ic]", main).forEach((x) => { if (x.value.trim()) icons[x.dataset.ic] = x.value.trim(); }); };
       $$("[data-ref]", main).forEach((b) => (b.onclick = () => { read(); ref = +b.dataset.ref; paint(); }));
@@ -971,7 +973,7 @@
   function drawAgendaList(box) {
     const up = AGENDA.upcoming(), past = AGENDA.past().slice(0, 10);
     const row = (x, old) => { const sj = AGENDA.subj(x.s), ty = AGENDA.TYPES[x.type] || AGENDA.TYPES.ctrl, n = STORE.buildSession({ agenda: x.id }).length;
-      return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${esc(ty[0])} · ${sj.ic} ${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
+      return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${sj.img ? sjIc(sj, 44) : ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${sj.img ? ty[1] + " " : ""}${esc(ty[0])} · ${sj.img ? "" : sj.ic + " "}${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
         ${x.lessons.length ? `<span class="tiny muted">${x.lessons.map((l) => STORE.LEI[l] ? esc(STORE.LEI[l].title) : "").filter(Boolean).join(" · ")}</span>` : `<span class="tiny muted">Aucune leçon liée dans Hikari.</span>`}</span><button class="btn ghost sm" data-adel="${x.id}" aria-label="Supprimer">✕</button></div>
         ${!old && n ? `<button class="btn sm primary" data-go="seance~a:${x.id}">S'entraîner maintenant · ${n}</button>` : ""}</div>`; };
     box.innerHTML = `<button class="btn primary" id="ag-new">+ Noter une interro ou une leçon</button>

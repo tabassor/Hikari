@@ -20,9 +20,10 @@
   function E() { const S = STORE.S; S.edt = S.edt || {}; const e = S.edt; e.slots = e.slots || []; e.icons = e.icons || {}; return e; }
   function A() { const S = STORE.S; S.agenda = S.agenda || []; return S.agenda; }
   function subjects() {
-    const ic = E().icons;
-    return PROGRAMME.subjects.map((s) => ({ id: s.id, n: s.short || s.name, c: s.color, k: s.kanji, hk: true, ic: ic[s.id] || DEF_IC[s.id] || "⭐" }))
-      .concat(EXTRA.map((x) => Object.assign({}, x, { ic: ic[x.id] || x.ic })));
+    // Personnage dessiné (data/images.js → IMAGES.subj, ajouté par le parent) s'il existe, sinon l'emoji choisi par l'élève
+    const ic = E().icons, im = (window.IMAGES && IMAGES.subj) || {};
+    return PROGRAMME.subjects.map((s) => ({ id: s.id, n: s.short || s.name, c: s.color, k: s.kanji, hk: true, ic: ic[s.id] || DEF_IC[s.id] || "⭐", img: im[s.id] || "" }))
+      .concat(EXTRA.map((x) => Object.assign({}, x, { ic: ic[x.id] || x.ic, img: im[x.id] || "" })));
   }
   const subj = (id) => subjects().find((s) => s.id === id) || subjects().find((s) => s.id === "autre");
 
