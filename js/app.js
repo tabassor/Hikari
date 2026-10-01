@@ -72,8 +72,9 @@
       <div class="who"><div class="name">${esc(p.name)}</div><div class="rank">Niv. ${L.level} · <span class="kj-f">${L.rank[1]}</span> ${L.rank[2]}</div><div class="xpbar" title="${L.into}/${L.need} XP"><i style="width:${(100 * L.into / L.need).toFixed(1)}%"></i></div></div>
       <div class="chips"><span class="chip flame" title="Flamme : jours d'affilée avec l'objectif atteint"><span class="k">炎</span>${STORE.streakAlive()}</span><span class="chip ki" title="Ki du jour : révisions faites / objectif"><span class="k">気</span>${Math.min(d.n, S().settings.goal)}/${S().settings.goal}</span></div>`;
   }
-  const TABS = [["dojo", "道", "Dōjō"], ["revision", "修", "Réviser"], ["monde", "界", "Monde"], ["tresors", "宝", "Trésors"], ["moi", "我", "Moi"]];
-  function renderTabs(cur) { $(".tabs").innerHTML = `<div class="in">${TABS.map(([id, k, n]) => `<button data-go="${id}" ${cur === id ? 'aria-current="page"' : ""}><span class="k">${k}</span>${n}</button>`).join("")}</div>`; }
+  const TABS = [["dojo", "道", "Dōjō"], ["revision", "修", "Réviser"], ["monde", "界", "Monde"], ["foyer", "家", "Foyer"], ["tresors", "宝", "Trésors"], ["moi", "我", "Moi"]];
+  let curTab = "dojo";
+  function renderTabs(cur) { curTab = cur; const dot = window.FOYER && foyerAlert(); $(".tabs").innerHTML = `<div class="in">${TABS.map(([id, k, n]) => `<button data-go="${id}" ${cur === id ? 'aria-current="page"' : ""}><span class="k">${k}</span>${n}${id === "foyer" && dot ? '<i class="tab-dot" aria-label="Mission à faire"></i>' : ""}</button>`).join("")}</div>`; }
   let leaveGuard = null, navDir = "fwd", depth = 0, orbitStop = null;
   function go(route, replace) {
     if (leaveGuard && !leaveGuard()) return;
@@ -91,9 +92,9 @@
     if (!S().profile) { renderTabs(""); renderHUD(); return viewOnboarding(main); }
     renderHUD();
     const [name, ...rest] = route.split("~"); const arg = rest.join("~");
-    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
+    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", foyer: "foyer", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
     renderTabs(tab);
-    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
+    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, foyer: viewFoyer, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
   }
   document.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b && !b.disabled) { e.preventDefault(); go(b.dataset.go); } });
   window.addEventListener("popstate", (e) => { leaveGuard = null; const d = (e.state && e.state.d) || 0; navDir = d < depth ? "back" : "fwd"; depth = d; render(); });
@@ -158,7 +159,7 @@
         <div id="clans"></div>${(() => { const g = STORE.stagesOf(STORE.allActiveCards()); return `<div class="stages"><div><b>${g.seen}</b><span>étudiées</span></div><div><b>${g.solid}</b><span>solides<br><i>tenues 1 sem.</i></span></div><div><b>${g.mastered}</b><span>maîtrisées<br><i>tenues 3 sem.</i></span></div><div><b>${c.total}</b><span>cartes<br><i>ouvertes</i></span></div></div>`; })()}</section>`;
     $("#flash").onclick = () => startFlashQuiz();
     const mn = $("#more-new"); if (mn) mn.onclick = () => { const t = STORE.today(); S().extraNew = { d: t, n: ((S().extraNew && S().extraNew.d === t) ? S().extraNew.n : 0) + 10 }; STORE.save(); go("seance"); };
-    drawDefis();
+    drawDefis(); setTimeout(foyerReminder, 3600);
     const nw = S().newWeek;
     if (nw && STORE.CHI[nw.ch]) {
       S().newWeek = null; STORE.save();
@@ -884,6 +885,96 @@
   }
 
 
+  // =================== Foyer : missions, Voie du mois, Jardin des bienfaits ===================
+  // Rappel : uniquement à partir de l'heure de la mission (19 h), jamais avant.
+  function foyerPending() { const t = FOYER.paris(); return FOYER.due(t.iso).filter((m) => !FOYER.doneOf(t.iso, m.id) && t.hm >= FOYER.atMin(m)); }
+  function foyerAlert() { try { return S().profile && foyerPending().length > 0; } catch (e) { return false; } }
+  function foyerReminder() {
+    const p = foyerPending(); if (!p.length) return; const f = FOYER.F(), t = FOYER.paris(); f.reminded = f.reminded || {};
+    if (f.reminded[t.iso]) return; f.reminded[t.iso] = 1; STORE.save();
+    celebrate("家の任務！", `${ART.sensei("think", 96)}<p>Il est l'heure de ta mission du soir :</p><ul class="small" style="text-align:left">${p.map((m) => `<li>${m.ic} <b>${esc(m.n)}</b></li>`).join("")}</ul><p class="tiny muted">Coche-la dans Foyer quand c'est fait.</p>`, "J'y vais !", "level").then(() => go("foyer"));
+  }
+  function viewFoyer(main, arg) {
+    const tab = arg || "missions";
+    main.innerHTML = `<div class="foyer-head"><h1>Foyer</h1><p class="small muted">La vie de la maison. Ça ne compte pas pour tes révisions, et tes révisions ne comptent pas ici.</p></div>
+      <div class="seg foyer-seg">${[["missions", "Missions"], ["voie", "Voie du mois"], ["jardin", "Jardin"]].map(([id, n]) => `<button aria-pressed="${tab === id}" data-go="foyer~${id}">${n}</button>`).join("")}</div><div id="fy"></div>`;
+    ({ missions: foyerMissions, voie: foyerVoie, jardin: foyerJardin })[tab]($("#fy"));
+  }
+  const dShort = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", timeZone: "UTC" });
+  const medal = (r) => !r ? "" : r.t === "gold" ? `<span class="medal gold" title="Faite d'elle-même">金</span>` : r.t === "silver" ? `<span class="medal silver" title="Faite après le rappel">銀</span>` : `<span class="medal parent" title="Validée par un parent">✓</span>`;
+  function foyerMissions(box) {
+    const won = FOYER.checkTokens(); const t = FOYER.paris(), today = FOYER.due(t.iso), w = FOYER.week(FOYER.mondayOf(t.iso)), f = FOYER.F();
+    const beforeDeadline = (m) => t.hm < FOYER.atMin(m);
+    box.innerHTML = `<section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Aujourd'hui</h2><span class="small muted">${FOYER.DOW[t.dow]}</span></div>
+        ${today.map((m) => { const r = FOYER.doneOf(t.iso, m.id); return `<button class="mission ${r ? "done" : ""} ${!r && !beforeDeadline(m) ? "late" : ""}" data-m="${m.id}"><span class="mi">${m.ic}</span><span class="mt"><b>${esc(m.n)}</b><span class="tiny muted">${r ? (r.t === "gold" ? "Faite d'elle-même : médaille d'or" : r.t === "silver" ? "Faite après le rappel : médaille d'argent" : "Validée par un parent") : beforeDeadline(m) ? `avant ${m.at}` : `il est l'heure : à faire maintenant`}</span></span>${r ? medal(r) : `<span class="check" aria-hidden="true"></span>`}</button>`; }).join("")}
+        <p class="tiny muted">Coche avant ${today[0] ? today[0].at : "19:00"} pour la médaille d'or 金. Après, c'est la médaille d'argent 銀.</p></section>
+      <section class="panel stack"><div class="row" style="justify-content:space-between"><h2>Ma semaine</h2><span class="small muted">${w.done} / ${w.total}</span></div>
+        <div class="wk">${w.days.map((d) => `<div class="wd ${d.iso === t.iso ? "today" : ""}"><span class="tiny">${dShort(d.iso)}</span>${d.ms.map((x) => `<span class="wm ${x.r ? "ok" : d.iso < t.iso ? "miss" : ""}" title="${esc(x.m.n)}">${x.r ? medal(x.r) : x.m.ic}</span>`).join("")}</div>`).join("")}</div>
+        <div class="dbar"><i style="width:${w.total ? Math.round((100 * w.done) / w.total) : 0}%"></i></div>
+        <p class="small">${w.complete ? `Semaine complète : ton jeton est gagné${w.allGold ? ", et tout en or !" : " !"}` : `Toutes les missions de la semaine = un jeton à échanger avec Papa le dimanche.`}</p>
+        <button class="btn ghost sm" id="fy-fix" style="justify-self:start">Corriger un jour (parent)</button></section>
+      <section class="stack"><h2>Mes jetons</h2>${Object.keys(f.tokens).length ? Object.entries(f.tokens).sort((a, b) => (a[0] < b[0] ? 1 : -1)).map(([mon, tk]) => `<div class="ticket ${tk.used ? "used" : ""}"><div class="tk-l token-face ${tk.gold ? "gold" : ""}"><span>家</span></div><div class="tk-r stack" style="gap:3px"><span class="who">Jeton de la semaine${tk.gold ? " · tout en or" : ""}</span><b>Semaine du ${new Date(mon + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" })}</b>
+          ${tk.used ? `<span class="stamp-used">Échangé le ${new Date(tk.used + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" })}</span>` : `<button class="btn sm primary" data-tok="${mon}" style="justify-self:start">Échanger avec Papa</button>`}</div></div>`).join("") : `<p class="small muted">Pas encore de jeton : termine toutes les missions d'une semaine.</p>`}</section>`;
+    $$("[data-m]", box).forEach((b) => (b.onclick = () => {
+      const id = b.dataset.m; if (FOYER.doneOf(t.iso, id)) { if (!b.dataset.sure) { b.dataset.sure = 1; toast("Touche encore pour décocher."); return; } FOYER.untick(id); return foyerMissions(box); }
+      const r = FOYER.tick(id); FX.sfx(r.t === "gold" ? "level" : "good"); const [x, y] = FX.center(b); FX.burst(x, y, { n: r.t === "gold" ? 40 : 20, colors: r.t === "gold" ? ["#E8B923", "#FFD36E", "#fff"] : ["#C0C7D1", "#fff"] });
+      fxText(r.t === "gold" ? "金 BRAVO !" : "銀 FAIT !"); setTimeout(() => { foyerMissions(box); renderTabs("foyer"); const nw = FOYER.checkTokens(); if (nw.length) celebrate("家の印！", `<div class="token-face big ${FOYER.F().tokens[nw[0]].gold ? "gold" : ""}"><span>家</span></div><p><b>Semaine complète !</b></p><p class="small">Ton jeton t'attend : montre-le à Papa pour ton argent de poche.</p>`, "Génial !", "level"); }, 650);
+    }));
+    $$("[data-tok]", box).forEach((b) => (b.onclick = async () => { if (!(await pinPrompt("Échanger le jeton de la semaine : code parent"))) return; FOYER.F().tokens[b.dataset.tok].used = FOYER.paris().iso; STORE.save(); FX.sfx("stamp"); toast("Jeton échangé. Merci pour ton aide !"); foyerMissions(box); }));
+    $("#fy-fix").onclick = async () => {
+      if (!(await pinPrompt("Corriger les missions : code parent"))) return;
+      const mon = FOYER.mondayOf(t.iso), prev = FOYER.week(FOYER.addDays(mon, -7)), cur = FOYER.week(mon);
+      const rows = prev.days.concat(cur.days).filter((d) => d.iso <= t.iso && d.ms.length);
+      const o = document.createElement("div"); o.className = "celebrate";
+      o.innerHTML = `<div class="panel stack" style="align-items:stretch;text-align:left"><b>Corriger les 2 dernières semaines</b><div class="fix-list">${rows.map((d) => d.ms.map((x) => `<label class="fix-row"><input type="checkbox" data-d="${d.iso}" data-id="${x.m.id}" ${x.r ? "checked" : ""}> <span class="small">${dShort(d.iso)} · ${x.m.ic} ${esc(x.m.n)}</span></label>`).join("")).join("")}</div><button class="btn primary" id="fix-ok">Terminé</button></div>`;
+      document.body.appendChild(o);
+      $$("input[data-d]", o).forEach((c) => (c.onchange = () => { if (c.checked) FOYER.tick(c.dataset.id, true, c.dataset.d); else FOYER.untick(c.dataset.id, c.dataset.d); }));
+      $("#fix-ok", o).onclick = () => { o.remove(); FOYER.checkTokens(); foyerMissions(box); renderTabs("foyer"); };
+    };
+  }
+  function foyerVoie(box) {
+    const t = FOYER.paris(), y = FOYER.addDays(t.iso, -1), m = FOYER.monthOf(t.iso), pts = FOYER.voiePoints(m), { L, next } = FOYER.levelOf(pts), best = FOYER.bestMonth(), f = FOYER.F();
+    const monthName = new Date(t.iso + "T12:00:00Z").toLocaleDateString("fr-FR", { month: "long", timeZone: "UTC" });
+    const row = (v, iso) => { const on = !!(f.voie[iso] && f.voie[iso][v.id]), other = v.freq === "semaine" && FOYER.voieDoneThisWeek(v.id, iso);
+      return `<button class="voie-it ${on ? "on" : ""}" data-v="${v.id}" data-d="${iso}" ${other && !on ? "disabled" : ""}><span class="mi">${v.ic}</span><span class="mt"><b>${esc(v.n)}</b><span class="tiny muted">${v.freq === "semaine" ? `+${v.p} · une fois par semaine${other && !on ? " : déjà fait cette semaine" : ""}` : `+${v.p}`}</span></span><span class="check ${on ? "on" : ""}" aria-hidden="true"></span></button>`; };
+    box.innerHTML = `<section class="panel stack voie-head"><div class="lvl"><span class="lvl-k">${L[2]}</span><div><span class="eyebrow">Voie de ${monthName}</span><b class="lvl-n">${L[1]}</b><span class="small muted">${pts} points${next ? ` · encore ${next[0] - pts} pour ${next[1]}` : " · niveau maximal !"}</span></div></div>
+        <div class="lvl-bar">${FOYER.LEVELS.slice(1).map((l) => `<span class="${pts >= l[0] ? "on" : ""}" style="--w:${l[0]}"><i>${l[2]}</i><small>${l[0]}</small></span>`).join("")}<b style="width:${Math.min(100, (pts / FOYER.LEVELS[FOYER.LEVELS.length - 1][0]) * 100)}%"></b></div>
+        <p class="tiny muted">Tout repart de zéro le 1er du mois.${best && best.m !== m ? ` Ton record : ${best.p} points (${new Date(best.m + "-15T12:00:00Z").toLocaleDateString("fr-FR", { month: "long", timeZone: "UTC" })}).` : ""}</p></section>
+      <section class="stack"><h2>Aujourd'hui</h2>${FOYER.voieList().map((v) => row(v, t.iso)).join("")}</section>
+      <details><summary>Hier (${FOYER.DOW[(t.dow + 6) % 7]}) : j'ai oublié de cocher</summary><div class="in">${FOYER.monthOf(y) === m ? FOYER.voieList().map((v) => row(v, y)).join("") : `<p class="small muted">Hier, c'était le mois dernier : on repart de zéro.</p>`}</div></details>`;
+    $$("[data-v]", box).forEach((b) => (b.onclick = () => {
+      const d = b.dataset.d, id = b.dataset.v; f.voie[d] = f.voie[d] || {};
+      if (f.voie[d][id]) delete f.voie[d][id]; else { f.voie[d][id] = 1; FX.sfx("good"); const [x, yy] = FX.center(b); FX.burst(x, yy, { n: 14 }); }
+      const before = L[1]; STORE.save(); const after = FOYER.levelOf(FOYER.voiePoints(m)).L;
+      if (after[1] !== before && FOYER.voiePoints(m) >= after[0] && after[0] > 0 && f.voie[d][id]) celebrate("昇段！", `<div class="lvl-k big">${after[2]}</div><p><b>Niveau ${after[1]} atteint !</b></p><p class="small">Continue jusqu'à la fin du mois pour monter encore.</p>`, "Continuer", "level");
+      foyerVoie(box);
+    }));
+  }
+  function gardenHTML(list, month) {
+    const G = (window.IMAGES && IMAGES.garden) || {};
+    const deco = FOYER.DECOS.filter(([n]) => list.length >= n).map(([n, k, em, x, y]) => `<span class="flower deco" style="left:${x}%;top:${y}%;z-index:${y}" title="Débloqué à ${n} bienfaits">${G[k] ? `<img src="${G[k]}" alt="">` : em}</span>`).join("");
+    const fl = deco + list.map((b, i) => `<span class="flower" style="left:${b.x}%;top:${b.y}%;--i:${i};z-index:${Math.round(b.y)}" title="${esc(b.txt)}">${G[b.fl] ? `<img src="${G[b.fl]}" alt="">` : FOYER.FLOWER_EMOJI[b.fl] || "🌸"}</span>`).join("");
+    return `<div class="garden ${G.bg ? "has-bg" : ""}" ${G.bg ? `style="background-image:url(${G.bg})"` : ""}>${G.bg ? "" : `<div class="g-sky"></div><div class="g-hill"></div><div class="g-path"></div>`}${fl}${list.length ? "" : `<p class="g-empty">Ton jardin de ${month} attend sa première fleur.</p>`}</div>`;
+  }
+  function foyerJardin(box, monthSel) {
+    const t = FOYER.paris(), f = FOYER.F(), m = monthSel || FOYER.monthOf(t.iso), months = Array.from(new Set(f.bienfaits.map((b) => b.d.slice(0, 7)).concat([FOYER.monthOf(t.iso)]))).sort().reverse();
+    const list = f.bienfaits.filter((b) => b.d.slice(0, 7) === m), mName = (mm) => new Date(mm + "-15T12:00:00Z").toLocaleDateString("fr-FR", { month: "long", year: "numeric", timeZone: "UTC" });
+    const isCur = m === FOYER.monthOf(t.iso);
+    box.innerHTML = `<section class="stack"><div class="row" style="justify-content:space-between"><h2>Jardin des bienfaits</h2><select id="g-m" style="width:auto">${months.map((x) => `<option value="${x}" ${x === m ? "selected" : ""}>${mName(x)}</option>`).join("")}</select></div>
+        ${gardenHTML(list, mName(m).split(" ")[0])}<p class="small muted">${list.length} bienfait${list.length > 1 ? "s" : ""} ${isCur ? "ce mois-ci" : `en ${mName(m)}`}. Chaque geste fait éclore une fleur ; les jardins des mois passés restent.</p></section>
+      ${isCur ? `<section class="panel stack"><b>Noter un bienfait</b><textarea id="bf-t" maxlength="160" placeholder="Ex. J'ai aidé Maman à porter les courses." style="min-height:70px;font-family:inherit;font-size:1rem"></textarea>
+        <div class="row wrap"><button class="btn primary" id="bf-me" style="flex:1">C'est moi qui l'ai fait</button><button class="btn ghost sm" id="bf-par">Ajouté par un parent</button></div></section>` : ""}
+      <section class="stack"><h2>Carnet</h2>${list.length ? list.slice().reverse().map((b) => `<div class="bf-row"><span class="bf-f">${FOYER.FLOWER_EMOJI[b.fl] || "🌸"}</span><span class="stack" style="gap:2px"><span>${esc(b.txt)}</span><span class="tiny muted">${dShort(b.d)} · ${b.by === "moi" ? "noté par moi" : `noté par ${esc(b.by)}`}</span></span></div>`).join("") : `<p class="small muted">Rien encore ce mois-ci.</p>`}</section>`;
+    $("#g-m").onchange = (e) => foyerJardin(box, e.target.value);
+    const add = (by) => { const v = $("#bf-t").value.trim(); if (!v) return toast("Écris ton bienfait en une phrase."); FOYER.addBienfait(v, by); FX.sfx("level"); fxText("花 !"); foyerJardin(box); };
+    if (isCur) {
+      $("#bf-me").onclick = () => add("moi");
+      $("#bf-par").onclick = async () => { if (!$("#bf-t").value.trim()) return toast("Écris d'abord le bienfait."); if (!(await pinPrompt("Bienfait noté par un parent : code parent"))) return;
+        const o = document.createElement("div"); o.className = "celebrate"; o.innerHTML = `<div class="panel stack" style="align-items:center"><b>Qui le note ?</b><div class="row"><button class="btn primary" data-by="Papa">Papa</button><button class="btn primary" data-by="Maman">Maman</button></div></div>`;
+        document.body.appendChild(o); $$("[data-by]", o).forEach((b) => (b.onclick = () => { o.remove(); add(b.dataset.by); })); };
+    }
+  }
+
   // ---------- Messages et défis de papa ----------
   // Récompense : visible, ou « surprise » (silhouette qui se remplit avec la progression, dévoilée à la fin).
   function prize(m, st, size = 64) {
@@ -1112,6 +1203,7 @@
     document.body.innerHTML = `<div id="app"><header class="hud" hidden></header><main></main></div><nav class="tabs" hidden></nav>`;
     history.replaceState({ d: 0 }, "", location.hash || "#dojo");
     splash(); render();
+    if (window.FOYER) { FOYER.syncClock().then(() => S().profile && renderTabs(curTab)); setInterval(() => S().profile && $(".tabs") && renderTabs(curTab), 60000); }
     document.addEventListener("pointerdown", () => FX.sfx && null, { once: true });
     if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => { });
   }

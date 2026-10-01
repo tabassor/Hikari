@@ -105,3 +105,10 @@ La boucle prévue :
 - **Nature des contenus :** ce sont des paraphrases rédigées par une IA, puis relues par une seconde relecture indépendante. **Une relecture parentale reste recommandée**, et la leçon de la prof fait toujours foi.
 - **Ordre des chapitres :** aucune progression officielle ne fixe l'ordre des chapitres. C'est à ta fille de débloquer ceux qui ont commencé en classe.
 - **Pas de rappels de notification :** ils demanderaient un serveur. La flamme et le Ki du jour servent de rappel.
+
+## 6. Foyer (indépendant des révisions)
+
+- **Missions** : tâches de la maison par jour de la semaine, heure limite 19 h (heure de Paris, corrigée par l'heure du serveur quand le téléphone est en ligne). Avant 19 h : aucune alerte. Cochée avant 19 h : médaille d'or ; après : argent. Après 19 h, Ren rappelle la mission à l'ouverture et un point rouge s'affiche sur l'onglet. Semaine complète (lundi → dimanche) : un jeton, échangé avec le code parent. Un parent peut corriger les deux dernières semaines.
+- **Voie du mois** : défis d'amélioration personnelle (+1 par jour, ou +3 une fois par semaine), niveaux Graine → Bronze (60) → Argent (110) → Or (160) → Légende (200), remise à zéro le 1er du mois, record conservé. Hier peut encore être coché.
+- **Jardin des bienfaits** : carnet sans points ; chaque bienfait fait éclore une fleur ; décors débloqués à 5, 10, 15, 20, 30 bienfaits ; les jardins des mois passés restent consultables. Illustrations facultatives : `IMAGES.garden` (bg, 8 fleurs, 5 décors) dans `data/images.js`.
+- Aucun XP ni effet sur les clans ; les révisions ne rapportent rien ici.
