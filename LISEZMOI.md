@@ -113,3 +113,10 @@ La boucle prévue :
 - **Voie du mois** : défis d'amélioration personnelle (+1 par jour, ou +3 une fois par semaine), niveaux Graine → Bronze → Argent → Or → Légende, à environ 26, 48, 70 et 87 % des points possibles du mois, remise à zéro le 1er du mois, record conservé. Hier peut encore être coché.
 - **Jardin des bienfaits** : carnet sans points ; chaque bienfait fait éclore une fleur ; décors débloqués à 5, 10, 15, 20, 30 bienfaits ; les jardins des mois passés restent consultables. Illustrations facultatives : `IMAGES.garden` (bg, 8 fleurs, 5 décors) dans `data/images.js`.
 - Aucun XP ni effet sur les clans ; les révisions ne rapportent rien ici.
+
+## 7. Emploi du temps et agenda (saisis par l'élève)
+
+- **Emploi du temps** (`S.edt`) : créneaux par jour (lundi → samedi), matière (clans de Hikari + EPS, arts, musique, techno, vie de classe, étude, autre), salle, semaine 1, 2 ou les deux. Alternance 1/2 à partir d'une semaine de référence, en sautant les semaines de vacances de la zone ; bouton de correction si le collège compte autrement. Icônes des matières modifiables.
+- **Cartable** (Dōjō) : le matin, les cours du jour ; ensuite, les matières du prochain jour de cours, et les échéances des 7 prochains jours.
+- **Agenda** (`S.agenda`) : contrôle, interro, leçon à apprendre, oral ; date (raccourci « prochain cours »), sujet, leçons Hikari liées. Pendant les 7 jours qui précèdent, jusqu'à 15 cartes de ces leçons passent en tête de la révision du jour (jamais vues d'abord, puis les plus fragiles), avec un badge. Une carte pas encore due et réussie garde son calendrier (pas de bachotage qui fausse les intervalles). Bouton « S'entraîner maintenant » par échéance.
+- Les devoirs écrits restent dans l'agenda papier ; l'emploi du temps officiel reste sur École Directe.

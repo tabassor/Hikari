@@ -92,9 +92,9 @@
     if (!S().profile) { renderTabs(""); renderHUD(); return viewOnboarding(main); }
     renderHUD();
     const [name, ...rest] = route.split("~"); const arg = rest.join("~");
-    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", foyer: "foyer", fprep: "moi", fcfg: "moi", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
+    const tab = { dojo: "dojo", clan: "dojo", ch: "dojo", le: "dojo", revision: "revision", seance: "revision", boss: "dojo", epreuve: "dojo", foyer: "foyer", agenda: "dojo", edt: "dojo", fprep: "moi", fcfg: "moi", monde: "monde", tresors: "tresors", moi: "moi" }[name] || "dojo";
     renderTabs(tab);
-    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, foyer: viewFoyer, fprep: viewFoyerPrep, fcfg: viewFoyerImport, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
+    ({ dojo: viewDojo, clan: viewClan, ch: viewChapter, le: viewLesson, revision: viewRevisionHub, seance: viewSession, boss: viewBoss, epreuve: viewEpreuve, foyer: viewFoyer, agenda: viewAgenda, edt: viewEdtEdit, fprep: viewFoyerPrep, fcfg: viewFoyerImport, monde: viewWorld, tresors: viewTreasures, moi: viewMe }[name] || viewDojo)(main, arg);
   }
   document.addEventListener("click", (e) => { const b = e.target.closest("[data-go]"); if (b && !b.disabled) { e.preventDefault(); go(b.dataset.go); } });
   window.addEventListener("popstate", (e) => { leaveGuard = null; const d = (e.state && e.state.d) || 0; navDir = d < depth ? "back" : "fwd"; depth = d; render(); });
@@ -154,12 +154,13 @@
         ${ses ? `<button class="btn primary big pulse" data-go="seance">Révision du jour · ${ses}</button>` : `<button class="btn primary big" disabled>Tout est révisé ✓</button>${c.fresh ? `<button class="btn" id="more-new">Encore motivée ? +10 nouvelles cartes</button>` : ""}`}
         <button class="btn" id="flash">Entraînement éclair (10 questions)</button>
       </section>
+      <div id="cartable" class="stack"></div>
       <div id="defis" class="stack"></div>
       <section class="stack"><div class="row" style="justify-content:space-between"><h2>Les sept clans</h2><button class="btn ghost sm" id="orb-toggle">${S().settings.clanList ? "Orbite" : "Liste"}</button></div>
         <div id="clans"></div>${(() => { const g = STORE.stagesOf(STORE.allActiveCards()); return `<div class="stages"><div><b>${g.seen}</b><span>étudiées</span></div><div><b>${g.solid}</b><span>solides<br><i>tenues 1 sem.</i></span></div><div><b>${g.mastered}</b><span>maîtrisées<br><i>tenues 3 sem.</i></span></div><div><b>${c.total}</b><span>cartes<br><i>ouvertes</i></span></div></div>`; })()}</section>`;
     $("#flash").onclick = () => startFlashQuiz();
     const mn = $("#more-new"); if (mn) mn.onclick = () => { const t = STORE.today(); S().extraNew = { d: t, n: ((S().extraNew && S().extraNew.d === t) ? S().extraNew.n : 0) + 10 }; STORE.save(); go("seance"); };
-    drawDefis(); setTimeout(foyerReminder, 3600);
+    drawCartable(); drawDefis(); setTimeout(foyerReminder, 3600);
     const nw = S().newWeek;
     if (nw && STORE.CHI[nw.ch]) {
       S().newWeek = null; STORE.save();
@@ -374,7 +375,7 @@
     return { ok: false };
   }
   function instantiate(card) {
-    let q = card.k === "g" ? Object.assign({}, GEN.run(card.g, card), { id: card.id, ch: card.ch, le: card.le, g: card.g }) : Object.assign({}, card);
+    let q = card.k === "g" ? Object.assign({}, GEN.run(card.g, card), { id: card.id, ch: card.ch, le: card.le, g: card.g, bonus: card.bonus, focus: card.focus }) : Object.assign({}, card);
     if (q.k === "q") { const order = shuffle(q.c.map((_, i) => i)); q.choices = order.map((i) => q.c[i]); q.good = order.indexOf(q.a); }
     return q;
   }
@@ -431,7 +432,7 @@
   }
   function mountCardCore(host, card, { selfGrade = true, onDone } = {}) {
     const ch = STORE.CHI[card.ch], s = ch && sub(ch.s), le = card.le && STORE.LEI[card.le];
-    const head = s ? `<div class="src">${ART.seal(s.kanji, s.color, 22)}<span>${esc(le ? le.title : ch.title)}</span>${card.bonus ? `<span class="revanche" title="Carte tirée d'une erreur d'interro : XP ×3">⚔ Revanche ×3</span>` : ""}</div>` : "";
+    const head = s ? `<div class="src">${ART.seal(s.kanji, s.color, 22)}<span>${esc(le ? le.title : ch.title)}</span>${card.bonus ? `<span class="revanche" title="Carte tirée d'une erreur d'interro : XP ×3">⚔ Revanche ×3</span>` : ""}${card.focus ? `<span class="revanche focus-b" title="Leçon de ton agenda">${AGENDA.TYPES[card.focus.type] ? AGENDA.TYPES[card.focus.type][1] : "🎯"} ${esc(focusWhen(card.focus))}</span>` : ""}</div>` : "";
     const q = card;
     const expl = () => (q.x ? `<p class="x">${md(q.x)}</p>` : "");
     const body = document.createElement("div"); body.className = "panel card enter"; body.style.setProperty("--accent", s ? s.color : "");
@@ -609,7 +610,7 @@
     main.innerHTML = `<div class="session-top"><button class="back" id="quit" aria-label="Terminer">✕</button><div class="prog"><i style="width:0"></i></div><span class="combo"></span></div><div id="stage"></div>`;
   }
   function viewSession(main, arg) {
-    const opt = {}; if (arg && arg.startsWith("s:")) opt.subject = arg.slice(2); if (arg && arg.startsWith("c:")) opt.chapter = arg.slice(2); if (arg && arg.startsWith("l:")) opt.lesson = arg.slice(2);
+    const opt = {}; if (arg && arg.startsWith("s:")) opt.subject = arg.slice(2); if (arg && arg.startsWith("c:")) opt.chapter = arg.slice(2); if (arg && arg.startsWith("l:")) opt.lesson = arg.slice(2); if (arg && arg.startsWith("a:")) opt.agenda = arg.slice(2);
     const queue = STORE.buildSession(opt); if (!queue.length) { toast("Rien à réviser ici pour le moment."); return go("revision", true); }
     const total = queue.length; let done = 0, good = 0, xp = 0, lvlUp = 0; const requeued = new Set(); combo = 0;
     sessionShell(main);
@@ -621,7 +622,7 @@
       mountCard($("#stage"), card, {
         onDone: ({ ok, grade }) => {
           const firstTime = !requeued.has(card.id);
-          if (firstTime) { STORE.grade(card.id, grade, card.bonus); if (STORE.countReview()) setTimeout(() => { toast("Objectif du jour atteint : ta flamme brille ! 炎"); FX.sfx("level"); }, 300); done++; }
+          if (firstTime) { STORE.grade(card.id, grade, card.bonus, !!card.focus); if (STORE.countReview()) setTimeout(() => { toast("Objectif du jour atteint : ta flamme brille ! 炎"); FX.sfx("level"); }, 300); done++; }
           if (ok) good++;
           const gain = ([2, 6, 10, 12][grade] || 2) * (1 + Math.min(combo, 10) * 0.05) * (firstTime ? 1 : 0.5) * (card.bonus && ok ? 3 : 1);
           if (card.bonus && ok && firstTime) setTimeout(() => fxText("REVANCHE ×3 !"), 350);
@@ -885,6 +886,125 @@
     $("#cov").innerHTML = `<p class="small">Pour chaque point officiel : y a-t-il du contenu Hikari qui s'y rattache ?</p>` + PROGRAMME.subjects.map((s) => `<details><summary>${s.name}</summary><div class="in cov">${s.domains.map((d) => `<span class="eyebrow">${esc(d.name)}</span>${d.items.map((it) => { const cs = covered[it.id] || []; const withContent = cs.filter((x) => x.filled); return `<div class="it"><span><b>${esc(it.t)}</b> <span class="muted tiny">${it.id}</span></span><span class="pill ${withContent.length ? "on" : cs.length ? "new" : "off"}">${withContent.length ? "contenu" : cs.length ? "prévu" : "—"}</span></div>`; }).join("")}`).join("")}<p class="tiny muted">${esc(PROGRAMME.sources[s.src].label)}</p></div></details>`).join("");
   }
 
+
+  // =================== Emploi du temps et agenda ===================
+  const dLong = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+  const whenTxt = (iso) => { const n = AGENDA.daysTo(iso); return n === 0 ? "aujourd'hui" : n === 1 ? "demain" : n < 7 ? `${new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })} (dans ${n} j)` : `le ${new Date(iso + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" })}`; };
+  function focusWhen(it) { const sj = AGENDA.subj(it.s); return `${AGENDA.TYPES[it.type] ? AGENDA.TYPES[it.type][0] : "Échéance"} de ${sj.n} ${whenTxt(it.date)}`; }
+  const sjChip = (sl) => { const sj = AGENDA.subj(sl.s); return `<span class="sj-chip" style="--c:${sj.c}">${sj.ic} ${esc(sl.lab || sj.n)}</span>`; };
+  const nowHM = () => { const d = new Date(); return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); };
+  // Carte du Dōjō : le cartable (aujourd'hui le matin, le lendemain ensuite) et les échéances proches
+  function drawCartable() {
+    const box = $("#cartable"); if (!box || !window.AGENDA) return;
+    const t = STORE.today(), e = AGENDA.E(), up = AGENDA.upcoming().filter((x) => AGENDA.daysTo(x.date) <= AGENDA.WINDOW);
+    if (!e.slots.length && !AGENDA.A().length) { box.innerHTML = `<button class="panel cartable-empty" data-go="agenda"><span class="ct-k">時</span><span class="stack" style="gap:2px;text-align:left"><b>Mon emploi du temps et mon agenda</b><span class="small muted">Recopie ton emploi du temps une fois, note tes interros : Ren t'aide à préparer les bonnes leçons.</span></span></button>`; return; }
+    const morning = nowHM() < "13:00" && AGENDA.slotsOn(t).length, day = morning ? t : AGENDA.nextSchoolDay(t), bag = day ? AGENDA.bag(day) : [];
+    box.innerHTML = `<section class="panel stack cartable" data-go="agenda">
+      ${e.slots.length ? `<div class="row" style="justify-content:space-between"><span class="eyebrow">${morning ? "Aujourd'hui" : day ? (AGENDA.daysTo(day) === 1 ? "Demain dans ton sac" : `Dans ton sac pour ${new Date(day + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", timeZone: "UTC" })}`) : "Vacances !"}</span>${AGENDA.E().ref ? `<span class="tiny muted">semaine ${AGENDA.weekNo(day || t)}</span>` : ""}</div>
+        <div class="row wrap" style="gap:6px">${bag.map(sjChip).join("") || `<span class="small muted">Pas de cours.</span>`}</div>` : ""}
+      ${up.length ? up.slice(0, 3).map((x) => { const sj = AGENDA.subj(x.s); return `<div class="due-row" style="--c:${sj.c}"><span class="due-ic">${AGENDA.TYPES[x.type][1]}</span><span class="stack" style="gap:0"><b>${esc(AGENDA.TYPES[x.type][0])} de ${esc(sj.n)} ${whenTxt(x.date)}</b><span class="tiny muted">${x.lessons.length ? "Ces leçons passent en tête de tes révisions." : esc(x.title || "")}</span></span></div>`; }).join("") : ""}
+    </section>`;
+  }
+  function viewAgenda(main, arg) {
+    const tab = arg || "semaine";
+    main.innerHTML = `<div class="foyer-head"><h1>Ma semaine</h1><p class="small muted">Ton emploi du temps et tes échéances. Tes cours de l'agenda remontent dans tes révisions 7 jours avant.</p></div>
+      <div class="seg">${[["semaine", "Emploi du temps"], ["agenda", "Agenda"]].map(([id, n]) => `<button aria-pressed="${tab === id}" data-go="agenda~${id}">${n}</button>`).join("")}</div><div id="ag"></div>`;
+    (tab === "agenda" ? drawAgendaList : drawEdt)($("#ag"));
+  }
+  // ---------- Emploi du temps (grille) ----------
+  function drawEdt(box, wShow) {
+    const e = AGENDA.E(), t = STORE.today();
+    if (!e.slots.length) { box.innerHTML = `<section class="panel stack" style="align-items:center;text-align:center">${ART.sensei("happy", 96)}<p><b>Recopie ton emploi du temps</b>, une seule fois pour l'année, avec les semaines 1 et 2.</p><button class="btn primary" data-go="edt">Commencer</button></section>`; return; }
+    const cur = AGENDA.weekNo(t) || 1, w = wShow || cur, days = e.slots.some((s) => s.d === 5) ? 6 : 5;
+    const sl = e.slots.filter((s) => !s.w || s.w === w), toMin = (hm) => { const [h, m] = hm.split(":"); return +h * 60 + +m; };
+    const lo = Math.min(...sl.map((s) => toMin(s.start))), hi = Math.max(...sl.map((s) => toMin(s.end))), K = 1.05;
+    const todayCol = w === cur && !AGENDA.isHoliday(t) ? AGENDA.dowOf(t) : -1, nm = toMin(nowHM());
+    const hours = []; for (let h = Math.ceil(lo / 60); h * 60 <= hi; h++) hours.push(h);
+    box.innerHTML = `<section class="stack"><div class="row" style="justify-content:space-between;align-items:center"><div class="seg wk-seg">${[1, 2].map((n) => `<button aria-pressed="${n === w}" data-w="${n}">Semaine ${n}${n === cur ? " ·  en cours" : ""}</button>`).join("")}</div></div>
+      <div class="edt" style="--cols:${days};height:${(hi - lo) * K + 30}px">
+        <div class="edt-hours">${hours.map((h) => `<span style="top:${(h * 60 - lo) * K + 26}px">${h}h</span>`).join("")}</div>
+        ${Array.from({ length: days }, (_, d) => `<div class="edt-col ${d === todayCol ? "today" : ""}"><span class="edt-day">${AGENDA.DAYS[d].slice(0, 3)}</span>
+          ${sl.filter((s) => s.d === d).map((s) => { const sj = AGENDA.subj(s.s), top = (toMin(s.start) - lo) * K + 26, h = (toMin(s.end) - toMin(s.start)) * K - 3, now = d === todayCol && nm >= toMin(s.start) && nm < toMin(s.end);
+            return `<button class="edt-b ${now ? "now" : ""}" style="top:${top}px;height:${h}px;--c:${sj.c}" data-sl="${s.id}"><span class="eb-ic">${sj.ic}</span><span class="eb-n">${esc(s.lab || sj.n)}</span>${h > 44 ? `<span class="eb-t">${s.start}${s.room ? " · " + esc(s.room) : ""}</span>` : ""}</button>`; }).join("")}
+          ${d === todayCol && nm > lo && nm < hi ? `<i class="edt-now" style="top:${(nm - lo) * K + 26}px"></i>` : ""}</div>`).join("")}
+      </div>
+      <div class="row wrap"><button class="btn" data-go="edt">Modifier mon emploi du temps</button><button class="btn ghost sm" id="wk-fix">On n'est pas en semaine ${cur} ?</button></div>
+      <p class="tiny muted">L'alternance saute les vacances scolaires (zone ${esc(S().settings.zone)}). Si le collège compte autrement, corrige la semaine en cours : la suite se recale.</p></section>`;
+    $$("[data-w]", box).forEach((b) => (b.onclick = () => drawEdt(box, +b.dataset.w)));
+    $("#wk-fix").onclick = () => { AGENDA.setWeek(cur === 1 ? 2 : 1); toast(`C'est noté : cette semaine est une semaine ${cur === 1 ? 2 : 1}.`); drawEdt(box); };
+    $$("[data-sl]", box).forEach((b) => (b.onclick = () => { const s = e.slots.find((x) => x.id === b.dataset.sl), sj = AGENDA.subj(s.s); toast(`${sj.ic} ${s.lab || sj.n} · ${AGENDA.DAYS[s.d].toLowerCase()} ${s.start}–${s.end}${s.room ? " · salle " + s.room : ""}${s.w ? " · semaine " + s.w + " seulement" : ""}`); }));
+  }
+  // ---------- Saisie de l'emploi du temps (par l'élève) ----------
+  function viewEdtEdit(main) {
+    const e = AGENDA.E(), slots = JSON.parse(JSON.stringify(e.slots)), icons = Object.assign({}, e.icons); let ref = e.ref ? AGENDA.weekNo() : 0, sat = slots.some((s) => s.d === 5);
+    const SJ = () => AGENDA.subjects();
+    const paint = () => {
+      const days = sat ? 6 : 5;
+      main.innerHTML = `<section class="stack"><p class="eyebrow">Ma semaine</p><h1>Mon emploi du temps</h1><p class="small muted">Recopie-le depuis ton carnet ou École Directe. Un cours qui n'a lieu qu'une semaine sur deux : choisis « Sem. 1 » ou « Sem. 2 ».</p></section>
+        <section class="panel stack"><b>Cette semaine, on est en…</b><div class="seg">${[1, 2].map((n) => `<button aria-pressed="${ref === n}" data-ref="${n}">Semaine ${n}</button>`).join("")}</div></section>
+        ${Array.from({ length: days }, (_, d) => `<section class="panel stack"><h2>${AGENDA.DAYS[d]}</h2>
+          ${slots.map((s, i) => [s, i]).filter(([s]) => s.d === d).sort((a, b) => (a[0].start < b[0].start ? -1 : 1)).map(([s, i]) => `<div class="prep-it" data-si="${i}" style="border-left:5px solid ${AGENDA.subj(s.s).c}">
+            <div class="row"><input type="time" data-f="start" value="${s.start}" style="width:auto"><span class="small">à</span><input type="time" data-f="end" value="${s.end}" style="width:auto"><button class="btn ghost sm" data-sdel="${i}" style="margin-left:auto" aria-label="Supprimer">✕</button></div>
+            <div class="row"><select data-f="s" style="flex:1">${SJ().map((x) => `<option value="${x.id}" ${x.id === s.s ? "selected" : ""}>${x.ic} ${esc(x.n)}</option>`).join("")}</select><select data-f="w" style="width:auto">${[["", "Sem. 1 et 2"], ["1", "Sem. 1"], ["2", "Sem. 2"]].map(([v, n]) => `<option value="${v}" ${String(s.w || "") === v ? "selected" : ""}>${n}</option>`).join("")}</select></div>
+            <div class="row">${s.s === "autre" ? `<input data-f="lab" value="${esc(s.lab || "")}" placeholder="Nom (ex. Chorale)" maxlength="30" style="flex:1">` : ""}<input data-f="room" value="${esc(s.room || "")}" placeholder="Salle" maxlength="12" style="width:6em"></div></div>`).join("") || `<p class="small muted">Pas de cours.</p>`}
+          <button class="btn sm" data-sadd="${d}">+ Ajouter un cours</button></section>`).join("")}
+        <label class="row small" style="gap:8px"><input type="checkbox" id="sat" ${sat ? "checked" : ""}> J'ai cours le samedi</label>
+        <details><summary>Les icônes de mes matières</summary><div class="in stack">${SJ().map((x) => `<label class="row" style="gap:8px"><input class="prep-ic" data-ic="${x.id}" value="${esc(x.ic)}" maxlength="4"><span class="sj-chip" style="--c:${x.c}">${esc(x.n)}</span></label>`).join("")}<p class="tiny muted">Choisis un emoji sur ton clavier pour chaque matière.</p></div></details>
+        <div class="row wrap"><button class="btn primary" id="edt-save" style="flex:1">Enregistrer</button><button class="btn ghost" data-go="agenda">Annuler</button></div>`;
+      const read = () => { $$("[data-si]", main).forEach((r) => { const s = slots[+r.dataset.si]; $$("[data-f]", r).forEach((x) => (s[x.dataset.f] = x.dataset.f === "w" ? (+x.value || 0) : x.value.trim())); }); $$("[data-ic]", main).forEach((x) => { if (x.value.trim()) icons[x.dataset.ic] = x.value.trim(); }); };
+      $$("[data-ref]", main).forEach((b) => (b.onclick = () => { read(); ref = +b.dataset.ref; paint(); }));
+      $$("[data-sadd]", main).forEach((b) => (b.onclick = () => { read(); const d = +b.dataset.sadd, same = slots.filter((s) => s.d === d).sort((a, c) => (a.end < c.end ? 1 : -1))[0];
+        const start = same ? same.end : "08:00", [h, m] = start.split(":").map(Number), end = String(h + 1).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+        slots.push({ id: "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4), d, start, end, s: "fr", w: 0 }); paint(); }));
+      $$("[data-sdel]", main).forEach((b) => (b.onclick = () => { read(); slots.splice(+b.dataset.sdel, 1); paint(); }));
+      $$("[data-f=s]", main).forEach((x) => (x.onchange = () => { read(); paint(); }));
+      $("#sat").onchange = (ev) => { read(); sat = ev.target.checked; paint(); };
+      $("#edt-save").onclick = () => { read();
+        const bad = slots.find((s) => !(s.start < s.end)); if (bad) return toast(`${AGENDA.DAYS[bad.d]} : l'heure de fin doit être après l'heure de début.`);
+        if (slots.some((s) => s.w) && !ref) return toast("Dis-moi si cette semaine est une semaine 1 ou 2.");
+        e.slots = slots.filter((s) => sat || s.d < 5); e.icons = icons; if (ref && ref !== (e.ref ? AGENDA.weekNo() : 0)) AGENDA.setWeek(ref); else if (!e.ref && ref) AGENDA.setWeek(ref);
+        STORE.save(); FX.sfx("stamp"); toast("Emploi du temps enregistré."); go("agenda", true); };
+    };
+    paint();
+  }
+  // ---------- Agenda ----------
+  function drawAgendaList(box) {
+    const up = AGENDA.upcoming(), past = AGENDA.past().slice(0, 10);
+    const row = (x, old) => { const sj = AGENDA.subj(x.s), ty = AGENDA.TYPES[x.type] || AGENDA.TYPES.ctrl, n = STORE.buildSession({ agenda: x.id }).length;
+      return `<div class="ag-it ${old ? "old" : ""}" style="--c:${sj.c}"><div class="row" style="gap:10px;align-items:flex-start"><span class="due-ic">${ty[1]}</span><span class="stack" style="gap:2px;flex:1"><b>${esc(ty[0])} · ${sj.ic} ${esc(sj.n)}</b><span class="small">${old ? dLong(x.date) : whenTxt(x.date)}${x.title ? " · " + esc(x.title) : ""}</span>
+        ${x.lessons.length ? `<span class="tiny muted">${x.lessons.map((l) => STORE.LEI[l] ? esc(STORE.LEI[l].title) : "").filter(Boolean).join(" · ")}</span>` : `<span class="tiny muted">Aucune leçon liée dans Hikari.</span>`}</span><button class="btn ghost sm" data-adel="${x.id}" aria-label="Supprimer">✕</button></div>
+        ${!old && n ? `<button class="btn sm primary" data-go="seance~a:${x.id}">S'entraîner maintenant · ${n}</button>` : ""}</div>`; };
+    box.innerHTML = `<button class="btn primary" id="ag-new">+ Noter une interro ou une leçon</button>
+      <section class="stack"><h2>À venir</h2>${up.length ? up.map((x) => row(x)).join("") : `<p class="small muted">Rien de prévu. Dès qu'une prof annonce une interro, note-la ici.</p>`}</section>
+      ${past.length ? `<details><summary>Passées</summary><div class="in stack">${past.map((x) => row(x, true)).join("")}</div></details>` : ""}`;
+    $("#ag-new").onclick = () => agendaForm(box);
+    $$("[data-adel]", box).forEach((b) => (b.onclick = () => { if (!b.dataset.sure) { b.dataset.sure = 1; b.textContent = "Sûr ?"; return; } AGENDA.del(b.dataset.adel); drawAgendaList(box); }));
+  }
+  function agendaForm(box) {
+    const st = { type: "ctrl", s: "ma", date: "", lessons: [], title: "" };
+    const paint = () => {
+      const sj = AGENDA.subj(st.s), nc = AGENDA.nextClass(st.s), hk = sj.hk;
+      const ls = []; if (hk) STORE.CH.forEach((c) => { if (c.s !== st.s) return; c.lessons.forEach((l) => { if (STORE.lessonOpen(l.id)) ls.push({ l, c, since: (S().lessons[l.id] && S().lessons[l.id].since) || "" }); }); });
+      ls.sort((a, b) => (a.since < b.since ? 1 : -1));
+      box.innerHTML = `<section class="panel stack"><h2>Noter une échéance</h2>
+        <div class="row wrap" style="gap:6px">${Object.entries(AGENDA.TYPES).map(([k, [n, ic]]) => `<button class="pday ${st.type === k ? "on" : ""}" data-ty="${k}">${ic} ${n}</button>`).join("")}</div>
+        <label class="stack"><span class="small"><b>Matière</b></span><select id="af-s">${AGENDA.subjects().filter((x) => x.id !== "etude" && x.id !== "vdc").map((x) => `<option value="${x.id}" ${x.id === st.s ? "selected" : ""}>${x.ic} ${esc(x.n)}</option>`).join("")}</select></label>
+        <label class="stack"><span class="small"><b>Pour quand ?</b></span><div class="row wrap" style="gap:6px">${nc ? `<button class="pday ${st.date === nc ? "on" : ""}" data-dt="${nc}">Prochain cours : ${new Date(nc + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", timeZone: "UTC" })}</button>` : ""}<input type="date" id="af-d" value="${st.date}" min="${STORE.today()}" style="width:auto"></div></label>
+        <label class="stack"><span class="small"><b>Sur quoi ?</b> (facultatif)</span><input id="af-t" value="${esc(st.title)}" maxlength="80" placeholder="Ex. les fractions, la poésie à réciter"></label>
+        ${hk ? `<div class="stack"><span class="small"><b>Les leçons de Hikari à réviser</b></span>${ls.length ? `<div class="fix-list">${ls.map(({ l, c }) => `<label class="fix-row"><input type="checkbox" data-l="${l.id}" ${st.lessons.includes(l.id) ? "checked" : ""}> <span class="small">${esc(l.title)} <span class="muted tiny">· ${esc(c.title)}</span></span></label>`).join("")}</div>` : `<p class="small muted">Aucune leçon ouverte dans cette matière.</p>`}<p class="tiny muted">La leçon n'y est pas ? Demande à Papa d'envoyer la photo de ton cours.</p></div>` : ""}
+        <div class="row wrap"><button class="btn primary" id="af-ok" style="flex:1">Enregistrer</button><button class="btn ghost" id="af-x">Annuler</button></div></section>`;
+      const read = () => { st.title = $("#af-t").value.trim(); if ($("#af-d").value) st.date = $("#af-d").value; st.lessons = $$("[data-l]", box).filter((c) => c.checked).map((c) => c.dataset.l); };
+      $$("[data-ty]", box).forEach((b) => (b.onclick = () => { read(); st.type = b.dataset.ty; paint(); }));
+      $$("[data-dt]", box).forEach((b) => (b.onclick = () => { read(); st.date = b.dataset.dt; paint(); }));
+      $("#af-d").onchange = () => { read(); paint(); };
+      $("#af-s").onchange = (ev) => { read(); st.s = ev.target.value; st.lessons = []; paint(); };
+      $("#af-x").onclick = () => drawAgendaList(box);
+      $("#af-ok").onclick = () => { read(); if (!st.date) return toast("Choisis la date."); if (st.date < STORE.today()) return toast("Cette date est déjà passée.");
+        AGENDA.add({ type: st.type, s: st.s, date: st.date, title: st.title, lessons: st.lessons }); FX.sfx("stamp");
+        toast(st.lessons.length ? "Noté ! Ces leçons passeront en tête de tes révisions 7 jours avant." : "Noté !"); drawAgendaList(box); };
+    };
+    paint();
+  }
 
   // =================== Foyer : missions, Voie du mois, Jardin des bienfaits ===================
   // Rappel : uniquement à partir de l'heure de la mission (19 h), jamais avant.

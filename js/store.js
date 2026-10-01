@@ -180,8 +180,10 @@
   function allActiveCards(filter) { let cs = []; activeChapters().forEach((c) => { if (!filter || filter(c)) cs = cs.concat(cardList(c)); }); return cs; }
 
   // ---------- SRS (variante SM-2, 4 boutons) ----------
-  function grade(cardId, g, bonus) {
+  function grade(cardId, g, bonus, focus) {
     const now = Date.now();
+    // Préparation d'une échéance : une carte pas encore due et réussie garde son calendrier (pas de bachotage qui fausse les intervalles)
+    if (focus && S.cards[cardId] && !isDue(cardId) && g >= 1) { const k = S.cards[cardId]; k.tries = (k.tries || 0) + 1; if (g >= 2 && (k.lapses > 0 || k.ease < 2.3)) { S.hw = S.hw || {}; S.hw[today()] = (S.hw[today()] || 0) + 1; } k.last = now; return k; }
     const c = S.cards[cardId] || { ivl: 0, ease: 2.5, reps: 0, lapses: 0, first: today() };
     c.tries = (c.tries || 0) + 1; c.last = today();
     // Carte difficile (déjà ratée, ou facilité basse) réussie : compte pour les défis « cartes difficiles »
@@ -205,9 +207,21 @@
   const mastered = (id) => { const c = S.cards[id]; return !!c && c.ivl >= 21; };
   const newSeenToday = () => Object.values(S.cards).filter((c) => c.first === today()).length;
 
-  function buildSession({ subject, chapter, lesson, max = 30 } = {}) {
+  // Cartes à préparer pour les échéances de l'agenda (contrôle, interro, leçon à apprendre)
+  function focusCards(pool, lessonsMap, max) {
+    const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+    const cand = pool.filter((c) => lessonsMap[c.le] && !(S.cards[c.id] && S.cards[c.id].last >= t0.getTime() && !isDue(c.id)));
+    // d'abord les cartes jamais vues, puis les plus fragiles, puis les moins récemment revues
+    const score = (c) => { const k = S.cards[c.id]; if (!k) return -1e12; return -(k.lapses * 5 + (3 - k.ease) * 4) * 1e10 + (k.last || 0); };
+    return cand.sort((a, b) => score(a) - score(b)).slice(0, max).map((c) => Object.assign({}, c, { focus: lessonsMap[c.le] }));
+  }
+  function buildSession({ subject, chapter, lesson, agenda, max = 30 } = {}) {
     let pool = allActiveCards((c) => (!subject || c.s === subject) && (!chapter || c.id === chapter));
     if (lesson) pool = pool.filter((c) => c.le === lesson);
+    if (agenda && window.AGENDA) { const it = AGENDA.A().find((x) => x.id === agenda); if (!it) return []; const m = {}; (it.lessons || []).forEach((l) => (m[l] = it)); return shuffleOrder(focusCards(pool, m, 20)); }
+    const fmap = !chapter && !lesson && window.AGENDA ? AGENDA.focusLessons() : {};
+    const focus = focusCards(pool, fmap, window.AGENDA ? AGENDA.FOCUS_MAX : 15), fids = new Set(focus.map((c) => c.id));
+    pool = pool.filter((c) => !fids.has(c.id));
     const due = pool.filter((c) => isDue(c.id)).sort((a, b) => S.cards[a.id].due - S.cards[b.id].due);
     const extra = (S.extraNew && S.extraNew.d === today()) ? S.extraNew.n : 0;
     const room = chapter || lesson ? 999 : Math.max(0, S.settings.newPerDay + extra - newSeenToday());
@@ -221,8 +235,9 @@
     Object.keys(byDay).sort().reverse().forEach((d) => { const groups = byDay[d]; let more = true; while (more) { more = false; groups.forEach((arr) => { if (arr.length) { fresh.push(arr.shift()); more = true; } }); } });
     fresh = fresh.slice(0, room);
     let list = due.slice(0, max).concat(fresh.slice(0, Math.max(0, max - Math.min(due.length, max))));
-    return list.map((c, i) => [c, i + Math.random() * 6]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
+    return shuffleOrder(focus).concat(shuffleOrder(list));
   }
+  const shuffleOrder = (list) => list.map((c, i) => [c, i + Math.random() * 6]).sort((a, b) => a[1] - b[1]).map((x) => x[0]);
   const GEN_LABEL = { tab: "conjugaison", enNum: "nombres en anglais", enDays: "jours et mois en anglais", enColor: "couleurs en anglais", enDate: "dates en anglais", esNum: "nombres en espagnol", esDays: "jours et mois en espagnol", esColor: "couleurs en espagnol", esDate: "dates en espagnol", words: "nombres en lettres", placeInt: "chiffres des grands nombres", nbOf: "nombre de dizaines, centaines…", placeDec: "chiffres des décimaux", decFrac: "fractions décimales", rayon: "rayon et diamètre", cmpDec: "comparer des décimaux", convLen: "conversions de longueurs", double: "doubles et moitiés", durees: "durées", encadre: "encadrements", fracQty: "fraction d'une quantité", numline: "droite graduée", round: "arrondis", tables: "tables de multiplication", convVol: "conversions de volumes", grossissement: "grossissement du microscope" };
   // ---------- Messages et défis de papa (champ « messages » des packs) ----------
   // { id, from, text, date, until?, reward?: { text, emoji, surprise } | "texte",
