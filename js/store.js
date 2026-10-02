@@ -19,6 +19,9 @@
     S.settings = Object.assign(DEFAULT().settings, S.settings || {}); S.stats = Object.assign(DEFAULT().stats, S.stats || {}); if (!S.settings.zone) S.settings.zone = "C"; // famille en zone C
     if (!S.settings.newPerDayV2) { if (S.settings.newPerDay === 15) S.settings.newPerDay = 25; S.settings.newPerDayV2 = true; }
     S.lessons = S.lessons || {}; S.msgs = S.msgs || {};
+    // Édition : « classe » (contenu des cours de la prof, défis de papa) ou « libre » (contenu de base seulement, pour un autre élève).
+    // Choisie par le lien d'installation : …/Hikari/?libre ; mémorisée ensuite sur le téléphone.
+    try { const q = location.search; const ed = /[?&]libre\b/.test(q) ? "libre" : /[?&]classe\b/.test(q) ? "classe" : null; if (ed && S.settings.edition !== ed) { S.settings.edition = ed; localStorage.setItem(KEY, JSON.stringify(S)); } } catch (e) { }
     return S;
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { console.warn("Sauvegarde impossible", e); } }
@@ -57,13 +60,16 @@
     ["cards", "events", "places", "routes", "photos"].forEach((k) => { if (L[k]) ex[k] = (ex[k] || []).concat(L[k]); });
     if (L.cards && L.cards.length || L.fiche) ex.stub = false;
   }
+  // Packs livrés avec l'application : en édition libre, seulement ceux destinés à tous (contenu de base, pas de cours ni de défi personnels)
+  const repoPacks = () => (window.REPO_PACKS || []).filter((p) => !(S && S.settings && S.settings.edition === "libre") || p.audience === "tous");
+  const isLibre = () => !!(S && S.settings && S.settings.edition === "libre");
   function buildContent() {
     SUBI = {}; REFI = {};
     PROGRAMME.subjects.forEach((s) => { SUBI[s.id] = s; s.domains.forEach((d) => d.items.forEach((it) => { REFI[it.id] = Object.assign({ s: s.id, domain: d.name }, it); })); });
     const map = new Map();
     CONTENT.chapters.forEach((c) => map.set(c.id, normalize(clone(c))));
     // Packs livrés avec l'application (dépôt GitHub : data/packs/*.js), puis packs importés sur le téléphone
-    (window.REPO_PACKS || []).concat(S.packs || []).forEach((p) => {
+    repoPacks().concat(S.packs || []).forEach((p) => {
       const pk = p.title || p.id;
       (p.chapters || []).forEach((c0) => {
         const c = normalize(clone(c0)); const base = map.get(c.id);
@@ -117,7 +123,7 @@
   // Leçons ouvertes automatiquement par les packs du dépôt (une seule fois : elle peut ensuite les refermer)
   function autoOpen() {
     S.autoOpened = S.autoOpened || {};
-    (window.REPO_PACKS || []).forEach((p) => (p.open || []).forEach((lid) => { if (!S.autoOpened[lid] && LEI[lid]) { S.autoOpened[lid] = today(); if (!lessonOpen(lid)) openLesson(lid); S.newFromRepo = (S.newFromRepo || []).concat([lid]); } }));
+    repoPacks().forEach((p) => (p.open || []).forEach((lid) => { if (!S.autoOpened[lid] && LEI[lid]) { S.autoOpened[lid] = today(); if (!lessonOpen(lid)) openLesson(lid); S.newFromRepo = (S.newFromRepo || []).concat([lid]); } }));
     // Chapitres à calendrier (carnet de conjugaison) : ouverture des leçons au fil des semaines
     S.schedWeek = S.schedWeek || {};
     CH.filter((c) => c.schedule).forEach((c) => {
@@ -273,7 +279,7 @@
   //   et un type de défi : boss: idChapitre | revisions: n | hard: n (cartes difficiles réussies)
   //   | streak: n (jours de flamme) | epreuve: { n, pass, cards: [...] | "hard" } }
   function messages() {
-    const out = []; (window.REPO_PACKS || []).forEach((p) => (p.messages || []).forEach((m) => {
+    const out = []; repoPacks().forEach((p) => (p.messages || []).forEach((m) => {
       if (!m || !m.id || !m.text) return;
       const r = typeof m.reward === "string" ? { text: m.reward } : m.reward || null;
       out.push(Object.assign({ from: "Papa", date: p.created || today() }, m, { reward: r }));
@@ -449,7 +455,7 @@
   function reset() { S = DEFAULT(); save(); buildContent(); }
 
   window.STORE = {
-    load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
+    load, save, isLibre, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, relatedLessons, itemCards, itemProgress, READY_DAYS, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
     levelInfo, famPreview, addFam, famWeek, FAM_XP_MIN, FAM_REGULAR, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };

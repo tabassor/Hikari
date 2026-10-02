@@ -128,3 +128,8 @@ La boucle prévue :
 - **Barème XP** : 2 XP pour une carte ratée (participation), 10 XP pour toute bonne réponse, +50 % si la carte avait déjà été ratée ; bonus d'enchaînement jusqu'à +50 % ; revanche ×3.
 - **Séances avec un parent** (salle d'entraînement) : matière, durée (15 à 60 min), parent, sujet ; validées avec le code parent ; 10 XP par minute, +100 XP si une autre séance a eu lieu dans les 7 jours précédents ; historique et emblèmes (1, 10, 30 séances). Ne comptent pas pour la flamme.
 - **Code parent à 6 chiffres** : un ancien code à 4 chiffres est accepté une dernière fois, puis l'appli impose d'en choisir un à 6.
+
+## 8. Édition libre (pour un autre élève)
+
+- Lien d'installation : `https://tabassor.github.io/Hikari/?libre` (mémorisé sur le téléphone ; `?classe` revient à l'édition normale).
+- En édition libre, les packs du dépôt (cours de la prof, défis de papa, leçons revanche) sont ignorés, sauf ceux marqués `"audience": "tous"`. Seul le contenu de base (`data/c-*.js`) et ce qui est saisi sur le téléphone s'affichent.
