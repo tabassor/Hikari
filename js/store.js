@@ -385,8 +385,17 @@
     ["tisseuse", "織", "Tisseuse de liens", "Réussir 10 exercices à glisser sans faute", () => S.stats.dragWins >= 10],
     ["photographe", "写", "Œil de l'espionne", "Ajouter une photo de cours", () => !!S.stats.photos],
     ["parchemin", "巻", "Parchemin secret", "Importer un pack de leçon", () => (S.packs || []).length >= 1],
-    ["niveau-10", "昇", "Ascension", "Atteindre le niveau 10", () => levelInfo().level >= 10]
+    ["niveau-10", "昇", "Ascension", "Atteindre le niveau 10", () => levelInfo().level >= 10],
+    ["famille-1", "家", "Révision en famille", "Valider une première séance de révision avec un parent", () => (S.fam || []).length >= 1],
+    ["famille-10", "絆", "Lien du savoir", "10 séances de révision avec un parent", () => (S.fam || []).length >= 10],
+    ["famille-30", "誓", "Serment d'étude", "30 séances de révision avec un parent", () => (S.fam || []).length >= 30]
   ];
+  // ---------- Séances de révision avec un parent (cahier en support, validées avec le code parent) ----------
+  // 10 XP par minute ; +100 XP de régularité si une autre séance a eu lieu dans les 7 jours précédents.
+  const FAM_XP_MIN = 10, FAM_REGULAR = 100;
+  function famPreview(min) { const t = today(), wk = (S.fam || []).some((x) => x.d < t && x.d >= addDays(t, -7)); return { base: min * FAM_XP_MIN, reg: wk ? FAM_REGULAR : 0 }; }
+  function addFam(f) { const p = famPreview(f.min); const rec = Object.assign({ d: today(), xp: p.base + p.reg, reg: !!p.reg }, f); (S.fam = S.fam || []).push(rec); const up = addXP(rec.xp); save(); return { rec, up }; }
+  const famWeek = () => { const t = today(), mon = addDays(t, -((new Date(t + "T12:00:00").getDay() + 6) % 7)); return (S.fam || []).filter((x) => x.d >= mon); };
   function checkBadges() { const won = []; BADGES.forEach(([id, , , , test]) => { if (!S.badges[id] && test()) { S.badges[id] = today(); won.push(id); } }); return won; }
 
   // ---------- Packs de leçon ----------
@@ -441,6 +450,6 @@
   window.STORE = {
     load, save, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
     cardList, lessonCards, relatedLessons, itemCards, itemProgress, READY_DAYS, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
-    levelInfo, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
+    levelInfo, famPreview, addFam, famWeek, FAM_XP_MIN, FAM_REGULAR, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();

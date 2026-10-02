@@ -782,3 +782,5 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .palm-row.best b { color: var(--accent); }
 .lvl-k.sm { width: 38px; height: 38px; font-size: 1.1rem; }
 .palm-crown { font-size: 1.3rem; }
+.fam-card { gap: 10px; }
+.fam-k { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-family: var(--f-kanji); font-size: 1.6rem; color: #fff; background: linear-gradient(135deg, #E8A23C, #D2691E); flex: none; }

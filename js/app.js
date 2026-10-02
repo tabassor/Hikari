@@ -602,9 +602,41 @@
       ${senseiLine(all ? `Ta séance mélange les matières : c'est plus efficace que de tout réviser d'un bloc. <b>${all}</b> cartes sont prêtes.` : "Tout est à jour ! Reviens demain, ou lance un entraînement éclair pour garder la main.", all ? "happy" : "wow")}
       <button class="btn primary big ${all ? "pulse" : ""}" data-go="seance" ${all ? "" : "disabled"}>Séance complète · ${all}</button>
       <button class="btn" id="flash2">Entraînement éclair</button>
+      ${famCard()}
       <section class="stack"><h2>Par clan</h2>${subjects.length ? subjects.map(({ s, n }) => `<button class="chapter on" data-go="seance~s:${s.id}" ${n ? "" : "disabled"}><span class="kj" style="color:${s.color}">${s.kanji}</span><span><span class="t">${s.name}</span><br><span class="tiny muted">${plural(n, "carte")} prête${n > 1 ? "s" : ""}</span></span><span class="pill ${n ? "new" : "off"}">${n ? "go" : "à jour"}</span></button>`).join("") : `<p class="muted">Ouvre des leçons dans les clans pour remplir tes révisions.</p>`}</section>
       <section class="flat stack"><h3>Comment ça marche ?</h3><p class="small">Chaque carte revient juste avant que tu l'oublies. Si tu réponds juste, elle revient plus tard (1 jour, 3 jours, une semaine, un mois…). Si tu te trompes, elle revient vite. Une carte revue avec un intervalle de 21 jours ou plus est <b>maîtrisée</b>.</p><p class="small">Cartes par cœur : touche pour retourner, puis glisse à <b>droite</b> (je savais), à <b>gauche</b> (je ne savais pas) ou vers le <b>haut</b> (facile).</p></section>`;
-    $("#flash2").onclick = () => startFlashQuiz();
+    $("#flash2").onclick = () => startFlashQuiz(); $("#fam-go").onclick = () => famForm();
+  }
+  // ---------- Séance de révision avec un parent ----------
+  function famCard() {
+    const wk = STORE.famWeek(), all = S().fam || [];
+    return `<section class="panel stack fam-card"><div class="row" style="gap:12px;align-items:center"><span class="fam-k">家</span><span class="stack" style="gap:2px"><b>Séance avec un parent</b><span class="small muted">Ton cahier ouvert, Papa ou Maman t'interroge. ${STORE.FAM_XP_MIN} XP par minute, +${STORE.FAM_REGULAR} si tu en as fait une autre dans la semaine.</span></span></div>
+      <div class="row" style="justify-content:space-between;align-items:center"><span class="small">${wk.length ? `Cette semaine : <b>${wk.length}</b> séance${wk.length > 1 ? "s" : ""} (${wk.reduce((a, x) => a + x.min, 0)} min)` : "Pas encore de séance cette semaine."}</span><button class="btn primary sm" id="fam-go">Valider une séance</button></div>
+      ${all.length ? `<details><summary class="small">Mes séances (${all.length})</summary><div class="in stack">${all.slice().reverse().slice(0, 12).map((x) => { const sj = window.AGENDA ? AGENDA.subj(x.s) : { n: x.s, ic: "" }; return `<div class="small">${new Date(x.d + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${sj.ic} ${esc(sj.n)} · ${x.min} min avec ${esc(x.by)}${x.on ? ` · <span class="muted">${esc(x.on)}</span>` : ""} · <b>+${x.xp} XP</b></div>`; }).join("")}</div></details>` : ""}</section>`;
+  }
+  function famForm() {
+    const st = { s: "", min: 30, by: (window.FOYER ? FOYER.parents()[0] : "Papa"), on: "" };
+    const sjs = window.AGENDA ? AGENDA.subjects().filter((x) => !["cantine", "recre", "etude", "vdc", "past"].includes(x.id)) : PROGRAMME.subjects.map((x) => ({ id: x.id, n: x.name, ic: "" }));
+    const o = document.createElement("div"); o.className = "celebrate";
+    const paint = () => { const pv = STORE.famPreview(st.min);
+      o.innerHTML = `<div class="panel stack" style="align-items:stretch;text-align:left"><b>Séance avec un parent</b>
+        <label class="stack"><span class="small">Matière</span><select id="fm-s"><option value="">Choisis la matière…</option>${sjs.map((x) => `<option value="${x.id}" ${x.id === st.s ? "selected" : ""}>${x.ic || ""} ${esc(x.n)}</option>`).join("")}</select></label>
+        <span class="small">Durée</span><div class="row wrap" style="gap:6px">${[15, 20, 30, 45, 60].map((m) => `<button class="pday ${st.min === m ? "on" : ""}" data-min="${m}">${m} min</button>`).join("")}</div>
+        <span class="small">Avec</span><div class="row wrap" style="gap:6px">${(window.FOYER ? FOYER.parents() : ["Papa", "Maman"]).map((p) => `<button class="pday ${st.by === p ? "on" : ""}" data-by="${esc(p)}">${esc(p)}</button>`).join("")}</div>
+        <label class="stack"><span class="small">Sur quoi ? (facultatif)</span><input id="fm-on" value="${esc(st.on)}" maxlength="80" placeholder="Ex. la leçon sur les décimaux"></label>
+        <p class="small">Gain : <b>+${pv.base + pv.reg} XP</b>${pv.reg ? ` <span class="muted">(dont ${pv.reg} de régularité)</span>` : ""}</p>
+        <div class="row wrap"><button class="btn primary" id="fm-ok" style="flex:1">Faire valider (code parent)</button><button class="btn ghost" id="fm-x">Annuler</button></div></div>`;
+      const read = () => { st.s = $("#fm-s", o).value; st.on = $("#fm-on", o).value.trim(); };
+      $$("[data-min]", o).forEach((b) => (b.onclick = () => { read(); st.min = +b.dataset.min; paint(); }));
+      $$("[data-by]", o).forEach((b) => (b.onclick = () => { read(); st.by = b.dataset.by; paint(); }));
+      $("#fm-x", o).onclick = () => o.remove();
+      $("#fm-ok", o).onclick = async () => { read(); if (!st.s) return toast("Choisis la matière.");
+        o.remove(); if (!(await pinPrompt(`Valider ${st.min} min de révision avec ${st.by} : code parent`))) return;
+        const { rec, up } = STORE.addFam({ s: st.s, min: st.min, by: st.by, on: st.on }); FX.sfx("level"); renderHUD();
+        await celebrate("家族の稽古！", `${ART.sensei("fire", 100)}<p><b>+${rec.xp} XP</b> pour ${rec.min} minutes avec ${esc(rec.by)}${rec.reg ? `<br><span class="small">dont ${STORE.FAM_REGULAR} XP de régularité : bravo !</span>` : ""}</p><p class="small">Réviser avec ton cahier, c'est l'entraînement le plus solide.</p>`, "Génial !", "win");
+        afterAction(); levelUpCheck(up); render(); };
+    };
+    paint(); document.body.appendChild(o);
   }
   function sessionShell(main) {
     main.innerHTML = `<div class="session-top"><button class="back" id="quit" aria-label="Terminer">✕</button><div class="prog"><i style="width:0"></i></div><span class="combo"></span></div><div id="stage"></div>`;
@@ -621,10 +653,11 @@
       const card = instantiate(queue.shift());
       mountCard($("#stage"), card, {
         onDone: ({ ok, grade }) => {
-          const firstTime = !requeued.has(card.id);
+          const firstTime = !requeued.has(card.id), wasHard = !!(S().cards[card.id] && S().cards[card.id].lapses > 0);
           if (firstTime) { STORE.grade(card.id, grade, card.bonus, !!card.focus); if (STORE.countReview()) setTimeout(() => { toast("Objectif du jour atteint : ta flamme brille ! 炎"); FX.sfx("level"); }, 300); done++; }
           if (ok) good++;
-          const gain = ([2, 6, 10, 12][grade] || 2) * (1 + Math.min(combo, 10) * 0.05) * (firstTime ? 1 : 0.5) * (card.bonus && ok ? 3 : 1);
+          // Barème : 2 XP pour une carte ratée (participation), 10 XP pour toute bonne réponse, +50 % si la carte avait déjà été ratée
+          const gain = (grade >= 1 ? 10 * (wasHard ? 1.5 : 1) : 2) * (1 + Math.min(combo, 10) * 0.05) * (firstTime ? 1 : 0.5) * (card.bonus && ok ? 3 : 1);
           if (card.bonus && ok && firstTime) setTimeout(() => fxText("REVANCHE ×3 !"), 350);
           xp += gain; const up = STORE.addXP(gain); if (up) lvlUp = up;
           if (grade === 0 && firstTime) { requeued.add(card.id); queue.splice(Math.min(queue.length, 3 + Math.floor(Math.random() * 3)), 0, STORE.allActiveCards().find((c) => c.id === card.id) || card); }
@@ -1292,34 +1325,42 @@
   }
 
   // ---------- Code parent ----------
-  // Code à 4 chiffres, stocké haché (SHA-256 + sel). Déverrouillé pour 10 minutes.
-  // Code de secours (connu de Felipe seulement) si le code est oublié.
+  // Code à 6 chiffres (les anciens codes à 4 chiffres restent acceptés une fois, puis il faut en choisir un à 6), stocké haché (SHA-256 + sel).
+  // Déverrouillé pour 10 minutes. Code de secours (connu de Felipe seulement) si le code est oublié.
   let parentUntil = 0;
+  const PIN_LEN = 6;
   const RESCUE = "b3d4cb4fcb9b6210368d0638929a2f760b28e4712ef4b6878c07fb4ebab106eb";
   async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map((x) => x.toString(16).padStart(2, "0")).join(""); }
+  const pinLen = (P) => (P && P.len) || 4;
+  const padHTML = (n, code) => `<div class="pin-dots">${Array.from({ length: n }, (_, i) => `<i class="${i < code.length ? "on" : ""}"></i>`).join("")}</div>`;
+  const keysHTML = () => `<div class="pinpad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((k) => k === "" ? "<span></span>" : `<button class="btn" data-k="${k}">${k}</button>`).join("")}</div>`;
+  async function savePin(code) { const salt = Math.random().toString(36).slice(2, 10); S().settings.parentPin = { salt, h: await sha(salt + ":" + code), len: code.length }; STORE.save(); }
   function pinPrompt(title) {
     return new Promise((res) => {
       const P = S().settings.parentPin;
       if (!P) { celebrate("Code parent", `<p>Le parent doit d'abord créer son code dans <b>Moi → Espace parent</b>.</p>`, "Compris", "lose").then(() => res(false)); return; }
-      const o = document.createElement("div"); o.className = "celebrate"; let code = "";
-      const paint = (msg) => { o.innerHTML = `<div class="panel stack" style="align-items:center"><p class="small"><b>${esc(title)}</b></p><div class="pin-dots">${[0, 1, 2, 3].map((i) => `<i class="${i < code.length ? "on" : ""}"></i>`).join("")}</div>${msg ? `<p class="small pin-msg">${msg}</p>` : ""}
-        <div class="pinpad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((k) => k === "" ? "<span></span>" : `<button class="btn" data-k="${k}">${k}</button>`).join("")}</div><button class="btn ghost sm" id="pp-x">Annuler</button></div>`;
+      const o = document.createElement("div"); o.className = "celebrate"; let code = "", mode = "enter", first = "";
+      const n = () => (mode === "enter" ? pinLen(P) : PIN_LEN);
+      const head = () => mode === "enter" ? `<b>${esc(title)}</b>` : mode === "create" ? `<b>Nouveau code parent à ${PIN_LEN} chiffres</b><br>Ton ancien code à 4 chiffres n'est plus assez sûr : choisis-en un à ${PIN_LEN} chiffres.` : `<b>Tape le nouveau code une seconde fois.</b>`;
+      const paint = (msg) => { o.innerHTML = `<div class="panel stack" style="align-items:center"><p class="small">${head()}</p>${padHTML(n(), code)}${msg ? `<p class="small pin-msg">${msg}</p>` : ""}${keysHTML()}<button class="btn ghost sm" id="pp-x">Annuler</button></div>`;
         $$("[data-k]", o).forEach((b) => (b.onclick = () => press(b.dataset.k))); $("#pp-x", o).onclick = () => { o.remove(); res(false); }; };
-      const press = async (k) => { FX.sfx("tap"); if (k === "⌫") { code = code.slice(0, -1); return paint(); } if (code.length >= 4) return; code += k; paint(); if (code.length < 4) return;
-        if ((await sha(P.salt + ":" + code)) === P.h) { o.remove(); parentUntil = Date.now() + 10 * 60000; res(true); } else { code = ""; FX.buzz(80); paint("Code incorrect."); } };
+      const press = async (k) => { FX.sfx("tap"); if (k === "⌫") { code = code.slice(0, -1); return paint(); } if (code.length >= n()) return; code += k; paint(); if (code.length < n()) return;
+        if (mode === "create") { first = code; code = ""; mode = "confirm"; return setTimeout(() => paint(), 150); }
+        if (mode === "confirm") { if (code !== first) { code = ""; mode = "create"; return setTimeout(() => paint("Les deux codes sont différents : recommence."), 150); } await savePin(code); toast("Nouveau code parent enregistré."); o.remove(); parentUntil = Date.now() + 10 * 60000; return res(true); }
+        if ((await sha(P.salt + ":" + code)) === P.h) { if (!P.len || P.len < PIN_LEN) { code = ""; mode = "create"; return setTimeout(() => paint(), 150); } o.remove(); parentUntil = Date.now() + 10 * 60000; res(true); } else { code = ""; FX.buzz(80); paint("Code incorrect."); } };
       paint(); document.body.appendChild(o);
     });
   }
   function drawLock() {
     const lock = $("#p-lock"), zone = $("#p-zone"); if (!lock) return;
-    const set = !!S().settings.parentPin, open = parentUntil > Date.now();
+    const set = !!S().settings.parentPin, open = parentUntil > Date.now() && !(set && pinLen(S().settings.parentPin) < PIN_LEN);
     zone.hidden = !open; lock.hidden = open;
     if (open) { drawParent(); drawNotesEditor(); return; }
-    let mode = set ? "enter" : "create", first = "", code = "";
+    let mode = set ? "enter" : "create", first = "", code = "", upgrade = false;
+    const n = () => (mode === "enter" ? pinLen(S().settings.parentPin) : PIN_LEN);
     const paint = (msg) => {
-      lock.innerHTML = `<p class="small">${mode === "create" ? "Choisis un <b>code parent à 4 chiffres</b>. Il protège le suivi, le nombre de nouvelles cartes, la zone de vacances, l'import de packs et la remise à zéro." : mode === "confirm" ? "Tape le code une seconde fois." : "Réservé aux parents : tape le code parent."}</p>
-        <div class="pin-dots">${[0, 1, 2, 3].map((i) => `<i class="${i < code.length ? "on" : ""}"></i>`).join("")}</div>${msg ? `<p class="small pin-msg">${msg}</p>` : ""}
-        <div class="pinpad">${[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((k) => k === "" ? "<span></span>" : `<button class="btn" data-k="${k}">${k}</button>`).join("")}</div>
+      lock.innerHTML = `<p class="small">${mode === "create" ? (upgrade ? `Le code parent passe à <b>${PIN_LEN} chiffres</b> : choisis ton nouveau code.` : `Choisis un <b>code parent à ${PIN_LEN} chiffres</b>. Il protège le suivi, les réglages, les validations (jetons, bons, séances avec un parent), l'import de packs et la remise à zéro.`) : mode === "confirm" ? "Tape le code une seconde fois." : "Réservé aux parents : tape le code parent."}</p>
+        ${padHTML(n(), code)}${msg ? `<p class="small pin-msg">${msg}</p>` : ""}${keysHTML()}
         ${mode === "enter" ? `<details class="rescue"><summary class="tiny">Code oublié ?</summary><div class="in"><input type="text" id="p-rescue" placeholder="Code de secours" autocomplete="off"><button class="btn sm" id="p-rescue-go">Réinitialiser le code</button></div></details>` : ""}`;
       $$("[data-k]", lock).forEach((b) => (b.onclick = () => press(b.dataset.k)));
       const rg = $("#p-rescue-go"); if (rg) rg.onclick = async () => { if ((await sha("hikari-secours:" + $("#p-rescue").value.trim().toUpperCase())) === RESCUE) { delete S().settings.parentPin; STORE.save(); toast("Code effacé : choisis-en un nouveau."); drawLock(); } else toast("Code de secours incorrect."); };
@@ -1327,16 +1368,15 @@
     const press = async (k) => {
       FX.sfx("tap");
       if (k === "⌫") { code = code.slice(0, -1); return paint(); }
-      if (code.length >= 4) return; code += k; paint();
-      if (code.length < 4) return;
+      if (code.length >= n()) return; code += k; paint();
+      if (code.length < n()) return;
       if (mode === "create") { first = code; code = ""; mode = "confirm"; return setTimeout(() => paint(), 150); }
       if (mode === "confirm") {
         if (code !== first) { code = ""; mode = "create"; return setTimeout(() => paint("Les deux codes sont différents : recommence."), 150); }
-        const salt = Math.random().toString(36).slice(2, 10); S().settings.parentPin = { salt, h: await sha(salt + ":" + code) }; STORE.save();
-        parentUntil = Date.now() + 10 * 60000; toast("Code parent enregistré."); return drawLock();
+        await savePin(code); parentUntil = Date.now() + 10 * 60000; toast("Code parent enregistré."); return drawLock();
       }
       const P = S().settings.parentPin;
-      if ((await sha(P.salt + ":" + code)) === P.h) { parentUntil = Date.now() + 10 * 60000; FX.sfx("good"); drawLock(); }
+      if ((await sha(P.salt + ":" + code)) === P.h) { if (pinLen(P) < PIN_LEN) { upgrade = true; code = ""; mode = "create"; return setTimeout(() => paint(), 150); } parentUntil = Date.now() + 10 * 60000; FX.sfx("good"); drawLock(); }
       else { code = ""; FX.buzz(80); lock.classList.add("shake-soft"); setTimeout(() => lock.classList.remove("shake-soft"), 400); paint("Code incorrect."); }
     };
     paint();

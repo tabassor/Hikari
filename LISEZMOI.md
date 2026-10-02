@@ -125,3 +125,6 @@ La boucle prévue :
 - Pendant une préparation, les cartes de préparation prennent la place des nouvelles cartes du jour (les révisions dues restent).
 - **Niveaux** : courbe `need(l) = 100 + 70 (l − 1)`, Légende (niv. 45) ≈ 70 000 XP, calibrée sur une année scolaire. Migration `curveV2` : le niveau atteint et la fraction en cours sont conservés.
 - **Palmarès de la Voie** : instantané par mois terminé (`foyer.palm`), points et niveau atteint, record couronné.
+- **Barème XP** : 2 XP pour une carte ratée (participation), 10 XP pour toute bonne réponse, +50 % si la carte avait déjà été ratée ; bonus d'enchaînement jusqu'à +50 % ; revanche ×3.
+- **Séances avec un parent** (salle d'entraînement) : matière, durée (15 à 60 min), parent, sujet ; validées avec le code parent ; 10 XP par minute, +100 XP si une autre séance a eu lieu dans les 7 jours précédents ; historique et emblèmes (1, 10, 30 séances). Ne comptent pas pour la flamme.
+- **Code parent à 6 chiffres** : un ancien code à 4 chiffres est accepté une dernière fois, puis l'appli impose d'en choisir un à 6.
