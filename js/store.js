@@ -135,8 +135,8 @@
   // Migration v1 → v2 : un chapitre ouvert ouvre toutes ses leçons remplies
   function migrate() {
     // Nouvelle courbe de niveaux : on garde le niveau atteint et la fraction en cours (les XP totaux sont recalculés)
-    if (!S.curveV2) { let l = 1, rest = S.xp || 0; while (rest >= needV1(l)) { rest -= needV1(l); l++; }
-      let x = 0; for (let k = 1; k < l; k++) x += need(k); S.xp = x + Math.round((rest / needV1(l)) * need(l)); S.curveV2 = 1; save(); }
+    if (!S.curveV3) { const old = S.curveV2 ? needV2 : needV1; let l = 1, rest = S.xp || 0; while (rest >= old(l)) { rest -= old(l); l++; }
+      let x = 0; for (let k = 1; k < l; k++) x += need(k); S.xp = x + Math.round((rest / old(l)) * need(l)); S.curveV2 = 1; S.curveV3 = 1; save(); }
     if (S.v >= 2 && S.migrated2) return;
     Object.entries(S.chapters || {}).forEach(([cid, st]) => {
       const c = CHI[cid]; if (!c || !st || st.state === "locked") return;
@@ -343,9 +343,10 @@
 
   // ---------- XP, niveaux, rangs, flamme ----------
   const RANKS = [[1, "見習い", "Apprentie"], [3, "初心", "Novice"], [6, "初段", "Shodan"], [10, "二段", "Nidan"], [15, "三段", "Sandan"], [20, "守護", "Gardienne"], [27, "達人", "Virtuose"], [35, "師範", "Maîtresse"], [45, "伝説", "Légende"]];
-  // Courbe calibrée sur une année scolaire : Légende (niv. 45) ≈ 70 000 XP, soit ~35 cartes par jour d'école sur l'année
-  const need = (l) => 100 + 70 * (l - 1);
-  const needV1 = (l) => 100 + 25 * (l - 1);
+  // Courbe calibrée sur une année scolaire : Légende (niv. 45) ≈ 96 000 XP, soit ~35 cartes par jour d'école
+  // (≈ 68 000 XP) + 2 séances de 30 min par semaine avec un parent (≈ 29 000 XP)
+  const need = (l) => 100 + 97 * (l - 1);
+  const needV1 = (l) => 100 + 25 * (l - 1), needV2 = (l) => 100 + 70 * (l - 1);
   function levelInfo(xp = S.xp) { let l = 1, rest = xp; while (rest >= need(l)) { rest -= need(l); l++; } const r = RANKS.filter((x) => x[0] <= l).pop(); const nx = RANKS.find((x) => x[0] > l); return { level: l, into: rest, need: need(l), rank: r, next: nx }; }
   function addXP(n) {
     const before = levelInfo().level; S.xp += Math.round(n);
