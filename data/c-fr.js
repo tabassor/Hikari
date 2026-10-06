@@ -119,9 +119,9 @@
      "q": "Dans la Genèse, en combien de jours Dieu crée-t-il le monde ?",
      "c": [
       "Six jours, puis il se repose le septième",
-      "Sept jours sans repos",
-      "Un seul jour",
-      "Quarante jours"
+      "Sept jours, sans jamais se reposer",
+      "Un seul jour, en une seule parole",
+      "Quarante jours, puis il se repose"
      ],
      "a": 0,
      "t": "coeur"
@@ -408,9 +408,9 @@
      "q": "Quel mythe explique l'alternance des saisons ?",
      "c": [
       "Déméter et sa fille Perséphone",
-      "Narcisse",
-      "Arachné",
-      "Icare"
+      "Narcisse et son reflet dans l'eau",
+      "Arachné et la déesse Athéna",
+      "Icare et son père Dédale"
      ],
      "a": 0,
      "x": "Quand Perséphone rejoint Hadès sous terre, Déméter est triste et rien ne pousse : c'est l'hiver.",
@@ -611,9 +611,9 @@
      "q": "Que signifie le suffixe **-logie** ?",
      "c": [
       "L'étude, la science de",
-      "La peur de",
-      "L'écriture",
-      "L'amour de"
+      "La peur, la crainte de",
+      "L'écriture, le dessin de",
+      "L'amour, le goût de"
      ],
      "a": 0,
      "t": "def"
@@ -858,9 +858,9 @@
      "q": "« __Chaque hiver__, Déméter pleure sa fille. » Fonction ?",
      "c": [
       "Complément circonstanciel de temps",
-      "COD",
-      "Sujet",
-      "COI"
+      "Complément circonstanciel de lieu",
+      "Complément d'objet direct (COD)",
+      "Sujet du verbe « pleure »"
      ],
      "a": 0,
      "t": "exo"
@@ -882,9 +882,9 @@
      "q": "« Pandore ouvre la jarre __dans sa maison__. » Fonction ?",
      "c": [
       "Complément circonstanciel de lieu",
-      "COD",
-      "COI",
-      "Sujet"
+      "Complément circonstanciel de temps",
+      "Complément d'objet direct (COD)",
+      "Complément d'objet indirect (COI)"
      ],
      "a": 0,
      "t": "exo"
@@ -894,9 +894,9 @@
      "q": "« Hermès apporte __un message__ __aux mortels__. » Le 2e groupe souligné est…",
      "c": [
       "COI (on dit : il leur apporte)",
-      "COD",
-      "Sujet",
-      "CC de lieu"
+      "COD (on dit : il les apporte)",
+      "Sujet (on dit : ils apportent)",
+      "CC de lieu (on dit : il apporte là)"
      ],
      "a": 0,
      "t": "exo"

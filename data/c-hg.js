@@ -47,9 +47,9 @@
      "q": "Vers quand apparaît le genre **Homo** ?",
      "c": [
       "Il y a environ 2,5 millions d'années",
-      "Vers −10 000",
-      "Vers −300 000",
-      "Vers −3500"
+      "Il y a environ 10 000 ans",
+      "Il y a environ 300 000 ans",
+      "Il y a environ 5 500 ans"
      ],
      "a": 0,
      "t": "coeur"
@@ -178,7 +178,7 @@
      "k": "o",
      "q": "Dans quel ordre Homo sapiens a-t-il atteint ces continents ?",
      "items": [
-      "Afrique (origine)",
+      "Afrique",
       "Asie",
       "Australie",
       "Europe",
@@ -493,9 +493,9 @@
      "q": "Où commence le Néolithique ?",
      "c": [
       "Dans le Croissant fertile (Proche-Orient)",
-      "En France",
-      "En Amérique",
-      "En Chine seulement"
+      "Dans la vallée du Nil (Égypte)",
+      "En Europe de l'Ouest (France)",
+      "En Océanie (Australie)"
      ],
      "a": 0,
      "t": "coeur"
@@ -842,9 +842,9 @@
      "q": "À quoi sert d'abord l'écriture ?",
      "c": [
       "À compter (récoltes, impôts, troupeaux)",
-      "À écrire des romans",
-      "À envoyer des lettres d'amour",
-      "À faire des affiches"
+      "À raconter des histoires (contes, poèmes)",
+      "À communiquer de loin (lettres, messages)",
+      "À décorer les murs (affiches, peintures)"
      ],
      "a": 0,
      "t": "coeur"
@@ -1250,9 +1250,9 @@
      "q": "São Paulo se trouve…",
      "c": [
       "au Brésil, en Amérique du Sud",
-      "au Mexique",
-      "au Portugal",
-      "en Argentine"
+      "au Mexique, en Amérique du Nord",
+      "au Portugal, en Europe du Sud",
+      "en Argentine, en Amérique du Sud"
      ],
      "a": 0,
      "t": "coeur"

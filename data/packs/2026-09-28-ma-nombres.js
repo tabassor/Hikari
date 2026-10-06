@@ -465,9 +465,9 @@ window.REPO_PACKS.push(
        "q": "Où peut-on ajouter ou supprimer des **zéros inutiles** ?",
        "c": [
         "À droite de la partie décimale et à gauche de la partie entière",
-        "Partout dans le nombre",
-        "Juste après la virgule",
-        "À droite de la partie entière"
+        "À gauche de la partie décimale et à droite de la partie entière",
+        "Partout dans le nombre, sans changer sa valeur",
+        "Juste après la virgule, avant les autres chiffres"
        ],
        "a": 0,
        "t": "coeur"
@@ -512,9 +512,9 @@ window.REPO_PACKS.push(
        "q": "Un nombre entier est-il un nombre décimal ?",
        "c": [
         "Oui : sa partie décimale est nulle (26 = 26,0)",
-        "Non, jamais",
-        "Seulement s'il est pair",
-        "Seulement s'il a une virgule"
+        "Non : il n'a pas de virgule (26 n'est pas décimal)",
+        "Seulement s'il est pair (26 oui, 27 non)",
+        "Seulement s'il est écrit avec une virgule"
        ],
        "a": 0,
        "t": "coeur"

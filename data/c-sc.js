@@ -98,9 +98,9 @@
      "q": "Qu'a une cellule végétale qu'une cellule animale n'a pas ?",
      "c": [
       "Une paroi (et des chloroplastes dans les parties vertes)",
-      "Un noyau",
-      "Une membrane",
-      "Du cytoplasme"
+      "Un noyau (et une membrane autour de la cellule)",
+      "Une membrane (et du cytoplasme à l'intérieur)",
+      "Du cytoplasme (et un noyau au centre de la cellule)"
      ],
      "a": 0,
      "t": "coeur"
@@ -161,9 +161,9 @@
      "q": "Comment calcule-t-on le grossissement d'un microscope ?",
      "c": [
       "Grossissement de l'oculaire × celui de l'objectif",
-      "Oculaire + objectif",
-      "Objectif − oculaire",
-      "Il est toujours de 100"
+      "Grossissement de l'oculaire + celui de l'objectif",
+      "Grossissement de l'objectif − celui de l'oculaire",
+      "Il est toujours de 100, quel que soit l'objectif"
      ],
      "a": 0,
      "t": "coeur"
@@ -173,9 +173,9 @@
      "q": "Quelle partie du microscope sert à faire la mise au point ?",
      "c": [
       "Les vis (macro puis micrométrique)",
-      "La platine",
-      "L'oculaire",
-      "Le miroir"
+      "La platine (où l'on pose la lame)",
+      "L'oculaire (où l'on place l'œil)",
+      "Le miroir (qui envoie la lumière)"
      ],
      "a": 0,
      "t": "coeur"
@@ -260,9 +260,9 @@
      "q": "Pour classer scientifiquement, on se base sur…",
      "c": [
       "les attributs que les êtres vivants possèdent",
-      "ce qu'ils mangent",
-      "le milieu où ils vivent",
-      "leur taille"
+      "ce que les êtres vivants mangent",
+      "le milieu où les êtres vivants habitent",
+      "la taille et la couleur des êtres vivants"
      ],
      "a": 0,
      "t": "coeur"
@@ -297,9 +297,9 @@
      "q": "Quel attribut définit les **vertébrés** ?",
      "c": [
       "Un squelette interne avec une colonne vertébrale",
-      "Des poils",
-      "Des plumes",
-      "4 membres"
+      "Une peau recouverte de poils ou de plumes",
+      "Quatre membres pour se déplacer",
+      "Une carapace qui protège tout le corps"
      ],
      "a": 0,
      "t": "coeur"
@@ -322,9 +322,9 @@
      "q": "Qui est le plus proche parent du chat ?",
      "c": [
       "Le lapin (mammifère)",
-      "Le pigeon",
-      "La truite",
-      "L'escargot"
+      "Le pigeon (oiseau)",
+      "La truite (poisson)",
+      "L'escargot (mollusque)"
      ],
      "a": 0,
      "t": "coeur"

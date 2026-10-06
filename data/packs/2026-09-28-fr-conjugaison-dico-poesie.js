@@ -3096,9 +3096,9 @@ window.REPO_PACKS.push(
        "q": "Dans l'article « chat », que veut dire « **Zool.** » ?",
        "c": [
         "une abréviation qui indique le domaine (la zoologie)",
-        "l'étymologie",
-        "la prononciation",
-        "un exemple"
+        "une abréviation qui indique l'étymologie (l'origine)",
+        "une abréviation qui indique la prononciation (en API)",
+        "une abréviation qui annonce un exemple (en italique)"
        ],
        "a": 0,
        "t": "coeur"

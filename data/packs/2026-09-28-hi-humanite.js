@@ -230,11 +230,12 @@ window.REPO_PACKS.push(
        "k": "o",
        "q": "Remets dans l'ordre chronologique.",
        "items": [
-        "début du Paléolithique (≈ 3 millions d'années)",
-        "début du Néolithique (≈ 10 000 av. n. è.)",
-        "invention de l'écriture (≈ 3 500 av. n. è.)"
+        "début du Paléolithique",
+        "début du Néolithique",
+        "invention de l'écriture"
        ],
-       "t": "coeur"
+       "t": "coeur",
+       "x": "Paléolithique : vers −3 millions d'années ; Néolithique : vers 10 000 av. n. è. ; écriture : vers 3 500 av. n. è."
       },
       {
        "k": "q",
@@ -503,9 +504,9 @@ window.REPO_PACKS.push(
        "q": "Qu'est-ce qui marque le début de la Préhistoire et du Paléolithique ?",
        "c": [
         "L'apparition d'Homo habilis, la première espèce humaine",
-        "La découverte de Toumaï",
-        "L'invention de l'agriculture",
-        "L'invention de l'écriture"
+        "La découverte de Toumaï, le plus vieux fossile connu",
+        "L'invention de l'agriculture, au Proche-Orient",
+        "L'invention de l'écriture, en Mésopotamie"
        ],
        "a": 0,
        "t": "coeur"
@@ -514,11 +515,12 @@ window.REPO_PACKS.push(
        "k": "o",
        "q": "Remets ces hominidés dans l'ordre, du plus ancien au plus récent.",
        "items": [
-        "Toumaï (≈ 7 millions d'années)",
-        "Lucie (≈ 3,2 millions d'années)",
-        "Homo habilis (≈ 2,5 millions d'années)"
+        "Toumaï",
+        "Lucie",
+        "Homo habilis"
        ],
-       "t": "coeur"
+       "t": "coeur",
+       "x": "Toumaï : environ 7 millions d'années ; Lucie : environ 3,2 millions ; Homo habilis : environ 2,5 millions."
       },
       {
        "k": "s",

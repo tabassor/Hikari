@@ -271,9 +271,9 @@ window.REPO_PACKS.push(
        "q": "Le point K de la droite (xy) partage cette droite en…",
        "c": [
         "2 demi-droites : [Kx) et [Ky)",
-        "2 segments",
-        "2 droites",
-        "3 demi-droites"
+        "2 segments : [Kx] et [Ky]",
+        "2 droites : (Kx) et (Ky)",
+        "3 demi-droites : [Kx), [Ky) et [xy)"
        ],
        "a": 0,
        "svg": "<svg viewBox=\"0 0 320 80\" class=\"fig\" role=\"img\" aria-label=\"Deux demi-droites d'origine K\"><line x1=\"20\" y1=\"40\" x2=\"160\" y2=\"40\" stroke=\"#D8334A\" stroke-width=\"4\"/><line x1=\"160\" y1=\"40\" x2=\"300\" y2=\"40\" stroke=\"#1E9E62\" stroke-width=\"4\"/><path d=\"M155 35 l10 10 M165 35 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"160\" y=\"30\" text-anchor=\"middle\" class=\"figtxt strong\">K</text><text x=\"22\" y=\"30\" class=\"figtxt strong\">x</text><text x=\"292\" y=\"30\" class=\"figtxt strong\">y</text><text x=\"90\" y=\"66\" text-anchor=\"middle\" class=\"figtxt\" style=\"fill:#D8334A\">[Kx)</text><text x=\"230\" y=\"66\" text-anchor=\"middle\" class=\"figtxt\" style=\"fill:#1E9E62\">[Ky)</text></svg>",
@@ -652,8 +652,8 @@ window.REPO_PACKS.push(
        "c": [
         "Non, car P n'appartient pas au segment",
         "Oui, car PM = PN",
-        "Oui, toujours",
-        "On ne peut pas savoir"
+        "Oui, car P est à la même distance de M et de N",
+        "On ne peut pas savoir sans mesurer"
        ],
        "a": 0,
        "t": "exo"
@@ -1059,9 +1059,9 @@ window.REPO_PACKS.push(
        "svg": "<svg viewBox=\"0 0 320 132\" class=\"fig\" role=\"img\" aria-label=\"Reporter des longueurs au compas\"><polyline points=\"20,40 80,30 140,60 180,55 230,75\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M15 35 l10 10 M25 35 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"20\" y=\"30\" text-anchor=\"middle\" class=\"figtxt strong\">P</text><path d=\"M75 25 l10 10 M85 25 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"80\" y=\"20\" text-anchor=\"middle\" class=\"figtxt strong\">E</text><path d=\"M135 55 l10 10 M145 55 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"140\" y=\"50\" text-anchor=\"middle\" class=\"figtxt strong\">N</text><path d=\"M175 50 l10 10 M185 50 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"180\" y=\"45\" text-anchor=\"middle\" class=\"figtxt strong\">T</text><path d=\"M225 70 l10 10 M235 70 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"230\" y=\"65\" text-anchor=\"middle\" class=\"figtxt strong\">A</text><line x1=\"20\" y1=\"100\" x2=\"258\" y2=\"100\" stroke=\"var(--accent)\" stroke-width=\"3\"/><path d=\"M15 95 l10 10 M25 95 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"20\" y=\"90\" text-anchor=\"middle\" class=\"figtxt strong\">O</text><path d=\"M253 95 l10 10 M263 95 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"258\" y=\"90\" text-anchor=\"middle\" class=\"figtxt strong\">M</text><text x=\"140\" y=\"126\" text-anchor=\"middle\" class=\"figtxt\">OM = PE + EN + NT + TA</text></svg>",
        "c": [
         "le compas, pour reporter chaque longueur bout à bout",
-        "le rapporteur",
-        "une équerre seulement",
-        "une calculatrice"
+        "le rapporteur, pour mesurer chaque angle",
+        "l'équerre, pour tracer des angles droits",
+        "la calculatrice, pour additionner les longueurs"
        ],
        "a": 0,
        "t": "coeur"

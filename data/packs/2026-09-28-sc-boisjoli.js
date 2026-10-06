@@ -146,8 +146,8 @@ window.REPO_PACKS.push(
        "q": "Pourquoi faut-il noter les conditions de l'observation ?",
        "c": [
         "Parce qu'au même endroit, dans d'autres conditions, on peut observer autre chose",
-        "Pour faire joli dans le cahier",
-        "Parce que le professeur le demande toujours"
+        "Pour que le cahier soit complet et bien présenté, même sans raison scientifique",
+        "Parce que le professeur le demande, même si cela ne change rien au résultat"
        ],
        "a": 0,
        "t": "coeur"
@@ -325,8 +325,8 @@ window.REPO_PACKS.push(
        "q": "Un élément anthropique est fait…",
        "c": [
         "de matière minérale, de matière organique, ou des deux",
-        "seulement de matière minérale",
-        "seulement de matière organique"
+        "seulement de matière minérale, jamais organique",
+        "seulement de matière organique, jamais minérale"
        ],
        "a": 0,
        "t": "coeur"
@@ -557,8 +557,8 @@ window.REPO_PACKS.push(
        "q": "Deux êtres vivants se ressemblent beaucoup. Est-ce qu'ils sont forcément de la même espèce ?",
        "c": [
         "Non : il faut qu'ils puissent se reproduire entre eux et avoir des petits fertiles",
-        "Oui, s'ils se ressemblent c'est la même espèce",
-        "Oui, s'ils vivent au même endroit"
+        "Oui : s'ils se ressemblent beaucoup, c'est forcément la même espèce",
+        "Oui : s'ils vivent au même endroit, c'est forcément la même espèce"
        ],
        "a": 0,
        "t": "coeur"
@@ -714,8 +714,8 @@ window.REPO_PACKS.push(
        "q": "Identifier un être vivant, c'est…",
        "c": [
         "nommer l'espèce à laquelle il appartient",
-        "le dessiner",
-        "le mesurer"
+        "le dessiner avec précision dans son cahier",
+        "le mesurer et le peser avec soin"
        ],
        "a": 0,
        "t": "coeur"

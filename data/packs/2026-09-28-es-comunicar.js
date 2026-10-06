@@ -147,8 +147,8 @@ window.REPO_PACKS.push(
        "q": "À partir de quelle heure dit-on « ¡Buenas noches! » ?",
        "c": [
         "Le soir, à partir de 21 h",
-        "Dès midi",
-        "Le matin"
+        "Dès midi, à l'heure du déjeuner",
+        "Le matin, jusqu'à 10 h"
        ],
        "a": 0,
        "t": "coeur"
@@ -580,8 +580,8 @@ window.REPO_PACKS.push(
        "q": "Pourquoi « año » a-t-il un tilde (ñ) ?",
        "c": [
         "Le ñ se prononce « gn » : sans lui, le mot change de sens",
-        "C'est pour faire joli",
-        "Pour montrer la syllabe accentuée"
+        "C'est une décoration : le mot se prononce de la même façon",
+        "Il indique la syllabe accentuée, comme un accent écrit"
        ],
        "a": 0,
        "t": "coeur"

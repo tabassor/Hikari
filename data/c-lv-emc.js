@@ -91,9 +91,9 @@
      "q": "« Good night » s'utilise…",
      "c": [
       "pour se dire bonne nuit, avant d'aller dormir",
-      "pour dire bonjour le soir",
-      "le matin",
-      "à midi"
+      "pour dire bonjour en arrivant le soir",
+      "pour dire bonjour le matin au réveil",
+      "pour dire au revoir à midi, avant de manger"
      ],
      "a": 0,
      "t": "coeur"
@@ -1276,9 +1276,9 @@
      "q": "Le ñ de España se prononce…",
      "c": [
       "« gn » comme dans montagne",
-      "« n »",
-      "« ni »",
-      "« nn »"
+      "« n » comme dans banane",
+      "« ni » comme dans nid",
+      "« nn » comme dans bonne"
      ],
      "a": 0,
      "t": "coeur"
@@ -1895,9 +1895,9 @@
      "q": "Qui est élu à la tête de la commune ?",
      "c": [
       "Le maire (par le conseil municipal)",
-      "Le député",
-      "Le préfet",
-      "Le président"
+      "Le député (par les citoyens)",
+      "Le préfet (nommé par l'État)",
+      "Le président (par les Français)"
      ],
      "a": 0,
      "t": "coeur"
