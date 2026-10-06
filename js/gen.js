@@ -158,6 +158,29 @@
       const bads = [`${fmt(round6(lo - 0.1), 1)} < ${fmt(n, 2)} < ${fmt(lo, 1)}`, `${fmt(Math.floor(n))} < ${fmt(n, 2)} < ${fmt(Math.floor(n) + 1)}`, `${fmt(hi, 1)} < ${fmt(n, 2)} < ${fmt(round6(hi + 0.1), 1)}`];
       return { k: "q", q: `Encadre **${fmt(n, 2)}** entre deux nombres consécutifs **au dixième** :`, c: [good, ...bads], a: 0 };
     },
+    // Intercaler un nombre entre deux nombres donnés (cours « Comparer les nombres décimaux », IV)
+    intercale() {
+      const d = R(0, 2), S = 10 ** d, A = R(10 * S, 999 * S), a = A / S, b = (A + 1) / S, f = R(1, 9) / (10 * S);
+      const inside = round6(a + f), opts = [inside, round6(b + f), round6(a - f), round6(b + 1 + f)];
+      return { k: "q", q: `Quel nombre peut-on **intercaler** entre **${fmt(a)}** et **${fmt(b)}** ?`, c: opts.map((x) => fmt(x)), a: 0, x: `${fmt(a)} < ${fmt(inside)} < ${fmt(b)} : il est **compris entre** les deux nombres.` };
+    },
+    // Encadrement et arrondi à un rang donné (unité, dixième, centième, millième, dizaine, centaine), sur un nombre à 4 décimales
+    encadreRang() {
+      const RG = [["à l'unité", 10000, 0], ["au dixième", 1000, 1], ["au centième", 100, 2], ["au millième", 10, 3], ["à la dizaine", 100000, 0], ["à la centaine", 1000000, 0]];
+      let N; do { N = R(1000000, 99999999); } while (N % 10 === 0);
+      const i = R(0, 5), [nom, s, d] = RG[i], lo = Math.floor(N / s) * s, v = (x) => fmt(x / 10000, d), n = fmt(N / 10000);
+      const enc = (l, st) => `${fmt(l / 10000)} < ${n} < ${fmt((l + st) / 10000)}`;
+      const good = enc(lo, s), other = i === 3 ? RG[2][1] : i === 5 ? RG[4][1] : i === 4 ? RG[0][1] : s / 10;
+      const bads = [enc(lo - s, s), enc(lo + s, s), enc(Math.floor(N / other) * other, other)].filter((z) => z !== good);
+      while (bads.length < 3) bads.push(enc(lo - (bads.length + 1) * s, s));
+      return { k: "q", q: `Encadre **${n}** **${nom}** :`, c: [good, ...bads.slice(0, 3)], a: 0, x: `À gauche, la valeur approchée **par défaut** (troncature) ${nom} : ${v(lo)} ; à droite, on ajoute **1 au rang demandé** : ${v(lo + s)}.` };
+    },
+    arrondiRang() {
+      const RG = [["à l'unité", 10000, 0], ["au dixième", 1000, 1], ["au centième", 100, 2], ["au millième", 10, 3], ["à la dizaine", 100000, 0], ["à la centaine", 1000000, 0]];
+      let N; do { N = R(1000000, 99999999); } while (N % 10 === 0);
+      const [nom, s, d] = pick(RG), lo = Math.floor(N / s) * s, next = Math.floor((N - lo) * 10 / s), r = next >= 5 ? lo + s : lo, val = round6(r / 10000);
+      return { k: "i", q: `Arrondi **${nom}** de **${fmt(N / 10000)}** ?`, a: [fmt(val, d), fmt(val, d).replace(/\s/g, "")], num: val, x: `On coupe ${nom} : ${fmt(lo / 10000, d)}. Le chiffre qui suit est **${next}** : ${next >= 5 ? "main de l'excès (5 à 9), on prend " : "main du défaut (0 à 4), on garde "}**${fmt(val, d)}**.` };
+    },
     rayon() {
       const r = R(2, 15);
       return Math.random() < 0.5 ? { k: "i", q: `Un cercle a un **rayon de ${r} cm**. Son diamètre ?`, a: [String(2 * r), 2 * r + " cm"], num: 2 * r, x: "Diamètre = 2 × rayon." }
