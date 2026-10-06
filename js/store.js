@@ -190,7 +190,8 @@
     // Mots clés : ceux en gras dans la réponse, sinon les mots les plus longs ; une carte « Complète » par mot clé (2 au plus)
     let keys = []; raw.replace(/\*\*([^*]+)\*\*/g, (m, g) => { g.split(/\s+/).filter((w) => !STOP.has(w.toLowerCase().replace(/^[ld]'/, "")) && w.replace(/[^\p{L}\d]/gu, "").length >= 3).forEach((w) => keys.push(w)); return m; });
     if (!keys.length) keys = words.filter((w) => !STOP.has(w.toLowerCase()) && w.replace(/[^\p{L}]/gu, "").length >= 6);
-    keys = Array.from(new Set(keys.map((w) => w.replace(/[,;:()]+$/g, "").replace(/^[(]+/, "").replace(/^(l|d|qu|j|s|n|m|t)['’]/i, "")))).filter((w) => w.length >= 2).sort((a, b) => b.length - a.length).slice(0, 2);
+    if (Array.isArray(c.cle) && c.cle.length) keys = c.cle.slice(); // mots clés imposés par la carte (ceux que la prof attend)
+    keys = Array.from(new Set(keys.map((w) => w.replace(/[,;:()]+$/g, "").replace(/^[(]+/, "").replace(/^(l|d|qu|j|s|n|m|t)['’]/i, "")))).filter((w) => w.length >= 2).sort((a, b) => (c.cle ? 0 : b.length - a.length)).slice(0, 2);
     keys.forEach((w, i) => {
       const re = new RegExp("(^|[\\s'(])" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?=$|[\\s,;:).])"); if (!re.test(plain)) return;
       const holed = plain.replace(re, (m, p) => p + "……");

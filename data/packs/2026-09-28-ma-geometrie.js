@@ -129,21 +129,33 @@ window.REPO_PACKS.push(
        "q": "Définition d'une **droite** ?",
        "a": "Une **ligne rectiligne illimitée des 2 côtés**.",
        "fig": "droite",
-       "t": "def"
+       "t": "def",
+       "cle": [
+        "rectiligne",
+        "illimitée"
+       ]
       },
       {
        "k": "f",
        "q": "Définition d'une **demi-droite** ?",
        "a": "Une portion de droite **limitée d'un côté par son origine** et **illimitée de l'autre**.",
        "fig": "demidroite",
-       "t": "def"
+       "t": "def",
+       "cle": [
+        "origine",
+        "illimitée"
+       ]
       },
       {
        "k": "f",
        "q": "Définition d'un **segment** ?",
        "a": "Une portion de droite **limitée des 2 côtés par ses extrémités**.",
        "fig": "segment",
-       "t": "def"
+       "t": "def",
+       "cle": [
+        "2",
+        "extrémités"
+       ]
       },
       {
        "k": "s",
