@@ -39,7 +39,8 @@
       "L'Asie",
       "L'Amérique"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -50,17 +51,20 @@
       "Vers −300 000",
       "Vers −3500"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Qu'a-t-on trouvé à **Dmanissi** (Géorgie) ?",
-     "a": "Des restes d'humains vieux d'environ 1,8 million d'années : la preuve de très anciennes migrations hors d'Afrique."
+     "a": "Des restes d'humains vieux d'environ 1,8 million d'années : la preuve de très anciennes migrations hors d'Afrique.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Qui est **Lucy** ?",
-     "a": "Une australopithèque (lointaine cousine de l'homme) qui vivait en Éthiopie il y a environ 3,2 millions d'années ; découverte en 1974."
+     "a": "Une australopithèque (lointaine cousine de l'homme) qui vivait en Éthiopie il y a environ 3,2 millions d'années ; découverte en 1974.",
+     "t": "coeur"
     }
    ],
    "events": [
@@ -125,7 +129,8 @@
       "Néandertal",
       "Australopithèque"
      ],
-     "a": 0
+     "a": 0,
+     "t": "def"
     },
     {
      "k": "q",
@@ -136,7 +141,8 @@
       "Vers −10 000",
       "Après l'invention de l'écriture"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -147,12 +153,14 @@
       "L'Australie",
       "L'Asie"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Définis **migration**.",
-     "a": "Déplacement d'une population d'un lieu à un autre pour s'y installer."
+     "a": "Déplacement d'une population d'un lieu à un autre pour s'y installer.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -163,7 +171,8 @@
       "4 millions d'années",
       "400 ans"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "o",
@@ -175,7 +184,8 @@
       "Europe",
       "Amérique"
      ],
-     "x": "Les dates de l'Asie et de l'Australie sont proches ; l'ordre donné est celui du récit du cours."
+     "x": "Les dates de l'Asie et de l'Australie sont proches ; l'ordre donné est celui du récit du cours.",
+     "t": "coeur"
     }
    ],
    "events": [
@@ -337,12 +347,14 @@
     {
      "k": "f",
      "q": "Que signifie **Paléolithique** ?",
-     "a": "L'âge de la pierre ancienne (pierre taillée)."
+     "a": "L'âge de la pierre ancienne (pierre taillée).",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **nomade**.",
-     "a": "Qui n'a pas d'habitat fixe et se déplace pour trouver sa nourriture."
+     "a": "Qui n'a pas d'habitat fixe et se déplace pour trouver sa nourriture.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -353,7 +365,8 @@
       "Commerce",
       "Grandes cultures de blé"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -364,12 +377,14 @@
       "Dmanissi",
       "Uruk"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Pourquoi les dates de la Préhistoire changent-elles parfois ?",
-     "a": "Parce que de nouvelles fouilles et de nouvelles méthodes de datation apportent de nouvelles découvertes."
+     "a": "Parce que de nouvelles fouilles et de nouvelles méthodes de datation apportent de nouvelles découvertes.",
+     "t": "coeur"
     },
     {
      "k": "o",
@@ -381,7 +396,8 @@
       "Premiers Homo sapiens",
       "Grotte Chauvet",
       "Grotte de Lascaux"
-     ]
+     ],
+     "t": "coeur"
     }
    ],
    "events": [
@@ -469,7 +485,8 @@
       "Vers −2,5 millions",
       "Vers −100 000"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -480,22 +497,26 @@
       "En Amérique",
       "En Chine seulement"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Définis **sédentaire**.",
-     "a": "Qui vit durablement au même endroit."
+     "a": "Qui vit durablement au même endroit.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **domestication**.",
-     "a": "Apprivoiser des animaux et sélectionner des plantes pour les utiliser."
+     "a": "Apprivoiser des animaux et sélectionner des plantes pour les utiliser.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Que signifie **Néolithique** ?",
-     "a": "L'âge de la pierre nouvelle (pierre polie)."
+     "a": "L'âge de la pierre nouvelle (pierre polie).",
+     "t": "def"
     },
     {
      "k": "q",
@@ -506,7 +527,8 @@
       "Le riz et le thé",
       "Le cacao et la vanille"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     }
    ],
    "events": [
@@ -563,7 +585,8 @@
       "Le papier"
      ],
      "a": 0,
-     "x": "Au Proche-Orient, la poterie se répand avec l'agriculture (elle existait déjà chez certains chasseurs-cueilleurs, au Japon par exemple)."
+     "x": "Au Proche-Orient, la poterie se répand avec l'agriculture (elle existait déjà chez certains chasseurs-cueilleurs, au Japon par exemple).",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -574,7 +597,8 @@
       "Parce que c'est une légende",
       "Parce que c'est arrivé en un jour"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -585,12 +609,14 @@
       "des pyramides",
       "des temples grecs"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Cite deux conséquences de la sédentarisation.",
-     "a": "Hausse de la population ; villages ; paysages transformés ; réserves et richesses ; apparition d'inégalités."
+     "a": "Hausse de la population ; villages ; paysages transformés ; réserves et richesses ; apparition d'inégalités.",
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -632,7 +658,8 @@
        "Peintures de Lascaux",
        0
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ],
    "events": [
@@ -713,17 +740,20 @@
     {
      "k": "f",
      "q": "Que signifie **Mésopotamie** ?",
-     "a": "Le pays entre deux fleuves : le Tigre et l'Euphrate."
+     "a": "Le pays entre deux fleuves : le Tigre et l'Euphrate.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **cité-État**.",
-     "a": "Une ville indépendante qui contrôle le territoire autour d'elle, avec son roi et ses dieux."
+     "a": "Une ville indépendante qui contrôle le territoire autour d'elle, avec son roi et ses dieux.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **État**.",
-     "a": "Une organisation qui gouverne un territoire et sa population (chef, lois, impôts, armée, fonctionnaires)."
+     "a": "Une organisation qui gouverne un territoire et sa population (chef, lois, impôts, armée, fonctionnaires).",
+     "t": "def"
     }
    ],
    "events": [
@@ -774,7 +804,8 @@
       "Vers −753",
       "Vers −40 000"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -785,12 +816,14 @@
       "En Chine",
       "En Gaule"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Qui est le **scribe** ?",
-     "a": "Un fonctionnaire qui sait lire, écrire et compter au service du roi."
+     "a": "Un fonctionnaire qui sait lire, écrire et compter au service du roi.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -801,7 +834,8 @@
       "Du parchemin",
       "Des feuilles de palmier"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -812,7 +846,8 @@
       "À envoyer des lettres d'amour",
       "À faire des affiches"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -823,12 +858,14 @@
       "L'alphabet",
       "Les idéogrammes chinois"
      ],
-     "a": 0
+     "a": 0,
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Qu'est-ce qui sépare la Préhistoire de l'Histoire ?",
-     "a": "L'invention de l'écriture (vers −3500)."
+     "a": "L'invention de l'écriture (vers −3500).",
+     "t": "coeur"
     },
     {
      "k": "p",
@@ -842,7 +879,8 @@
        "Hiéroglyphes",
        "Égypte"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ],
    "events": [
@@ -884,7 +922,8 @@
       "L'Euphrate",
       "Le Jourdain"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -895,7 +934,8 @@
       "Périclès",
       "Ramsès"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "o",
@@ -906,7 +946,8 @@
       "Invention de l'écriture",
       "Pyramides de Gizeh",
       "Code de Hammurabi"
-     ]
+     ],
+     "t": "coeur"
     }
    ],
    "events": [
@@ -997,22 +1038,26 @@
     {
      "k": "f",
      "q": "Définis **métropole**.",
-     "a": "Une très grande ville qui concentre population, activités et pouvoirs de décision, et rayonne sur un vaste territoire."
+     "a": "Une très grande ville qui concentre population, activités et pouvoirs de décision, et rayonne sur un vaste territoire.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **urbanisation**.",
-     "a": "L'augmentation de la part de la population qui vit en ville."
+     "a": "L'augmentation de la part de la population qui vit en ville.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **étalement urbain**.",
-     "a": "L'extension de la ville sur les espaces ruraux qui l'entourent."
+     "a": "L'extension de la ville sur les espaces ruraux qui l'entourent.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **densité** de population.",
-     "a": "Le nombre d'habitants par km²."
+     "a": "Le nombre d'habitants par km².",
+     "t": "def"
     },
     {
      "k": "q",
@@ -1023,7 +1068,8 @@
       "Presque personne",
       "Environ un quart"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -1067,7 +1113,8 @@
        "Londres",
        3
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ],
    "places": [
@@ -1183,7 +1230,8 @@
       "L'étalement urbain",
       "La densité"
      ],
-     "a": 0
+     "a": 0,
+     "t": "def"
     },
     {
      "k": "q",
@@ -1194,7 +1242,8 @@
       "en Inde",
       "au Brésil"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1205,7 +1254,8 @@
       "au Portugal",
       "en Argentine"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1216,7 +1266,8 @@
       "Europe (Portugal)",
       "Amérique (Mexique)"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     }
    ]
   },
@@ -1238,7 +1289,8 @@
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **écoquartier** ?",
-     "a": "Un quartier conçu pour respecter l'environnement : économe en énergie, avec espaces verts, transports doux et mixité sociale."
+     "a": "Un quartier conçu pour respecter l'environnement : économe en énergie, avec espaces verts, transports doux et mixité sociale.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -1249,7 +1301,8 @@
       "L'avion",
       "Le camion"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -1287,7 +1340,8 @@
        "Quartiers séparés riches/pauvres",
        1
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   }

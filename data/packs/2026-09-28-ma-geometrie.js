@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-ma-geometrie — Maths — Langage géométrique, cercle, triangles */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-ma-geometrie",
@@ -108,7 +109,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Comment écrit-on le nom d'un **point** ?",
-       "a": "Avec une **majuscule d'imprimerie**."
+       "a": "Avec une **majuscule d'imprimerie**.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -119,25 +121,29 @@ window.REPO_PACKS.push({
         "d'une droite",
         "d'un segment"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Définition d'une **droite** ?",
        "a": "Une **ligne rectiligne illimitée des 2 côtés**.",
-       "fig": "droite"
+       "fig": "droite",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définition d'une **demi-droite** ?",
        "a": "Une portion de droite **limitée d'un côté par son origine** et **illimitée de l'autre**.",
-       "fig": "demidroite"
+       "fig": "demidroite",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définition d'un **segment** ?",
        "a": "Une portion de droite **limitée des 2 côtés par ses extrémités**.",
-       "fig": "segment"
+       "fig": "segment",
+       "t": "def"
       },
       {
        "k": "s",
@@ -176,7 +182,8 @@ window.REPO_PACKS.push({
          "S'écrit avec 2 crochets",
          2
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -187,7 +194,8 @@ window.REPO_PACKS.push({
         "une infinité de droites",
         "aucune droite"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -198,13 +206,15 @@ window.REPO_PACKS.push({
         "deux droites",
         "aucune droite"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Des droites qui se coupent toutes en un même point D sont…",
        "a": "**concourantes** en D ; D est le **point de concours**.",
-       "svg": "<svg viewBox=\"0 0 320 130\" class=\"fig\" role=\"img\" aria-label=\"Droites concourantes\"><line x1=\"70\" y1=\"65\" x2=\"250\" y2=\"65\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"81.7\" y1=\"20.0\" x2=\"238.3\" y2=\"110.0\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"115.0\" y1=\"-13.299999999999997\" x2=\"205.0\" y2=\"143.3\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"160\" y1=\"-25\" x2=\"160\" y2=\"155\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"205.0\" y1=\"-13.299999999999997\" x2=\"115.0\" y2=\"143.3\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"160\" cy=\"65\" r=\"5\" fill=\"var(--accent)\" stroke=\"currentColor\" stroke-width=\"1.5\"/><text x=\"176\" y=\"60\" class=\"figtxt strong\">D</text><text x=\"160\" y=\"126\" text-anchor=\"middle\" class=\"figtxt\">5 droites concourantes en D</text></svg>"
+       "svg": "<svg viewBox=\"0 0 320 130\" class=\"fig\" role=\"img\" aria-label=\"Droites concourantes\"><line x1=\"70\" y1=\"65\" x2=\"250\" y2=\"65\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"81.7\" y1=\"20.0\" x2=\"238.3\" y2=\"110.0\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"115.0\" y1=\"-13.299999999999997\" x2=\"205.0\" y2=\"143.3\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"160\" y1=\"-25\" x2=\"160\" y2=\"155\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"205.0\" y1=\"-13.299999999999997\" x2=\"115.0\" y2=\"143.3\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"160\" cy=\"65\" r=\"5\" fill=\"var(--accent)\" stroke=\"currentColor\" stroke-width=\"1.5\"/><text x=\"176\" y=\"60\" class=\"figtxt strong\">D</text><text x=\"160\" y=\"126\" text-anchor=\"middle\" class=\"figtxt\">5 droites concourantes en D</text></svg>",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -216,7 +226,8 @@ window.REPO_PACKS.push({
         "(d)"
        ],
        "a": 0,
-       "x": "Le nom d'une droite s'écrit avec 2 lettres (ou une seule minuscule comme (d)), jamais 3."
+       "x": "Le nom d'une droite s'écrit avec 2 lettres (ou une seule minuscule comme (d)), jamais 3.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -227,7 +238,8 @@ window.REPO_PACKS.push({
         "Elle n'en a pas",
         "M et N"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -239,7 +251,8 @@ window.REPO_PACKS.push({
         "la même droite"
        ],
        "a": 0,
-       "x": "L'origine n'est pas la même : G pour [GH), H pour [HG)."
+       "x": "L'origine n'est pas la même : G pour [GH), H pour [HG).",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -250,7 +263,8 @@ window.REPO_PACKS.push({
         "deux demi-droites",
         "deux droites"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -262,7 +276,8 @@ window.REPO_PACKS.push({
         "3 demi-droites"
        ],
        "a": 0,
-       "svg": "<svg viewBox=\"0 0 320 80\" class=\"fig\" role=\"img\" aria-label=\"Deux demi-droites d'origine K\"><line x1=\"20\" y1=\"40\" x2=\"160\" y2=\"40\" stroke=\"#D8334A\" stroke-width=\"4\"/><line x1=\"160\" y1=\"40\" x2=\"300\" y2=\"40\" stroke=\"#1E9E62\" stroke-width=\"4\"/><path d=\"M155 35 l10 10 M165 35 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"160\" y=\"30\" text-anchor=\"middle\" class=\"figtxt strong\">K</text><text x=\"22\" y=\"30\" class=\"figtxt strong\">x</text><text x=\"292\" y=\"30\" class=\"figtxt strong\">y</text><text x=\"90\" y=\"66\" text-anchor=\"middle\" class=\"figtxt\" style=\"fill:#D8334A\">[Kx)</text><text x=\"230\" y=\"66\" text-anchor=\"middle\" class=\"figtxt\" style=\"fill:#1E9E62\">[Ky)</text></svg>"
+       "svg": "<svg viewBox=\"0 0 320 80\" class=\"fig\" role=\"img\" aria-label=\"Deux demi-droites d'origine K\"><line x1=\"20\" y1=\"40\" x2=\"160\" y2=\"40\" stroke=\"#D8334A\" stroke-width=\"4\"/><line x1=\"160\" y1=\"40\" x2=\"300\" y2=\"40\" stroke=\"#1E9E62\" stroke-width=\"4\"/><path d=\"M155 35 l10 10 M165 35 l-10 10\" stroke=\"currentColor\" stroke-width=\"2\"/><text x=\"160\" y=\"30\" text-anchor=\"middle\" class=\"figtxt strong\">K</text><text x=\"22\" y=\"30\" class=\"figtxt strong\">x</text><text x=\"292\" y=\"30\" class=\"figtxt strong\">y</text><text x=\"90\" y=\"66\" text-anchor=\"middle\" class=\"figtxt\" style=\"fill:#D8334A\">[Kx)</text><text x=\"230\" y=\"66\" text-anchor=\"middle\" class=\"figtxt\" style=\"fill:#1E9E62\">[Ky)</text></svg>",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -273,7 +288,8 @@ window.REPO_PACKS.push({
         "la demi-droite",
         "aucune"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ]
     },
@@ -335,7 +351,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Quand dit-on que des points sont **alignés** ?",
-       "a": "Quand ils appartiennent à une **même droite**."
+       "a": "Quand ils appartiennent à une **même droite**.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -345,7 +362,8 @@ window.REPO_PACKS.push({
         "Oui",
         "Non"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -355,7 +373,8 @@ window.REPO_PACKS.push({
         "Non",
         "Oui"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -366,7 +385,8 @@ window.REPO_PACKS.push({
         "Non"
        ],
        "a": 0,
-       "x": "Ils sont tous sur la droite en pointillés : peu importe la ligne en zigzag."
+       "x": "Ils sont tous sur la droite en pointillés : peu importe la ligne en zigzag.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -377,7 +397,8 @@ window.REPO_PACKS.push({
         "Oui"
        ],
        "a": 0,
-       "x": "Ils sont sur une ligne courbe, pas sur une même droite."
+       "x": "Ils sont sur une ligne courbe, pas sur une même droite.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -388,7 +409,8 @@ window.REPO_PACKS.push({
         "est égal à",
         "euro"
        ],
-       "a": 0
+       "a": 0,
+       "t": "def"
       },
       {
        "k": "q",
@@ -399,7 +421,8 @@ window.REPO_PACKS.push({
         "E",
         "e"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -409,7 +432,8 @@ window.REPO_PACKS.push({
         "∉",
         "∈"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -419,7 +443,8 @@ window.REPO_PACKS.push({
         "∈",
         "∉"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -430,7 +455,8 @@ window.REPO_PACKS.push({
         "∉"
        ],
        "a": 0,
-       "x": "[CD) part de C, passe par D et continue : elle atteint E."
+       "x": "[CD) part de C, passe par D et continue : elle atteint E.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -441,7 +467,8 @@ window.REPO_PACKS.push({
         "∈"
        ],
        "a": 0,
-       "x": "[DC) part de D et va vers C : elle part dans l'autre sens, loin de E."
+       "x": "[DC) part de D et va vers C : elle part dans l'autre sens, loin de E.",
+       "t": "exo"
       }
      ]
     },
@@ -521,7 +548,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Que représente **AB** (sans crochets ni parenthèses) ?",
-       "a": "La **longueur du segment [AB]**, c'est-à-dire la **distance entre A et B**."
+       "a": "La **longueur du segment [AB]**, c'est-à-dire la **distance entre A et B**.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -532,7 +560,8 @@ window.REPO_PACKS.push({
         "(IJ) = 4,6 cm",
         "[IJ) = 4,6 cm"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -542,7 +571,8 @@ window.REPO_PACKS.push({
         "5,8"
        ],
        "num": 5.8,
-       "x": "CE = CD + DE = 2,2 + 3,6 = 5,8. La longueur CE vaut 5,8 mètres."
+       "x": "CE = CD + DE = 2,2 + 3,6 = 5,8. La longueur CE vaut 5,8 mètres.",
+       "t": "exo"
       },
       {
        "k": "i",
@@ -551,7 +581,8 @@ window.REPO_PACKS.push({
         "3,5"
        ],
        "num": 3.5,
-       "x": "FG = FH − GH = 9 − 5,5 = 3,5."
+       "x": "FG = FH − GH = 9 − 5,5 = 3,5.",
+       "t": "exo"
       },
       {
        "k": "o",
@@ -561,13 +592,15 @@ window.REPO_PACKS.push({
         "Donc : la formule littérale",
         "Le calcul avec les nombres",
         "La phrase réponse"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Définition du **milieu** d'un segment ?",
        "a": "Le point qui **appartient au segment** et qui le **partage en 2 segments de même longueur**.",
-       "fig": "milieu"
+       "fig": "milieu",
+       "t": "def"
       },
       {
        "k": "i",
@@ -576,7 +609,8 @@ window.REPO_PACKS.push({
         "4,2"
        ],
        "num": 4.2,
-       "x": "IB = AB ÷ 2 = 8,4 ÷ 2 = 4,2."
+       "x": "IB = AB ÷ 2 = 8,4 ÷ 2 = 4,2.",
+       "t": "exo"
       },
       {
        "k": "i",
@@ -585,7 +619,8 @@ window.REPO_PACKS.push({
         "5,2"
        ],
        "num": 5.2,
-       "x": "MN = MK + KN = 2,6 + 2,6 = 5,2 (ou 2 × 2,6)."
+       "x": "MN = MK + KN = 2,6 + 2,6 = 5,2 (ou 2 × 2,6).",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -596,7 +631,8 @@ window.REPO_PACKS.push({
         "écrit leur nom entre crochets",
         "trace une droite"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -607,7 +643,8 @@ window.REPO_PACKS.push({
         "appartient à",
         "est plus petit que"
        ],
-       "a": 0
+       "a": 0,
+       "t": "def"
       },
       {
        "k": "q",
@@ -618,7 +655,8 @@ window.REPO_PACKS.push({
         "Oui, toujours",
         "On ne peut pas savoir"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -629,7 +667,8 @@ window.REPO_PACKS.push({
         "Oui, toujours",
         "On ne peut pas savoir"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       }
      ]
     },
@@ -712,7 +751,8 @@ window.REPO_PACKS.push({
          "le point S tel que S ∈ [LO)",
          1
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -723,12 +763,14 @@ window.REPO_PACKS.push({
         "Sur L",
         "En dehors de la demi-droite"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Qu'est-ce que le **point d'intersection** de deux lignes ?",
-       "a": "Le point où elles se **coupent** (le point qui appartient aux deux)."
+       "a": "Le point où elles se **coupent** (le point qui appartient aux deux).",
+       "t": "def"
       },
       {
        "k": "q",
@@ -739,7 +781,8 @@ window.REPO_PACKS.push({
         "MA < MB",
         "MA > MB"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -750,7 +793,8 @@ window.REPO_PACKS.push({
         "MA = MB",
         "MA > MB"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -761,7 +805,8 @@ window.REPO_PACKS.push({
         "MA = MB",
         "MA < MB"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       }
      ]
     },
@@ -849,7 +894,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Définition d'un **cercle** ?",
-       "a": "Un ensemble de points tous **équidistants** d'un point donné appelé **centre**."
+       "a": "Un ensemble de points tous **équidistants** d'un point donné appelé **centre**.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -860,7 +906,8 @@ window.REPO_PACKS.push({
         "au milieu",
         "sur une droite"
        ],
-       "a": 0
+       "a": 0,
+       "t": "def"
       },
       {
        "k": "p",
@@ -882,7 +929,8 @@ window.REPO_PACKS.push({
          "arc de cercle",
          "portion de cercle entre deux points"
         ]
-       ]
+       ],
+       "t": "def"
       },
       {
        "k": "q",
@@ -893,7 +941,8 @@ window.REPO_PACKS.push({
         "Seulement si le rayon est petit",
         "On ne peut pas savoir"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -904,7 +953,8 @@ window.REPO_PACKS.push({
         "l'extrémité d'une corde",
         "le rayon"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -915,7 +965,8 @@ window.REPO_PACKS.push({
         "le disque de centre O",
         "le point O à 2,1 cm"
        ],
-       "a": 0
+       "a": 0,
+       "t": "def"
       },
       {
        "k": "q",
@@ -926,17 +977,20 @@ window.REPO_PACKS.push({
         "un arc de cercle",
         "le centre"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "g",
        "g": "rayon",
-       "n": 3
+       "n": 3,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Définition d'un **disque** ?",
-       "a": "Un cercle et l'ensemble des points situés **à l'intérieur** : les points à une distance **inférieure ou égale** au rayon du centre."
+       "a": "Un cercle et l'ensemble des points situés **à l'intérieur** : les points à une distance **inférieure ou égale** au rayon du centre.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -948,7 +1002,8 @@ window.REPO_PACKS.push({
         "à l'intérieur du cercle",
         "le centre"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -959,7 +1014,8 @@ window.REPO_PACKS.push({
         "à l'extérieur du cercle",
         "le centre"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -994,7 +1050,8 @@ window.REPO_PACKS.push({
          "OM = 3,1 cm",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1006,7 +1063,8 @@ window.REPO_PACKS.push({
         "une équerre seulement",
         "une calculatrice"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ]
     },
@@ -1071,17 +1129,20 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Définition d'un **triangle** ?",
-       "a": "Un **polygone ayant trois côtés**."
+       "a": "Un **polygone ayant trois côtés**.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définition d'un triangle **isocèle** ?",
-       "a": "Un triangle ayant **deux côtés de même longueur**."
+       "a": "Un triangle ayant **deux côtés de même longueur**.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définition d'un triangle **équilatéral** ?",
-       "a": "Un triangle ayant ses **trois côtés de même longueur**."
+       "a": "Un triangle ayant ses **trois côtés de même longueur**.",
+       "t": "def"
       },
       {
        "k": "s",
@@ -1116,7 +1177,8 @@ window.REPO_PACKS.push({
          "7 cm ; 7 cm ; 7 cm",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1128,7 +1190,8 @@ window.REPO_PACKS.push({
         "On ne peut pas savoir"
        ],
        "a": 0,
-       "x": "Isocèle en O : les deux côtés qui partent de O ont la même longueur, OT = OM."
+       "x": "Isocèle en O : les deux côtés qui partent de O ont la même longueur, OT = OM.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1139,7 +1202,8 @@ window.REPO_PACKS.push({
         "2,25 cm",
         "On ne peut pas savoir"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1150,7 +1214,8 @@ window.REPO_PACKS.push({
         "un arc de cercle",
         "un chemin passant par C"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1160,7 +1225,8 @@ window.REPO_PACKS.push({
         "<",
         "="
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1171,12 +1237,14 @@ window.REPO_PACKS.push({
         "C ∉ (AB)",
         "le triangle est isocèle"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Quand peut-on construire un triangle dont on connaît les 3 côtés ?",
-       "a": "Quand la longueur du **plus grand côté** est **inférieure à la somme** des longueurs des deux autres."
+       "a": "Quand la longueur du **plus grand côté** est **inférieure à la somme** des longueurs des deux autres.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1187,7 +1255,8 @@ window.REPO_PACKS.push({
         "Oui, toujours",
         "Non, car 3 < 4"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "s",
@@ -1221,11 +1290,13 @@ window.REPO_PACKS.push({
          "2 ; 3 ; 6",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       }
      ]
     }
    ]
   }
  ]
-});
+}
+);

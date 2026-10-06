@@ -133,3 +133,9 @@ La boucle prévue :
 
 - Lien d'installation : `https://tabassor.github.io/Hikari/?libre` (mémorisé sur le téléphone ; `?classe` revient à l'édition normale).
 - En édition libre, les packs du dépôt (cours de la prof, défis de papa, leçons revanche) sont ignorés, sauf ceux marqués `"audience": "tous"`. Seul le contenu de base (`data/c-*.js`) et ce qui est saisi sur le téléphone s'affichent.
+
+## 9. Nature des cartes, mode Définitions, atelier
+
+- **Champ `t`** sur chaque carte : `def` (définition), `coeur` (à savoir par cœur : règles, propriétés, dates), `exo` (exercice d'application), `vocab` (vocabulaire de langue). Sans `t`, un générateur compte comme `exo`, le reste comme `coeur`. Outil : `tools/card-kinds.py dump|apply` (règles relues à la main dans `OVR`).
+- **Définitions** : chaque carte `def` de type `f` génère automatiquement « Reconstitue » (morceaux à remettre dans l'ordre) et jusqu'à deux « Complète » (mot clé à taper, pris dans le gras de la réponse). Ces cartes entrent dans la répétition espacée et dans les jauges de l'agenda.
+- **Réviser → chaque clan** : séance complète, ou séance par nature (`#seance~s:<matière>:<nature>`), et atelier libre de 10 questions (exercices ou définitions), sans effet sur le calendrier des cartes, avec record par matière.

@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-sc-boisjoli — Sciences — Enquête au Bois Joli (matière, espèce, clés de détermination) */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-sc-boisjoli",
@@ -137,7 +138,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Quelles sont les trois choses à noter pour une observation rigoureuse sur le terrain ?",
-       "a": "Où on observe (se repérer dans l'espace), quand on observe (se situer dans le temps), et les conditions de l'observation."
+       "a": "Où on observe (se repérer dans l'espace), quand on observe (se situer dans le temps), et les conditions de l'observation.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -147,7 +149,8 @@ window.REPO_PACKS.push({
         "Pour faire joli dans le cahier",
         "Parce que le professeur le demande toujours"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -169,7 +172,8 @@ window.REPO_PACKS.push({
          "Humidimètre",
          "l'humidité du sol ou du bois"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -187,7 +191,8 @@ window.REPO_PACKS.push({
          "Hygromètre",
          "%"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -196,7 +201,8 @@ window.REPO_PACKS.push({
         "luxmètre",
         "le luxmètre",
         "un luxmètre"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -205,7 +211,8 @@ window.REPO_PACKS.push({
         "lux",
         "en lux",
         "le lux"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -217,7 +224,8 @@ window.REPO_PACKS.push({
         "Le thermomètre"
        ],
        "a": 0,
-       "x": "L'hygromètre mesure l'humidité de l'air ; l'humidimètre, celle d'un matériau comme le sol."
+       "x": "L'hygromètre mesure l'humidité de l'air ; l'humidimètre, celle d'un matériau comme le sol.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -228,7 +236,8 @@ window.REPO_PACKS.push({
         "En degrés Celsius (°C)"
        ],
        "a": 0,
-       "x": "0 % = sec, 100 % = très humide."
+       "x": "0 % = sec, 100 % = très humide.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -238,22 +247,26 @@ window.REPO_PACKS.push({
         "très humide",
         "à moitié humide"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Qu'est-ce que la matière ?",
-       "a": "Tout ce qui a une masse et occupe de l'espace (ce qu'on peut toucher ou peser)."
+       "a": "Tout ce qui a une masse et occupe de l'espace (ce qu'on peut toucher ou peser).",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Qu'est-ce que la matière organique ?",
-       "a": "La matière qui compose les êtres vivants et qui est fabriquée par ces êtres vivants."
+       "a": "La matière qui compose les êtres vivants et qui est fabriquée par ces êtres vivants.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Que sont les éléments anthropiques ?",
-       "a": "Des éléments fabriqués par l'Homme."
+       "a": "Des éléments fabriqués par l'Homme.",
+       "t": "def"
       },
       {
        "k": "s",
@@ -304,7 +317,8 @@ window.REPO_PACKS.push({
          "un déchet",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -314,7 +328,8 @@ window.REPO_PACKS.push({
         "seulement de matière minérale",
         "seulement de matière organique"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -324,7 +339,8 @@ window.REPO_PACKS.push({
         "La matière anthropique",
         "La matière vivante"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -358,12 +374,14 @@ window.REPO_PACKS.push({
          "une canette",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Que sont capables de faire tous les êtres vivants ?",
-       "a": "Naître, se nourrir, grandir, communiquer, se reproduire et mourir."
+       "a": "Naître, se nourrir, grandir, communiquer, se reproduire et mourir.",
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -373,7 +391,8 @@ window.REPO_PACKS.push({
         "se nourrir et grandir",
         "se reproduire",
         "mourir"
-       ]
+       ],
+       "t": "coeur"
       }
      ]
     },
@@ -469,7 +488,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'une espèce ?",
-       "a": "L'ensemble des êtres vivants capables de se reproduire entre eux et d'avoir une descendance fertile."
+       "a": "L'ensemble des êtres vivants capables de se reproduire entre eux et d'avoir une descendance fertile.",
+       "t": "def"
       },
       {
        "k": "i",
@@ -477,7 +497,8 @@ window.REPO_PACKS.push({
        "a": [
         "espèce",
         "une espèce"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -487,7 +508,8 @@ window.REPO_PACKS.push({
         "Beaucoup de petits",
         "Des petits qui ressemblent à leurs parents"
        ],
-       "a": 0
+       "a": 0,
+       "t": "def"
       },
       {
        "k": "p",
@@ -505,7 +527,8 @@ window.REPO_PACKS.push({
          "Hybride",
          "né de deux individus d'espèces différentes"
         ]
-       ]
+       ],
+       "t": "def"
       },
       {
        "k": "q",
@@ -515,7 +538,8 @@ window.REPO_PACKS.push({
         "Oui, toujours",
         "Seulement s'il ressemble à ses parents"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -525,7 +549,8 @@ window.REPO_PACKS.push({
         "c'est la même espèce",
         "ce sont des hybrides"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -535,7 +560,8 @@ window.REPO_PACKS.push({
         "Oui, s'ils se ressemblent c'est la même espèce",
         "Oui, s'ils vivent au même endroit"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -546,7 +572,8 @@ window.REPO_PACKS.push({
         "un fossile"
        ],
        "a": 0,
-       "x": "Âne et cheval sont deux espèces différentes : leur petit est un hybride, stérile."
+       "x": "Âne et cheval sont deux espèces différentes : leur petit est un hybride, stérile.",
+       "t": "exo"
       },
       {
        "k": "o",
@@ -555,7 +582,8 @@ window.REPO_PACKS.push({
         "On observe que…",
         "Or, on sait que…",
         "On en déduit que… / Donc…"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -573,7 +601,8 @@ window.REPO_PACKS.push({
          "Déduction",
          "On en déduit que…"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -583,7 +612,8 @@ window.REPO_PACKS.push({
         "Par la réponse au problème",
         "Par « parce que »"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -593,7 +623,8 @@ window.REPO_PACKS.push({
         "or et donc",
         "on observe que"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -602,7 +633,8 @@ window.REPO_PACKS.push({
         "On observe que le lapin et le lièvre ne peuvent pas se reproduire entre eux.",
         "Or, on sait qu'une espèce rassemble les êtres vivants capables de se reproduire entre eux.",
         "Donc le lapin et le lièvre sont deux espèces différentes."
-       ]
+       ],
+       "t": "exo"
       }
      ]
     },
@@ -665,7 +697,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'une clé de détermination ?",
-       "a": "Un outil qui permet de déterminer le nom de l'espèce d'un être vivant à partir de certains de ses caractères."
+       "a": "Un outil qui permet de déterminer le nom de l'espèce d'un être vivant à partir de certains de ses caractères.",
+       "t": "def"
       },
       {
        "k": "i",
@@ -673,7 +706,8 @@ window.REPO_PACKS.push({
        "a": [
         "caractères",
         "des caractères"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -683,7 +717,8 @@ window.REPO_PACKS.push({
         "le dessiner",
         "le mesurer"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -693,7 +728,8 @@ window.REPO_PACKS.push({
         "On regarde toutes les photos et on choisit celle qui ressemble le plus",
         "On commence par la fin de la clé"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -705,7 +741,8 @@ window.REPO_PACKS.push({
         "Plus d'un milliard"
        ],
        "a": 0,
-       "x": "Environ 2 millions seulement ont été inventoriées par les scientifiques."
+       "x": "Environ 2 millions seulement ont été inventoriées par les scientifiques.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -715,7 +752,8 @@ window.REPO_PACKS.push({
         "Entre 8 et 20 millions",
         "Environ 20 000"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -745,12 +783,14 @@ window.REPO_PACKS.push({
          "compter les feuilles",
          1
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Cite les 5 espèces d'arbres trouvées au Bois Joli.",
-       "a": "Le chêne, le frêne, l'érable, le robinier et le tilleul."
+       "a": "Le chêne, le frêne, l'érable, le robinier et le tilleul.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -761,7 +801,8 @@ window.REPO_PACKS.push({
         "Le robinier",
         "Le frêne"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -769,7 +810,8 @@ window.REPO_PACKS.push({
        "a": [
         "tilleul",
         "le tilleul"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -777,7 +819,8 @@ window.REPO_PACKS.push({
        "a": [
         "frêne",
         "le frêne"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -786,11 +829,13 @@ window.REPO_PACKS.push({
         "érable",
         "l'érable",
         "erable"
-       ]
+       ],
+       "t": "exo"
       }
      ]
     }
    ]
   }
  ]
-});
+}
+);

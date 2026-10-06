@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-hi-humanite — Histoire — Les débuts de l'humanité : lexique et premiers hominidés */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-hi-humanite",
@@ -79,37 +80,44 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Définis **bipède**.",
-       "a": "Un être vivant qui se déplace sur deux pieds."
+       "a": "Un être vivant qui se déplace sur deux pieds.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définis **hominidé**.",
-       "a": "Une famille de primates qui rassemble les singes et les hommes : des espèces au moins en partie bipèdes, capables de vie sociale et d'apprentissage."
+       "a": "Une famille de primates qui rassemble les singes et les hommes : des espèces au moins en partie bipèdes, capables de vie sociale et d'apprentissage.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définis **migration**.",
-       "a": "Le déplacement de populations d'un lieu à un autre."
+       "a": "Le déplacement de populations d'un lieu à un autre.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définis **nomade**.",
-       "a": "Un groupe (humain ou animal) qui se déplace au fil des saisons."
+       "a": "Un groupe (humain ou animal) qui se déplace au fil des saisons.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définis **sédentaire**.",
-       "a": "Une population qui reste attachée à un lieu et ne se déplace donc pas pour vivre."
+       "a": "Une population qui reste attachée à un lieu et ne se déplace donc pas pour vivre.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définis **Paléolithique**.",
-       "a": "La période de la Préhistoire de la pierre taillée, de la cueillette et de la chasse : d'environ 3 millions d'années jusque vers 10 000 av. n. è."
+       "a": "La période de la Préhistoire de la pierre taillée, de la cueillette et de la chasse : d'environ 3 millions d'années jusque vers 10 000 av. n. è.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Définis **Néolithique**.",
-       "a": "La période de la Préhistoire de la pierre polie et de la sédentarisation (élevage, agriculture) : de 10 000 av. n. è. à l'invention de l'écriture, vers 3 500 av. n. è."
+       "a": "La période de la Préhistoire de la pierre polie et de la sédentarisation (élevage, agriculture) : de 10 000 av. n. è. à l'invention de l'écriture, vers 3 500 av. n. è.",
+       "t": "def"
       },
       {
        "k": "p",
@@ -131,7 +139,8 @@ window.REPO_PACKS.push({
          "Migration",
          "déplacement de populations"
         ]
-       ]
+       ],
+       "t": "def"
       },
       {
        "k": "s",
@@ -169,7 +178,8 @@ window.REPO_PACKS.push({
          "sédentarisation",
          1
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -180,7 +190,8 @@ window.REPO_PACKS.push({
         "La découverte du feu",
         "La sortie d'Afrique"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -191,7 +202,8 @@ window.REPO_PACKS.push({
         "Vers 3 500 av. n. è.",
         "En l'an 1"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -202,7 +214,8 @@ window.REPO_PACKS.push({
         "Il y a 3 millions d'années",
         "Vers 500 av. n. è."
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -210,7 +223,8 @@ window.REPO_PACKS.push({
        "a": [
         "avant notre ère",
         "avant notre ere"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -219,7 +233,8 @@ window.REPO_PACKS.push({
         "début du Paléolithique (≈ 3 millions d'années)",
         "début du Néolithique (≈ 10 000 av. n. è.)",
         "invention de l'écriture (≈ 3 500 av. n. è.)"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -229,7 +244,8 @@ window.REPO_PACKS.push({
         "sédentaire",
         "néolithique"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ],
      "events": [
@@ -348,7 +364,8 @@ window.REPO_PACKS.push({
         "Toumaï",
         "Toumai",
         "toumaï"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -359,7 +376,8 @@ window.REPO_PACKS.push({
         "En France, en 1940",
         "Au Maroc, en 2017"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -370,7 +388,8 @@ window.REPO_PACKS.push({
         "2,5 millions d'années",
         "10 000 ans"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -378,7 +397,8 @@ window.REPO_PACKS.push({
        "a": [
         "espoir de vie",
         "l'espoir de vie"
-       ]
+       ],
+       "t": "def"
       },
       {
        "k": "q",
@@ -389,12 +409,14 @@ window.REPO_PACKS.push({
         "En Afrique du Sud, au Cap",
         "Dans le désert du Sahara"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Qui est **Lucie** (Lucy) ?",
-       "a": "Une australopithèque qui aurait vécu il y a environ 3,2 millions d'années ; ses ossements sont les premiers à être presque complets (40 % du squelette)."
+       "a": "Une australopithèque qui aurait vécu il y a environ 3,2 millions d'années ; ses ossements sont les premiers à être presque complets (40 % du squelette).",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -405,7 +427,8 @@ window.REPO_PACKS.push({
         "100 %",
         "Environ 5 %"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -416,7 +439,8 @@ window.REPO_PACKS.push({
         "Dans des grottes décorées",
         "Uniquement au sol, sur deux pieds"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -424,7 +448,8 @@ window.REPO_PACKS.push({
        "a": [
         "homme habile",
         "l'homme habile"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -435,7 +460,8 @@ window.REPO_PACKS.push({
         "3,2 millions d'années",
         "300 000 ans"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -469,7 +495,8 @@ window.REPO_PACKS.push({
          "peut communiquer",
          1
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -480,7 +507,8 @@ window.REPO_PACKS.push({
         "L'invention de l'agriculture",
         "L'invention de l'écriture"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -489,7 +517,8 @@ window.REPO_PACKS.push({
         "Toumaï (≈ 7 millions d'années)",
         "Lucie (≈ 3,2 millions d'années)",
         "Homo habilis (≈ 2,5 millions d'années)"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -531,7 +560,8 @@ window.REPO_PACKS.push({
          "longueur des bras",
          1
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -541,7 +571,8 @@ window.REPO_PACKS.push({
         "Oui, elle était noire",
         "Oui, elle était poilue et marron"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ],
      "events": [
@@ -590,4 +621,5 @@ window.REPO_PACKS.push({
    ]
   }
  ]
-});
+}
+);

@@ -77,18 +77,21 @@
     {
      "k": "f",
      "q": "Quelles sont les caractéristiques d'un **être vivant** ?",
-     "a": "Il naît, se nourrit, respire, grandit, se reproduit et meurt."
+     "a": "Il naît, se nourrit, respire, grandit, se reproduit et meurt.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Quelle est l'unité de base de tous les êtres vivants ?",
-     "a": "La cellule."
+     "a": "La cellule.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Les 3 éléments présents à la fois dans les cellules **animales** et **végétales** ?",
      "a": "La membrane, le cytoplasme et le noyau.",
-     "fig": "cellules"
+     "fig": "cellules",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -99,7 +102,8 @@
       "Une membrane",
       "Du cytoplasme"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -129,7 +133,8 @@
        "Chloroplastes",
        1
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -160,7 +165,8 @@
       "Objectif − oculaire",
       "Il est toujours de 100"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -171,7 +177,8 @@
       "L'oculaire",
       "Le miroir"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -182,12 +189,14 @@
       "L'objectif",
       "La vis"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "g",
      "g": "grossissement",
-     "n": 2
+     "n": 2,
+     "t": "exo"
     },
     {
      "k": "p",
@@ -209,7 +218,8 @@
        "Vis",
        "Mise au point"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -254,7 +264,8 @@
       "le milieu où ils vivent",
       "leur taille"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -265,7 +276,8 @@
       "Une colonne vertébrale",
       "Des nageoires"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -277,7 +289,8 @@
       "Pondre des œufs"
      ],
      "a": 0,
-     "x": "Les chauves-souris ont des ailes, les tortues ont un bec et pondent des œufs : seules les plumes sont propres aux oiseaux."
+     "x": "Les chauves-souris ont des ailes, les tortues ont un bec et pondent des œufs : seules les plumes sont propres aux oiseaux.",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -288,7 +301,8 @@
       "Des plumes",
       "4 membres"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -300,7 +314,8 @@
       "un invertébré"
      ],
      "a": 0,
-     "x": "Elle a des poils (très peu, à la naissance) et allaite ses petits."
+     "x": "Elle a des poils (très peu, à la naissance) et allaite ses petits.",
+     "t": "exo"
     },
     {
      "k": "q",
@@ -311,17 +326,20 @@
       "La truite",
       "L'escargot"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Définis **espèce**.",
-     "a": "Ensemble d'individus qui se ressemblent et peuvent se reproduire entre eux, avec des petits eux-mêmes féconds."
+     "a": "Ensemble d'individus qui se ressemblent et peuvent se reproduire entre eux, avec des petits eux-mêmes féconds.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Pourquoi dit-on que les groupes sont **emboîtés** ?",
-     "a": "Parce qu'un groupe peut être inclus dans un autre plus grand (mammifères ⊂ tétrapodes ⊂ vertébrés)."
+     "a": "Parce qu'un groupe peut être inclus dans un autre plus grand (mammifères ⊂ tétrapodes ⊂ vertébrés).",
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -364,7 +382,8 @@
        "Tortue",
        2
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   }
@@ -429,17 +448,20 @@
     {
      "k": "f",
      "q": "Solide : forme propre ? volume propre ?",
-     "a": "Oui et oui."
+     "a": "Oui et oui.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Liquide : forme propre ? volume propre ?",
-     "a": "Pas de forme propre (il prend celle du récipient), mais un volume propre."
+     "a": "Pas de forme propre (il prend celle du récipient), mais un volume propre.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Gaz : forme propre ? volume propre ?",
-     "a": "Ni forme ni volume propres : il occupe tout l'espace disponible."
+     "a": "Ni forme ni volume propres : il occupe tout l'espace disponible.",
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -474,7 +496,8 @@
        "Vapeur d'eau",
        2
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -507,7 +530,8 @@
      "a": [
       "fusion",
       "la fusion"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
@@ -515,7 +539,8 @@
      "a": [
       "solidification",
       "la solidification"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
@@ -525,7 +550,8 @@
       "la vaporisation",
       "ébullition",
       "évaporation"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
@@ -535,7 +561,8 @@
       "condensation",
       "la liquéfaction",
       "la condensation"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -546,7 +573,8 @@
       "−10 °C",
       "4 °C"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -557,12 +585,14 @@
       "50 °C",
       "200 °C"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **palier** de température ?",
-     "a": "Pendant le changement d'état d'un corps pur, la température reste constante."
+     "a": "Pendant le changement d'état d'un corps pur, la température reste constante.",
+     "t": "def"
     },
     {
      "k": "p",
@@ -584,7 +614,8 @@
        "Liquéfaction",
        "Gaz → liquide"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -628,7 +659,8 @@
       "diminue",
       "devient nulle"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -640,7 +672,8 @@
       "devient nul"
      ],
      "a": 0,
-     "x": "C'est pour cela qu'une bouteille pleine d'eau peut éclater au congélateur."
+     "x": "C'est pour cela qu'une bouteille pleine d'eau peut éclater au congélateur.",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -651,7 +684,8 @@
       "Un thermomètre",
       "Une règle"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -662,12 +696,14 @@
       "Un thermomètre",
       "Un microscope"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "g",
      "g": "convVol",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -678,7 +714,8 @@
       "10 kg",
       "100 g"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     }
    ]
   }

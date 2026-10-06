@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-es-comunicar — Espagnol — Comunicar en clase, la fecha, el mundo hispanohablante */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-es-comunicar",
@@ -127,7 +128,8 @@ window.REPO_PACKS.push({
         "¡Buenas noches!",
         "¡Hasta luego!"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -137,7 +139,8 @@ window.REPO_PACKS.push({
         "¡Buenos días!",
         "¡Buenas noches!"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -147,7 +150,8 @@ window.REPO_PACKS.push({
         "Dès midi",
         "Le matin"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -185,7 +189,8 @@ window.REPO_PACKS.push({
          "¡Hasta la vista!",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "p",
@@ -211,7 +216,8 @@ window.REPO_PACKS.push({
          "Por favor",
          "S'il te plaît"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -219,14 +225,16 @@ window.REPO_PACKS.push({
        "a": [
         "muchas gracias",
         "¡muchas gracias!"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Traduis : **s'il vous plaît**",
        "a": [
         "por favor"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -237,7 +245,8 @@ window.REPO_PACKS.push({
         "Hasta lluego"
        ],
        "a": 0,
-       "x": "Avec un **h** (muet) : **h**asta."
+       "x": "Avec un **h** (muet) : **h**asta.",
+       "t": "exo"
       },
       {
        "k": "i",
@@ -247,7 +256,8 @@ window.REPO_PACKS.push({
         "No entiendo",
         "No comprendo.",
         "No entiendo."
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -257,7 +267,8 @@ window.REPO_PACKS.push({
         "¿Cómo se dice « chat » en francés?",
         "¿Puedo ir al baño?"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -267,7 +278,8 @@ window.REPO_PACKS.push({
         "Puedo ir al baño?",
         "¿Puedo ir al baño",
         "Puedo ir al baño"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -276,7 +288,8 @@ window.REPO_PACKS.push({
         "¿Puedo ir a la enfermería?",
         "Puedo ir a la enfermería?",
         "Puedo ir a la enfermería"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -287,7 +300,8 @@ window.REPO_PACKS.push({
         "¿Puedo ir a la puerta?"
        ],
        "a": 0,
-       "x": "**ir** veut dire « aller » : ici, on ne va nulle part, on ouvre !"
+       "x": "**ir** veut dire « aller » : ici, on ne va nulle part, on ouvre !",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -297,7 +311,8 @@ window.REPO_PACKS.push({
         "?",
         "¡"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ]
     },
@@ -443,12 +458,14 @@ window.REPO_PACKS.push({
       {
        "k": "g",
        "g": "esDays",
-       "n": 6
+       "n": 6,
+       "t": "exo"
       },
       {
        "k": "g",
        "g": "esDate",
-       "n": 4
+       "n": 4,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -458,7 +475,8 @@ window.REPO_PACKS.push({
         "Qué día es hoy?",
         "¿Qué día es hoy",
         "Qué día es hoy"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -471,7 +489,8 @@ window.REPO_PACKS.push({
         "viernes",
         "sábado",
         "domingo"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "o",
@@ -483,7 +502,8 @@ window.REPO_PACKS.push({
         "abril",
         "mayo",
         "junio"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "o",
@@ -495,7 +515,8 @@ window.REPO_PACKS.push({
         "octubre",
         "noviembre",
         "diciembre"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -506,7 +527,8 @@ window.REPO_PACKS.push({
         "martes 15 septiembre"
        ],
        "a": 0,
-       "x": "Pas de majuscule, et **de** entre le jour et le mois."
+       "x": "Pas de majuscule, et **de** entre le jour et le mois.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -517,7 +539,8 @@ window.REPO_PACKS.push({
         "mezes"
        ],
        "a": 0,
-       "x": "Un seul **s** : me**s**es."
+       "x": "Un seul **s** : me**s**es.",
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -527,7 +550,8 @@ window.REPO_PACKS.push({
         "el sábado",
         "la semana"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -537,7 +561,8 @@ window.REPO_PACKS.push({
         "se prononce comme en anglais",
         "se prononce « j »"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -547,7 +572,8 @@ window.REPO_PACKS.push({
         "comme un f",
         "comme en français"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -557,7 +583,8 @@ window.REPO_PACKS.push({
         "C'est pour faire joli",
         "Pour montrer la syllabe accentuée"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -583,7 +610,8 @@ window.REPO_PACKS.push({
          "la puerta",
          "la porte"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "p",
@@ -609,7 +637,8 @@ window.REPO_PACKS.push({
          "poco",
          "peu"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -617,7 +646,8 @@ window.REPO_PACKS.push({
        "a": [
         "el cumpleaños",
         "cumpleaños"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -625,7 +655,8 @@ window.REPO_PACKS.push({
        "a": [
         "el apellido",
         "apellido"
-       ]
+       ],
+       "t": "vocab"
       }
      ]
     },
@@ -682,7 +713,8 @@ window.REPO_PACKS.push({
         "Le monde hispanique ancien",
         "Les Romains d'Espagne"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -692,7 +724,8 @@ window.REPO_PACKS.push({
         "Les Ibères",
         "Les Grecs"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -702,7 +735,8 @@ window.REPO_PACKS.push({
         "Les Hispaniques",
         "Les Gaulois"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -710,14 +744,16 @@ window.REPO_PACKS.push({
        "a": [
         "Hispania",
         "hispania"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "i",
        "q": "Traduis : **épeler**",
        "a": [
         "deletrear"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -725,7 +761,8 @@ window.REPO_PACKS.push({
        "a": [
         "la palabra",
         "palabra"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -733,7 +770,8 @@ window.REPO_PACKS.push({
        "a": [
         "el mundo",
         "mundo"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -743,11 +781,13 @@ window.REPO_PACKS.push({
         "habiter",
         "écouter"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       }
      ]
     }
    ]
   }
  ]
-});
+}
+);

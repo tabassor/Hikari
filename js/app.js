@@ -603,10 +603,21 @@
       <button class="btn primary big ${all ? "pulse" : ""}" data-go="seance" ${all ? "" : "disabled"}>Séance complète · ${all}</button>
       <button class="btn" id="flash2">Entraînement éclair</button>
       ${famCard()}
-      <section class="stack"><h2>Par clan</h2>${subjects.length ? subjects.map(({ s, n }) => `<button class="chapter on" data-go="seance~s:${s.id}" ${n ? "" : "disabled"}><span class="kj" style="color:${s.color}">${s.kanji}</span><span><span class="t">${s.name}</span><br><span class="tiny muted">${plural(n, "carte")} prête${n > 1 ? "s" : ""}</span></span><span class="pill ${n ? "new" : "off"}">${n ? "go" : "à jour"}</span></button>`).join("") : `<p class="muted">Ouvre des leçons dans les clans pour remplir tes révisions.</p>`}</section>
+      <section class="stack"><h2>Par clan</h2><p class="small muted">Choisis aussi ce que tu veux travailler : les définitions, le par cœur, les exercices ou le vocabulaire.</p>${subjects.length ? subjects.map(({ s, n }) => clanPanel(s, n)).join("") : `<p class="muted">Ouvre des leçons dans les clans pour remplir tes révisions.</p>`}</section>
       <section class="flat stack"><h3>Comment ça marche ?</h3><p class="small">Chaque carte revient juste avant que tu l'oublies. Si tu réponds juste, elle revient plus tard (1 jour, 3 jours, une semaine, un mois…). Si tu te trompes, elle revient vite. Une carte revue avec un intervalle de 21 jours ou plus est <b>maîtrisée</b>.</p><p class="small">Cartes par cœur : touche pour retourner, puis glisse à <b>droite</b> (je savais), à <b>gauche</b> (je ne savais pas) ou vers le <b>haut</b> (facile).</p></section>`;
     $("#flash2").onclick = () => startFlashQuiz(); $("#fam-go").onclick = () => famForm();
+    $$("[data-atelier]", main).forEach((b) => (b.onclick = () => { const [sid, kind] = b.dataset.atelier.split(":"); startFlashQuiz({ subject: sid, kind }); }));
   }
+  // Un clan : séance complète, séance par nature de carte, et atelier libre (séries de 10, sans effet sur la répétition espacée)
+  function clanPanel(s, n) {
+    const kinds = Object.keys(STORE.KINDS).filter((k) => k !== "vocab" || s.id === "en" || s.id === "es").map((k) => ({ k, n: STORE.buildSession({ subject: s.id, kind: k }).length, tot: STORE.allActiveCards((c) => c.s === s.id).filter((c) => STORE.kindOf(c) === k).length })).filter((x) => x.tot);
+    const pool = (kind) => atelierPool(s.id, kind).length;
+    return `<div class="panel stack clan-p" style="--c:${s.color}"><button class="chapter on" data-go="seance~s:${s.id}" ${n ? "" : "disabled"}><span class="kj" style="color:${s.color}">${s.kanji}</span><span><span class="t">${s.name}</span><br><span class="tiny muted">${plural(n, "carte")} prête${n > 1 ? "s" : ""}</span></span><span class="pill ${n ? "new" : "off"}">${n ? "go" : "à jour"}</span></button>
+      <div class="row wrap kind-row">${kinds.map((x) => `<button class="kind-b" data-go="seance~s:${s.id}:${x.k}" ${x.n ? "" : "disabled"}>${STORE.KINDS[x.k][1]} ${STORE.KINDS[x.k][0]} <b>${x.n}</b></button>`).join("")}</div>
+      <div class="row wrap kind-row">${pool("exo") >= 3 ? `<button class="kind-b at" data-atelier="${s.id}:exo">⚡ Atelier : 10 exercices</button>` : ""}${pool("def") >= 3 ? `<button class="kind-b at" data-atelier="${s.id}:def">📖 Atelier : 10 définitions</button>` : ""}</div></div>`;
+  }
+  // Cartes corrigées automatiquement d'une matière et d'une nature (atelier libre)
+  function atelierPool(sid, kind) { return STORE.allActiveCards((c) => c.s === sid).filter((c) => c.k !== "f" && STORE.kindOf(c) === kind); }
   // ---------- Séance de révision avec un parent ----------
   function famCard() {
     const wk = STORE.famWeek(), all = S().fam || [];
@@ -642,7 +653,7 @@
     main.innerHTML = `<div class="session-top"><button class="back" id="quit" aria-label="Terminer">✕</button><div class="prog"><i style="width:0"></i></div><span class="combo"></span></div><div id="stage"></div>`;
   }
   function viewSession(main, arg) {
-    const opt = {}; if (arg && arg.startsWith("s:")) opt.subject = arg.slice(2); if (arg && arg.startsWith("c:")) opt.chapter = arg.slice(2); if (arg && arg.startsWith("l:")) opt.lesson = arg.slice(2); if (arg && arg.startsWith("a:")) opt.agenda = arg.slice(2);
+    const opt = {}; if (arg && arg.startsWith("s:")) { const [sid, kind] = arg.slice(2).split(":"); opt.subject = sid; if (kind) opt.kind = kind; } if (arg && arg.startsWith("c:")) opt.chapter = arg.slice(2); if (arg && arg.startsWith("l:")) opt.lesson = arg.slice(2); if (arg && arg.startsWith("a:")) opt.agenda = arg.slice(2);
     const queue = STORE.buildSession(opt); if (!queue.length) { toast("Rien à réviser ici pour le moment."); return go("revision", true); }
     const total = queue.length; let done = 0, good = 0, xp = 0, lvlUp = 0; const requeued = new Set(); combo = 0;
     sessionShell(main);
@@ -676,14 +687,20 @@
     next();
   }
   function autoCards(filter) { return STORE.allActiveCards(filter).filter((c) => c.k !== "f"); }
-  function startFlashQuiz() {
-    const pool = shuffle(autoCards()); if (pool.length < 3) { toast("Ouvre d'abord quelques leçons pour t'entraîner."); return; }
-    const main = $("main"); const list = pool.slice(0, 10); let i = 0, good = 0; combo = 0;
+  function startFlashQuiz(opt = {}) {
+    const pool = shuffle(opt.subject ? atelierPool(opt.subject, opt.kind) : autoCards()); if (pool.length < 3) { toast("Ouvre d'abord quelques leçons pour t'entraîner."); return; }
+    const main = $("main"); const list = pool.slice(0, 10), missed = []; let i = 0, good = 0; combo = 0;
     history.pushState({ d: ++depth }, "", "#revision"); sessionShell(main);
-    $("#quit").onclick = () => go("dojo", true);
+    $("#quit").onclick = () => go(opt.subject ? "revision" : "dojo", true);
     const next = async () => {
-      if (i >= list.length) { const g = good * 5; const up = STORE.addXP(g); await celebrate("Éclair !", `${ART.sensei(good >= 8 ? "fire" : "happy", 100)}<p><b>${good} / ${list.length}</b> bonnes réponses · <b>+${g} XP</b></p>`); afterAction(); levelUpCheck(up); return go("dojo", true); }
-      mountCard($("#stage"), instantiate(list[i]), { selfGrade: false, onDone: ({ ok }) => { if (ok) good++; i++; $(".prog > i").style.width = (100 * i / list.length) + "%"; STORE.save(); next(); } });
+      if (i >= list.length) { const g = good * 5; const up = STORE.addXP(g);
+        if (!opt.subject) { await celebrate("Éclair !", `${ART.sensei(good >= 8 ? "fire" : "happy", 100)}<p><b>${good} / ${list.length}</b> bonnes réponses · <b>+${g} XP</b></p>`); afterAction(); levelUpCheck(up); return go("dojo", true); }
+        // Atelier : score, record, et ce qu'il faut revoir
+        const key = opt.subject + ":" + opt.kind, A = (S().atelier = S().atelier || {}), prev = A[key] || { best: 0, n: 0 }, best = Math.max(prev.best, good); A[key] = { best, n: prev.n + 1, last: STORE.today() }; STORE.save();
+        const sj = sub(opt.subject), lab = STORE.KINDS[opt.kind][0].toLowerCase();
+        await celebrate("稽古！", `${ART.sensei(good >= 8 ? "fire" : good >= 5 ? "happy" : "think", 100)}<p>Atelier ${esc(sj.name)} · ${lab}</p><p class="big"><b>${good} / ${list.length}</b></p><p class="small">${good > prev.best && prev.n ? "Nouveau record !" : `Ton record : ${best} / 10`} · <b>+${g} XP</b></p>${missed.length ? `<div class="small" style="text-align:left"><p>À revoir :</p><ul>${missed.slice(0, 5).map((m) => `<li>${md(m)}</li>`).join("")}</ul></div>` : ""}<p class="tiny muted">L'atelier est un entraînement libre : il ne change pas le calendrier de tes cartes.</p>`, "Terminer", good >= 7 ? "win" : "level");
+        afterAction(); levelUpCheck(up); return go("revision", true); }
+      mountCard($("#stage"), instantiate(list[i]), { selfGrade: false, onDone: ({ ok }) => { if (ok) good++; else missed.push(String(list[i].q || "").slice(0, 120)); i++; $(".prog > i").style.width = (100 * i / list.length) + "%"; STORE.save(); next(); } });
     };
     next();
   }

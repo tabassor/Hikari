@@ -83,7 +83,8 @@
       "Good night",
       "Good afternoon"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -94,12 +95,14 @@
       "le matin",
       "à midi"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Réponds à « How are you? »",
-     "a": "I'm fine, thanks. And you?"
+     "a": "I'm fine, thanks. And you?",
+     "t": "exo"
     },
     {
      "k": "p",
@@ -125,7 +128,8 @@
        "Thank you",
        "Merci"
       ]
-     ]
+     ],
+     "t": "vocab"
     }
    ]
   },
@@ -205,22 +209,26 @@
     {
      "k": "f",
      "q": "Comment dit-on **« Comment t'appelles-tu ? »** ?",
-     "a": "What's your name?"
+     "a": "What's your name?",
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment dit-on **« Quel âge as-tu ? »** ?",
-     "a": "How old are you?"
+     "a": "How old are you?",
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment dit-on **« D'où viens-tu ? »** ?",
-     "a": "Where are you from?"
+     "a": "Where are you from?",
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment dit-on **« Où habites-tu ? »** ?",
-     "a": "Where do you live?"
+     "a": "Where do you live?",
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -234,7 +242,8 @@
       "I'm 11 years old",
       "I am 11",
       "I am 11 years old"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -242,7 +251,8 @@
      "a": [
       "is",
       "'s"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
@@ -250,7 +260,8 @@
      "a": [
       "are",
       "'re"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
@@ -258,7 +269,8 @@
      "a": [
       "am",
       "'m"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "q",
@@ -269,7 +281,8 @@
       "there",
       "they's"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "p",
@@ -295,7 +308,8 @@
        "She",
        "is"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -317,28 +331,32 @@
      "a": [
       "forty"
      ],
-     "x": "Attention : forty, sans u (mais four et fourteen)."
+     "x": "Attention : forty, sans u (mais four et fourteen).",
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "Écris en lettres : 12",
      "a": [
       "twelve"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "Écris en lettres : 13",
      "a": [
       "thirteen"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "Écris en lettres : 20",
      "a": [
       "twenty"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
@@ -347,12 +365,14 @@
       "a hundred",
       "one hundred",
       "hundred"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "enNum",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "o",
@@ -364,7 +384,8 @@
       "thirty",
       "forty",
       "a hundred"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -390,7 +411,8 @@
       "I'm Frenchs."
      ],
      "a": 0,
-     "x": "Les nationalités prennent une majuscule."
+     "x": "Les nationalités prennent une majuscule.",
+     "t": "exo"
     },
     {
      "k": "q",
@@ -401,7 +423,8 @@
       "Welsh",
       "English"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -412,7 +435,8 @@
       "Irish",
       "English"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "p",
@@ -438,7 +462,8 @@
        "France",
        "French"
       ]
-     ]
+     ],
+     "t": "vocab"
     }
    ]
   }
@@ -530,7 +555,8 @@
       "aunt",
       "an aunt",
       "my aunt"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -539,7 +565,8 @@
       "uncle",
       "an uncle",
       "my uncle"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -550,7 +577,8 @@
       "granny",
       "a grandmother",
       "my grandmother"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -559,7 +587,8 @@
       "brother",
       "a brother",
       "my brother"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -567,7 +596,8 @@
      "a": [
       "only child",
       "an only child"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "q",
@@ -578,7 +608,8 @@
       "its",
       "their"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -589,7 +620,8 @@
       "its",
       "our"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -600,7 +632,8 @@
       "her",
       "our"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "p",
@@ -626,7 +659,8 @@
        "sister",
        "sœur"
       ]
-     ]
+     ],
+     "t": "vocab"
     }
    ]
   },
@@ -651,7 +685,8 @@
     {
      "k": "g",
      "g": "enDays",
-     "n": 3
+     "n": 3,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -662,7 +697,8 @@
       "in Monday",
       "at monday"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -673,7 +709,8 @@
       "at",
       "of"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "i",
@@ -681,14 +718,16 @@
      "a": [
       "Wednesday"
      ],
-     "x": "Attention au d muet : Wed-nes-day se prononce « ouènzdèï »."
+     "x": "Attention au d muet : Wed-nes-day se prononce « ouènzdèï ».",
+     "t": "vocab"
     },
     {
      "k": "i",
      "q": "Traduis : **février**",
      "a": [
       "February"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "o",
@@ -701,7 +740,8 @@
       "Friday",
       "Saturday",
       "Sunday"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -758,12 +798,14 @@
      "a": [
       "I don't like spiders",
       "I do not like spiders"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment dit-on « Ma couleur préférée est le violet » ?",
-     "a": "My favourite colour is purple."
+     "a": "My favourite colour is purple.",
+     "t": "vocab"
     },
     {
      "k": "q",
@@ -774,7 +816,8 @@
       "Écoute !",
       "Répète !"
      ],
-     "a": 0
+     "a": 0,
+     "t": "vocab"
     },
     {
      "k": "q",
@@ -785,7 +828,8 @@
       "Range tes affaires !",
       "Tu as oublié tes devoirs ?"
      ],
-     "a": 0
+     "a": 0,
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -793,7 +837,8 @@
      "a": [
       "Listen",
       "Listen!"
-     ]
+     ],
+     "t": "vocab"
     }
    ]
   }
@@ -932,12 +977,14 @@
       "Buenas noches",
       "Hasta luego"
      ],
-     "a": 0
+     "a": 0,
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Réponds à « ¿Cómo estás? »",
-     "a": "Bien, gracias. ¿Y tú?"
+     "a": "Bien, gracias. ¿Y tú?",
+     "t": "exo"
     },
     {
      "k": "p",
@@ -963,7 +1010,8 @@
        "Gracias",
        "Merci"
       ]
-     ]
+     ],
+     "t": "vocab"
     }
    ]
   },
@@ -1048,17 +1096,20 @@
     {
      "k": "f",
      "q": "Comment dit-on « **Comment t'appelles-tu ?** » ?",
-     "a": "¿Cómo te llamas?"
+     "a": "¿Cómo te llamas?",
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment dit-on « **Quel âge as-tu ?** » ?",
-     "a": "¿Cuántos años tienes?"
+     "a": "¿Cuántos años tienes?",
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment dit-on « **D'où es-tu ?** » ?",
-     "a": "¿De dónde eres?"
+     "a": "¿De dónde eres?",
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -1066,7 +1117,8 @@
      "a": [
       "Me llamo Lina",
       "Yo me llamo Lina"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -1076,7 +1128,8 @@
       "Tengo 11 años",
       "Yo tengo once años",
       "Yo tengo 11 años"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -1084,49 +1137,56 @@
      "a": [
       "Soy de Francia",
       "Yo soy de Francia"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
      "q": "**ser**, yo : ___",
      "a": [
       "soy"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "**ser**, tú : ___",
      "a": [
       "eres"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "**ser**, nosotros : ___",
      "a": [
       "somos"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "**tener**, yo : ___",
      "a": [
       "tengo"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "**tener**, tú : ___",
      "a": [
       "tienes"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "**tener**, ellos : ___",
      "a": [
       "tienen"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "q",
@@ -1137,7 +1197,8 @@
       "Francesa",
       "francia"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "p",
@@ -1163,7 +1224,8 @@
        "ellos",
        "tienen"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -1206,7 +1268,8 @@
       "?Cómo estás?",
       "¡Cómo estás?"
      ],
-     "a": 0
+     "a": 0,
+     "t": "vocab"
     },
     {
      "k": "q",
@@ -1217,26 +1280,30 @@
       "« ni »",
       "« nn »"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "g",
      "g": "esNum",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "Écris en lettres : 15",
      "a": [
       "quince"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "Écris en lettres : 100",
      "a": [
       "cien"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "o",
@@ -1248,7 +1315,8 @@
       "veinte",
       "cuarenta",
       "cien"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   }
@@ -1340,7 +1408,8 @@
      "q": "Traduis : **le cahier** (avec l'article)",
      "a": [
       "el cuaderno"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -1348,28 +1417,32 @@
      "a": [
       "el estuche"
      ],
-     "x": "Attention : trousse est féminin en français mais estuche est masculin en espagnol."
+     "x": "Attention : trousse est féminin en français mais estuche est masculin en espagnol.",
+     "t": "vocab"
     },
     {
      "k": "i",
      "q": "Traduis : **la gomme** (avec l'article)",
      "a": [
       "la goma"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
      "q": "Traduis : **les ciseaux** (avec l'article)",
      "a": [
       "las tijeras"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
      "q": "Traduis : **le tableau** (de la classe)",
      "a": [
       "la pizarra"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -1377,7 +1450,8 @@
      "a": [
       "la mochila",
       "mochila"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "q",
@@ -1388,7 +1462,8 @@
       "las lápices",
       "los lápiz"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -1430,7 +1505,8 @@
        "pizarra",
        1
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -1461,12 +1537,14 @@
     {
      "k": "g",
      "g": "esColor",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "esDays",
-     "n": 3
+     "n": 3,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -1478,7 +1556,8 @@
       "le lunes"
      ],
      "a": 0,
-     "x": "Jours et mois s'écrivent sans majuscule en espagnol."
+     "x": "Jours et mois s'écrivent sans majuscule en espagnol.",
+     "t": "exo"
     },
     {
      "k": "o",
@@ -1491,7 +1570,8 @@
       "viernes",
       "sábado",
       "domingo"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -1555,7 +1635,8 @@
       "gusto",
       "gustas"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -1566,7 +1647,8 @@
       "gusto",
       "gustamos"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -1577,7 +1659,8 @@
       "Je n'aime pas",
       "Je préfère"
      ],
-     "a": 0
+     "a": 0,
+     "t": "vocab"
     },
     {
      "k": "i",
@@ -1585,17 +1668,20 @@
      "a": [
       "No me gusta nada",
       "No me gustan nada"
-     ]
+     ],
+     "t": "vocab"
     },
     {
      "k": "f",
      "q": "Comment demander de répéter ?",
-     "a": "¿Puedes repetir, por favor?"
+     "a": "¿Puedes repetir, por favor?",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Comment demander comment un mot s'écrit ?",
-     "a": "¿Cómo se escribe?"
+     "a": "¿Cómo se escribe?",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1606,7 +1692,8 @@
       "Écrivez !",
       "Venez !"
      ],
-     "a": 0
+     "a": 0,
+     "t": "vocab"
     }
    ]
   }
@@ -1678,12 +1765,14 @@
     {
      "k": "f",
      "q": "Qu'est-ce qu'une **démocratie représentative** ?",
-     "a": "Un système où les citoyens élisent des représentants qui décident en leur nom."
+     "a": "Un système où les citoyens élisent des représentants qui décident en leur nom.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Définis **intérêt général**.",
-     "a": "Ce qui est bon pour tous, y compris les générations futures, et non pour une personne ou un groupe."
+     "a": "Ce qui est bon pour tous, y compris les générations futures, et non pour une personne ou un groupe.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -1694,7 +1783,8 @@
       "la laïcité",
       "la République"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -1724,7 +1814,8 @@
        "Garder la meilleure place pour soi",
        1
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -1784,7 +1875,8 @@
       "Le principal",
       "Les parents"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1795,7 +1887,8 @@
       "Au conseil municipal",
       "Au Sénat"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1806,7 +1899,8 @@
       "Le préfet",
       "Le président"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1817,12 +1911,14 @@
       "Les délégués de classe",
       "Les conseillers régionaux"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Que sont les **éco-délégués** ?",
-     "a": "Des élèves élus qui portent des projets pour protéger l'environnement au collège."
+     "a": "Des élèves élus qui portent des projets pour protéger l'environnement au collège.",
+     "t": "def"
     },
     {
      "k": "o",
@@ -1834,7 +1930,8 @@
       "Région",
       "France",
       "Union européenne"
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -1859,7 +1956,8 @@
       "15 ans",
       "21 ans"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1870,7 +1968,8 @@
       "Pour se reposer",
       "Pour montrer son choix"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     }
    ]
   }

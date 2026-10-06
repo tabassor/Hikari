@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-ma-nombres — Maths — Écritures des nombres entiers et décimaux */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-ma-nombres",
@@ -85,17 +86,20 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Combien y a-t-il de **chiffres** dans le système décimal ?",
-       "a": "Dix : 0 ; 1 ; 2 ; 3 ; 4 ; 5 ; 6 ; 7 ; 8 ; 9."
+       "a": "Dix : 0 ; 1 ; 2 ; 3 ; 4 ; 5 ; 6 ; 7 ; 8 ; 9.",
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Comment appelle-t-on les nombres entiers qui servent à compter ?",
-       "a": "Les **entiers naturels**."
+       "a": "Les **entiers naturels**.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Dans un nombre **entier**, quel est le chiffre des unités ?",
-       "a": "Le **dernier** chiffre."
+       "a": "Le **dernier** chiffre.",
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -105,7 +109,8 @@ window.REPO_PACKS.push({
         "Classe des millions",
         "Classe des mille",
         "Classe des unités"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -123,7 +128,8 @@ window.REPO_PACKS.push({
          "U",
          "unités"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -134,7 +140,8 @@ window.REPO_PACKS.push({
         "7",
         "1"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -145,7 +152,8 @@ window.REPO_PACKS.push({
         "unités de millions",
         "dizaines de mille"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -155,17 +163,20 @@ window.REPO_PACKS.push({
         "19 678 023"
        ],
        "num": 19678023,
-       "x": "On garde tout ce qui est à gauche du chiffre des centaines, lui compris."
+       "x": "On garde tout ce qui est à gauche du chiffre des centaines, lui compris.",
+       "t": "exo"
       },
       {
        "k": "g",
        "g": "placeInt",
-       "n": 3
+       "n": 3,
+       "t": "exo"
       },
       {
        "k": "g",
        "g": "nbOf",
-       "n": 3
+       "n": 3,
+       "t": "exo"
       }
      ]
     },
@@ -207,22 +218,26 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Depuis la réforme de l'orthographe, comment relie-t-on les mots d'un nombre écrit en lettres ?",
-       "a": "Par des **traits d'union**, entre tous les mots."
+       "a": "Par des **traits d'union**, entre tous les mots.",
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "« **mille** » s'accorde-t-il ?",
-       "a": "Non, **mille est invariable** : trois-mille."
+       "a": "Non, **mille est invariable** : trois-mille.",
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "« **million** » et « **milliard** » s'accordent-ils ?",
-       "a": "Oui : quarante-millions, treize-milliards."
+       "a": "Oui : quarante-millions, treize-milliards.",
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Quand « **vingt** » et « **cent** » prennent-ils un **s** ?",
-       "a": "Quand ils sont **multipliés** et **suivis d'aucun nombre** : quatre-vingts, trois-cents."
+       "a": "Quand ils sont **multipliés** et **suivis d'aucun nombre** : quatre-vingts, trois-cents.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -234,7 +249,8 @@ window.REPO_PACKS.push({
         "quatre-vingt-s"
        ],
        "a": 0,
-       "x": "80 = 4 × 20 : vingt est multiplié et n'est suivi d'aucun nombre."
+       "x": "80 = 4 × 20 : vingt est multiplié et n'est suivi d'aucun nombre.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -245,7 +261,8 @@ window.REPO_PACKS.push({
         "quatre-vingt deux",
         "quatres-vingt-deux"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -257,7 +274,8 @@ window.REPO_PACKS.push({
         "cents-vingts"
        ],
        "a": 0,
-       "x": "120 = 100 + 20 : ni cent ni vingt ne sont multipliés."
+       "x": "120 = 100 + 20 : ni cent ni vingt ne sont multipliés.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -269,7 +287,8 @@ window.REPO_PACKS.push({
         "trois-cents six"
        ],
        "a": 0,
-       "x": "cent est suivi d'un nombre (six) : pas de s."
+       "x": "cent est suivi d'un nombre (six) : pas de s.",
+       "t": "exo"
       },
       {
        "k": "s",
@@ -311,12 +330,14 @@ window.REPO_PACKS.push({
          "treize-milliard",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "g",
        "g": "words",
-       "n": 4
+       "n": 4,
+       "t": "exo"
       }
      ]
     }
@@ -411,7 +432,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'un **nombre décimal** ?",
-       "a": "Un nombre qui possède une **partie entière** et une **partie décimale** (plus petite que 1) ; il a une virgule et il est fini."
+       "a": "Un nombre qui possède une **partie entière** et une **partie décimale** (plus petite que 1) ; il a une virgule et il est fini.",
+       "t": "def"
       },
       {
        "k": "i",
@@ -419,7 +441,8 @@ window.REPO_PACKS.push({
        "a": [
         "123"
        ],
-       "num": 123
+       "num": 123,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -428,12 +451,14 @@ window.REPO_PACKS.push({
         "0,456"
        ],
        "num": 0.456,
-       "x": "La partie décimale s'écrit 0,456 : elle est plus petite que 1."
+       "x": "La partie décimale s'écrit 0,456 : elle est plus petite que 1.",
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Dans un nombre **décimal**, quel est le chiffre des unités ?",
-       "a": "Le **dernier chiffre de la partie entière**, juste avant la virgule."
+       "a": "Le **dernier chiffre de la partie entière**, juste avant la virgule.",
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -444,7 +469,8 @@ window.REPO_PACKS.push({
         "Juste après la virgule",
         "À droite de la partie entière"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -478,7 +504,8 @@ window.REPO_PACKS.push({
          "le 0 de 20,5",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -489,7 +516,8 @@ window.REPO_PACKS.push({
         "Seulement s'il est pair",
         "Seulement s'il a une virgule"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -501,7 +529,8 @@ window.REPO_PACKS.push({
         "dix-millièmes",
         "cent-millièmes",
         "millionièmes"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -512,7 +541,8 @@ window.REPO_PACKS.push({
         "cent-millièmes",
         "centièmes"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -521,17 +551,20 @@ window.REPO_PACKS.push({
         "4060071",
         "4 060 071"
        ],
-       "num": 4060071
+       "num": 4060071,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Combien de centièmes dans **une unité** ?",
-       "a": "100 centièmes (1 unité = 10 dixièmes = 100 centièmes = 1 000 millièmes)."
+       "a": "100 centièmes (1 unité = 10 dixièmes = 100 centièmes = 1 000 millièmes).",
+       "t": "coeur"
       },
       {
        "k": "g",
        "g": "placeDec",
-       "n": 4
+       "n": 4,
+       "t": "exo"
       }
      ]
     },
@@ -644,7 +677,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'une **écriture fractionnaire** ?",
-       "a": "Une écriture de la forme **a/b**, avec b différent de 0."
+       "a": "Une écriture de la forme **a/b**, avec b différent de 0.",
+       "t": "def"
       },
       {
        "k": "p",
@@ -658,7 +692,8 @@ window.REPO_PACKS.push({
          "dénominateur",
          "nombre de parts dans l'unité"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -669,12 +704,14 @@ window.REPO_PACKS.push({
         "pair",
         "égal au numérateur"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Quand une écriture fractionnaire s'appelle-t-elle une **fraction** ?",
-       "a": "Quand le numérateur et le dénominateur sont des **nombres entiers**."
+       "a": "Quand le numérateur et le dénominateur sont des **nombres entiers**.",
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -708,7 +745,8 @@ window.REPO_PACKS.push({
          "3,5/7",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "s",
@@ -743,12 +781,14 @@ window.REPO_PACKS.push({
          "12/5",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Qu'est-ce qu'une **fraction décimale** ?",
-       "a": "L'écriture fractionnaire d'un nombre décimal dont le dénominateur vaut 10, 100, 1 000…"
+       "a": "L'écriture fractionnaire d'un nombre décimal dont le dénominateur vaut 10, 100, 1 000…",
+       "t": "def"
       },
       {
        "k": "p",
@@ -770,7 +810,8 @@ window.REPO_PACKS.push({
          "7/100",
          "0,07"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -781,7 +822,8 @@ window.REPO_PACKS.push({
         "1/15",
         "1000/15"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -792,12 +834,14 @@ window.REPO_PACKS.push({
         "5 + 2/100 + 7/10",
         "52/10 + 7"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Qu'est-ce qu'un **nombre mixte** ?",
-       "a": "L'écriture d'un nombre décimal supérieur à 1 comme la **somme d'un nombre entier et d'une fraction inférieure à 1**."
+       "a": "L'écriture d'un nombre décimal supérieur à 1 comme la **somme d'un nombre entier et d'une fraction inférieure à 1**.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -809,7 +853,8 @@ window.REPO_PACKS.push({
         "12 + 5/10"
        ],
        "a": 0,
-       "x": "1,25 = 1 + 0,25 et 0,25 = 25/100 (vingt-cinq centièmes). 125/100 est juste mais ce n'est pas un nombre mixte."
+       "x": "1,25 = 1 + 0,25 et 0,25 = 25/100 (vingt-cinq centièmes). 125/100 est juste mais ce n'est pas un nombre mixte.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -820,12 +865,14 @@ window.REPO_PACKS.push({
         "37/10",
         "3 + 10/7"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "g",
        "g": "decFrac",
-       "n": 3
+       "n": 3,
+       "t": "exo"
       }
      ]
     },
@@ -880,7 +927,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'un **pourcentage** ?",
-       "a": "Une fraction décimale ayant **100** comme dénominateur : a % = a/100."
+       "a": "Une fraction décimale ayant **100** comme dénominateur : a % = a/100.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -891,7 +939,8 @@ window.REPO_PACKS.push({
         "75",
         "250"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -902,7 +951,8 @@ window.REPO_PACKS.push({
         "0,25 %",
         "4 %"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -910,7 +960,8 @@ window.REPO_PACKS.push({
        "a": [
         "0,25"
        ],
-       "num": 0.25
+       "num": 0.25,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -918,7 +969,8 @@ window.REPO_PACKS.push({
        "a": [
         "7"
        ],
-       "num": 7
+       "num": 7,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -927,7 +979,8 @@ window.REPO_PACKS.push({
         "0,4",
         "0,40"
        ],
-       "num": 0.4
+       "num": 0.4,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -938,7 +991,8 @@ window.REPO_PACKS.push({
         "0,3 %",
         "300 %"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "p",
@@ -960,11 +1014,13 @@ window.REPO_PACKS.push({
          "100 %",
          "1"
         ]
-       ]
+       ],
+       "t": "coeur"
       }
      ]
     }
    ]
   }
  ]
-});
+}
+);

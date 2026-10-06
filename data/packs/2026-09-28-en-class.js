@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-en-class — Anglais — Back to school : become the teacher's assistant */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-en-class",
@@ -345,7 +346,8 @@ window.REPO_PACKS.push({
          "Repeat after me!",
          "Répète après moi !"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "p",
@@ -371,7 +373,8 @@ window.REPO_PACKS.push({
          "Put all your things away!",
          "Range tes affaires !"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -380,7 +383,8 @@ window.REPO_PACKS.push({
         "Look at the picture!",
         "Look at the picture"
        ],
-       "x": "Look **at** the picture."
+       "x": "Look **at** the picture.",
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -388,7 +392,8 @@ window.REPO_PACKS.push({
        "a": [
         "Sit down!",
         "Sit down"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -398,7 +403,8 @@ window.REPO_PACKS.push({
         "Allume l'ordinateur !",
         "Range l'ordinateur !"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -408,7 +414,8 @@ window.REPO_PACKS.push({
         "Écris sur la feuille !",
         "Range la feuille !"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "p",
@@ -434,7 +441,8 @@ window.REPO_PACKS.push({
          "Can I open the window, please?",
          "ouvrir la fenêtre"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "p",
@@ -460,7 +468,8 @@ window.REPO_PACKS.push({
          "Sorry, I have forgotten my book.",
          "J'ai oublié mon livre."
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -469,7 +478,8 @@ window.REPO_PACKS.push({
         "Can I go to the toilet, please?",
         "Can I go to the toilet please?",
         "Can I go to the toilet?"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -478,7 +488,8 @@ window.REPO_PACKS.push({
         "Can I borrow a pen, please?",
         "Can I borrow a pen please?",
         "Can I borrow a pen?"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -488,7 +499,8 @@ window.REPO_PACKS.push({
         "What's the French for « haut », please?",
         "What does « haut » mean, please?"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -498,7 +510,8 @@ window.REPO_PACKS.push({
         "Excuse me, I can't see.",
         "Repeat after me!"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -508,7 +521,8 @@ window.REPO_PACKS.push({
         "Qui est en retard ?",
         "Qui peut effacer le tableau ?"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -518,7 +532,8 @@ window.REPO_PACKS.push({
         "I am!",
         "Yes, everyone is here."
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -528,7 +543,8 @@ window.REPO_PACKS.push({
         "Lève-toi !",
         "Tais-toi !"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -538,7 +554,8 @@ window.REPO_PACKS.push({
         "Aimez votre leçon.",
         "Lisez votre leçon."
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -546,7 +563,8 @@ window.REPO_PACKS.push({
        "a": [
         "See you next week!",
         "See you next week"
-       ]
+       ],
+       "t": "vocab"
       }
      ]
     },
@@ -647,7 +665,8 @@ window.REPO_PACKS.push({
         "Good evening!",
         "Good night!"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -657,7 +676,8 @@ window.REPO_PACKS.push({
         "Good morning!",
         "Good evening!"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -667,7 +687,8 @@ window.REPO_PACKS.push({
         "Good afternoon!",
         "Good morning!"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "s",
@@ -705,7 +726,8 @@ window.REPO_PACKS.push({
          "Goodbye!",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "p",
@@ -731,7 +753,8 @@ window.REPO_PACKS.push({
          "Désolé(e)",
          "Sorry"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -739,14 +762,16 @@ window.REPO_PACKS.push({
        "a": [
         "You're welcome",
         "You are welcome"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Traduis : **Excusez-moi**",
        "a": [
         "Excuse me"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "o",
@@ -756,7 +781,8 @@ window.REPO_PACKS.push({
         "I'm George.",
         "This is Suzy.",
         "Hi Suzy! Nice to meet you!"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -766,7 +792,8 @@ window.REPO_PACKS.push({
         "I'm Suzy.",
         "What's your name, Suzy?"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -774,7 +801,8 @@ window.REPO_PACKS.push({
        "a": [
         "Nice to meet you!",
         "Nice to meet you"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -786,7 +814,8 @@ window.REPO_PACKS.push({
         "Fine, thank you!",
         "Fine, thanks!",
         "Fine"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -796,7 +825,8 @@ window.REPO_PACKS.push({
         "La prof prend le registre des notes.",
         "La prof ramasse les cahiers."
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -811,14 +841,16 @@ window.REPO_PACKS.push({
         "I am eleven",
         "I'm eleven"
        ],
-       "x": "En anglais, on **est** son âge : I **am** 11 (years old)."
+       "x": "En anglais, on **est** son âge : I **am** 11 (years old).",
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Complète : She is ___ London. (Elle vient de Londres.)",
        "a": [
         "from"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -829,7 +861,8 @@ window.REPO_PACKS.push({
         "fine"
        ],
        "a": 0,
-       "x": "On peut aussi dire : one pupil is **missing**."
+       "x": "On peut aussi dire : one pupil is **missing**.",
+       "t": "exo"
       }
      ]
     },
@@ -971,7 +1004,8 @@ window.REPO_PACKS.push({
       {
        "k": "g",
        "g": "enColor",
-       "n": 6
+       "n": 6,
+       "t": "exo"
       },
       {
        "k": "i",
@@ -979,21 +1013,24 @@ window.REPO_PACKS.push({
        "a": [
         "white"
        ],
-       "x": "**white** : w-h-i-t-e (pas **with** !)."
+       "x": "**white** : w-h-i-t-e (pas **with** !).",
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "A strawberry is…",
        "a": [
         "red"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Grapes are…",
        "a": [
         "purple"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1004,7 +1041,8 @@ window.REPO_PACKS.push({
         "orange",
         "grey"
        ],
-       "a": 0
+       "a": 0,
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -1016,7 +1054,8 @@ window.REPO_PACKS.push({
         "whit"
        ],
        "a": 0,
-       "x": "**with** veut dire « avec »."
+       "x": "**with** veut dire « avec ».",
+       "t": "vocab"
       },
       {
        "k": "p",
@@ -1042,7 +1081,8 @@ window.REPO_PACKS.push({
          "uniform",
          "uniforme"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "p",
@@ -1068,21 +1108,24 @@ window.REPO_PACKS.push({
          "door",
          "porte"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Traduis : **timide**",
        "a": [
         "shy"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Traduis : **fier / fière**",
        "a": [
         "proud"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -1090,7 +1133,8 @@ window.REPO_PACKS.push({
        "a": [
         "light grey",
         "light gray"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -1098,7 +1142,8 @@ window.REPO_PACKS.push({
        "a": [
         "dark grey",
         "dark gray"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -1109,7 +1154,8 @@ window.REPO_PACKS.push({
         "am"
        ],
        "a": 0,
-       "x": "Plusieurs feuilles → **there are**."
+       "x": "Plusieurs feuilles → **there are**.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1119,7 +1165,8 @@ window.REPO_PACKS.push({
         "are",
         "am"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1129,7 +1176,8 @@ window.REPO_PACKS.push({
         "shy",
         "proud"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1139,7 +1187,8 @@ window.REPO_PACKS.push({
         "grey",
         "a desk"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ]
     },
@@ -1229,21 +1278,24 @@ window.REPO_PACKS.push({
          "They",
          "are"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "i",
        "q": "Complète : They ___ English. (affirmatif)",
        "a": [
         "are"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
        "q": "Complète : It ___ English. (affirmatif)",
        "a": [
         "is"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1251,7 +1303,8 @@ window.REPO_PACKS.push({
        "a": [
         "am not",
         "'m not"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1259,7 +1312,8 @@ window.REPO_PACKS.push({
        "a": [
         "isn't",
         "is not"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1267,7 +1321,8 @@ window.REPO_PACKS.push({
        "a": [
         "aren't",
         "are not"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1275,7 +1330,8 @@ window.REPO_PACKS.push({
        "a": [
         "Are",
         "are"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1283,7 +1339,8 @@ window.REPO_PACKS.push({
        "a": [
         "Is",
         "is"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1293,7 +1350,8 @@ window.REPO_PACKS.push({
         "They are English.",
         "They aren't English."
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1303,7 +1361,8 @@ window.REPO_PACKS.push({
         "I am not",
         "I'm not"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1313,7 +1372,8 @@ window.REPO_PACKS.push({
         "are not",
         "am not"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -1324,7 +1384,8 @@ window.REPO_PACKS.push({
         "I am not English",
         "I'm not English"
        ],
-       "x": "English prend une majuscule."
+       "x": "English prend une majuscule.",
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -1332,7 +1393,8 @@ window.REPO_PACKS.push({
        "a": [
         "Are you English?",
         "Are you English"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "o",
@@ -1341,7 +1403,8 @@ window.REPO_PACKS.push({
         "Are",
         "they",
         "English?"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1351,7 +1414,8 @@ window.REPO_PACKS.push({
         "We're French.",
         "We are French",
         "We're French"
-       ]
+       ],
+       "t": "vocab"
       }
      ]
     },
@@ -1451,12 +1515,14 @@ window.REPO_PACKS.push({
       {
        "k": "g",
        "g": "enDays",
-       "n": 5
+       "n": 5,
+       "t": "exo"
       },
       {
        "k": "g",
        "g": "enDate",
-       "n": 6
+       "n": 6,
+       "t": "exo"
       },
       {
        "k": "s",
@@ -1516,7 +1582,8 @@ window.REPO_PACKS.push({
          "20",
          3
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1526,7 +1593,8 @@ window.REPO_PACKS.push({
         "the 22th of December",
         "the 22rd of December"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1537,7 +1605,8 @@ window.REPO_PACKS.push({
         "friday"
        ],
        "a": 0,
-       "x": "F-r-**i**-day, avec une majuscule."
+       "x": "F-r-**i**-day, avec une majuscule.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1547,7 +1616,8 @@ window.REPO_PACKS.push({
         "Suday",
         "sunday"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1558,21 +1628,24 @@ window.REPO_PACKS.push({
         "Wednesdey"
        ],
        "a": 0,
-       "x": "Le **d** ne se prononce pas : on dit « wenz-dé », mais on l'écrit !"
+       "x": "Le **d** ne se prononce pas : on dit « wenz-dé », mais on l'écrit !",
+       "t": "exo"
       },
       {
        "k": "i",
        "q": "In English, we use ___ numbers to say the date.",
        "a": [
         "ordinal"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "i",
        "q": "Days and months begin with a ___ letter.",
        "a": [
         "capital"
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1583,7 +1656,8 @@ window.REPO_PACKS.push({
         "at"
        ],
        "a": 0,
-       "x": "**in** + année ou mois."
+       "x": "**in** + année ou mois.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1594,7 +1668,8 @@ window.REPO_PACKS.push({
         "at"
        ],
        "a": 0,
-       "x": "**on** + date complète."
+       "x": "**on** + date complète.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1604,21 +1679,24 @@ window.REPO_PACKS.push({
         "Thursday: tomorrow",
         "Monday: yesterday"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "i",
        "q": "Traduis : **demain**",
        "a": [
         "tomorrow"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Traduis : **hier**",
        "a": [
         "yesterday"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "o",
@@ -1629,7 +1707,8 @@ window.REPO_PACKS.push({
         "15th",
         "of",
         "September"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "o",
@@ -1641,7 +1720,8 @@ window.REPO_PACKS.push({
         "April",
         "May",
         "June"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "o",
@@ -1653,7 +1733,8 @@ window.REPO_PACKS.push({
         "October",
         "November",
         "December"
-       ]
+       ],
+       "t": "exo"
       }
      ]
     },
@@ -1735,7 +1816,8 @@ window.REPO_PACKS.push({
       {
        "k": "g",
        "g": "enNum",
-       "n": 8
+       "n": 8,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1745,7 +1827,8 @@ window.REPO_PACKS.push({
         "fourty",
         "fourteen"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1754,21 +1837,24 @@ window.REPO_PACKS.push({
         "fifty",
         "fifteen"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
        "q": "Write in English: **12**",
        "a": [
         "twelve"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
        "q": "Write in English: **0**",
        "a": [
         "zero"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1776,7 +1862,8 @@ window.REPO_PACKS.push({
        "a": [
         "one thousand",
         "a thousand"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1786,7 +1873,8 @@ window.REPO_PACKS.push({
         "one billion",
         "one thousand"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -1812,7 +1900,8 @@ window.REPO_PACKS.push({
          "=",
          "equals"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
@@ -1820,7 +1909,8 @@ window.REPO_PACKS.push({
        "a": [
         "seven plus five equals twelve",
         "seven plus five is twelve"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -1828,7 +1918,8 @@ window.REPO_PACKS.push({
        "a": [
         "ten minus four equals six",
         "ten minus four is six"
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "o",
@@ -1840,7 +1931,8 @@ window.REPO_PACKS.push({
         "fifty",
         "sixty-eight",
         "ninety"
-       ]
+       ],
+       "t": "exo"
       }
      ]
     },
@@ -1988,7 +2080,8 @@ window.REPO_PACKS.push({
          "un siècle",
          "a century"
         ]
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "q",
@@ -1998,7 +2091,8 @@ window.REPO_PACKS.push({
         "Parce que hour est pluriel",
         "C'est une erreur, on dit a hour"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -2006,7 +2100,8 @@ window.REPO_PACKS.push({
        "a": [
         "a century",
         "century"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "s",
@@ -2065,7 +2160,8 @@ window.REPO_PACKS.push({
          "the day after tomorrow",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "i",
@@ -2073,14 +2169,16 @@ window.REPO_PACKS.push({
        "a": [
         "the day after tomorrow",
         "day after tomorrow"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "i",
        "q": "Traduis : **il y a deux mois**",
        "a": [
         "two months ago"
-       ]
+       ],
+       "t": "vocab"
       },
       {
        "k": "s",
@@ -2135,7 +2233,8 @@ window.REPO_PACKS.push({
          "2050",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2146,7 +2245,8 @@ window.REPO_PACKS.push({
         "on"
        ],
        "a": 0,
-       "x": "⚠ **at** night, mais **in** the morning."
+       "x": "⚠ **at** night, mais **in** the morning.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2157,7 +2257,8 @@ window.REPO_PACKS.push({
         "at"
        ],
        "a": 0,
-       "x": "Jour + moment de la journée → **on**."
+       "x": "Jour + moment de la journée → **on**.",
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2167,7 +2268,8 @@ window.REPO_PACKS.push({
         "on",
         "at"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2177,11 +2279,13 @@ window.REPO_PACKS.push({
         "on",
         "in"
        ],
-       "a": 0
+       "a": 0,
+       "t": "exo"
       }
      ]
     }
    ]
   }
  ]
-});
+}
+);

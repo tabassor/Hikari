@@ -56,19 +56,22 @@
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **mythe** ?",
-     "a": "Un récit très ancien, d'abord oral, avec des dieux, des héros ou des créatures, qui explique l'origine du monde ou d'un phénomène."
+     "a": "Un récit très ancien, d'abord oral, avec des dieux, des héros ou des créatures, qui explique l'origine du monde ou d'un phénomène.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **récit étiologique** ?",
      "a": "Un récit qui explique l'origine (la cause) de quelque chose.",
-     "x": "Grec aitia = la cause."
+     "x": "Grec aitia = la cause.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Que signifie **cosmogonie** ?",
      "a": "Le récit de la création du monde.",
-     "x": "kosmos = monde ordonné, gonos = naissance."
+     "x": "kosmos = monde ordonné, gonos = naissance.",
+     "t": "def"
     },
     {
      "k": "p",
@@ -90,7 +93,8 @@
        "Texte fondateur",
        "Base d'une culture ou d'une religion"
       ]
-     ]
+     ],
+     "t": "def"
     }
    ]
   },
@@ -119,7 +123,8 @@
       "Un seul jour",
       "Quarante jours"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -131,7 +136,8 @@
       "Babylone"
      ],
      "a": 0,
-     "x": "Uruk se trouve en Mésopotamie, dans l'actuel Irak."
+     "x": "Uruk se trouve en Mésopotamie, dans l'actuel Irak.",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -142,7 +148,8 @@
       "Une épouse",
       "Un royaume"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -153,12 +160,14 @@
       "L'alphabet latin",
       "L'alphabet grec"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Qui a écrit **les Métamorphoses** et de quoi parlent-elles ?",
-     "a": "Le poète latin Ovide ; elles racontent des transformations d'êtres en animaux, plantes, pierres…"
+     "a": "Le poète latin Ovide ; elles racontent des transformations d'êtres en animaux, plantes, pierres…",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -170,7 +179,8 @@
       "En chouette"
      ],
      "a": 0,
-     "x": "Elle avait défié Athéna (Minerve) au tissage."
+     "x": "Elle avait défié Athéna (Minerve) au tissage.",
+     "t": "coeur"
     },
     {
      "k": "s",
@@ -217,7 +227,8 @@
        "Daphné",
        2
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -312,21 +323,24 @@
      "q": "Nom **latin** de Zeus ?",
      "a": [
       "Jupiter"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
      "q": "Nom **latin** de Poséidon ?",
      "a": [
       "Neptune"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
      "q": "Nom **latin** d'Athéna ?",
      "a": [
       "Minerve"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
@@ -334,21 +348,24 @@
      "a": [
       "Vénus",
       "Venus"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
      "q": "Nom **latin** d'Arès ?",
      "a": [
       "Mars"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
      "q": "Nom **latin** d'Hermès ?",
      "a": [
       "Mercure"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -359,7 +376,8 @@
       "Apollon",
       "Hermès"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -370,7 +388,8 @@
       "Le serpent",
       "Le paon"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -381,7 +400,8 @@
       "Poséidon",
       "Hermès"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -393,7 +413,8 @@
       "Icare"
      ],
      "a": 0,
-     "x": "Quand Perséphone rejoint Hadès sous terre, Déméter est triste et rien ne pousse : c'est l'hiver."
+     "x": "Quand Perséphone rejoint Hadès sous terre, Déméter est triste et rien ne pousse : c'est l'hiver.",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -404,7 +425,8 @@
       "Hermès",
       "Zeus"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "p",
@@ -434,7 +456,8 @@
        "Hermès",
        "Mercure"
       ]
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "p",
@@ -460,7 +483,8 @@
        "Dionysos",
        "La vigne"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -533,7 +557,8 @@
      "k": "f",
      "q": "Que veut dire « **ouvrir la boîte de Pandore** » ?",
      "a": "Déclencher une série de malheurs.",
-     "x": "Pandore ouvre une jarre qui libère tous les maux sur le monde ; seule l'espérance reste au fond."
+     "x": "Pandore ouvre une jarre qui libère tous les maux sur le monde ; seule l'espérance reste au fond.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -544,7 +569,8 @@
       "Pandore",
       "Apollon"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -555,7 +581,8 @@
       "Très ancien",
       "Divin"
      ],
-     "a": 0
+     "a": 0,
+     "t": "def"
     },
     {
      "k": "i",
@@ -565,7 +592,8 @@
       "chrono-",
       "khronos",
       "chronos"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "i",
@@ -575,7 +603,8 @@
       "géo-",
       "geo",
       "gê"
-     ]
+     ],
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -586,7 +615,8 @@
       "L'écriture",
       "L'amour de"
      ],
-     "a": 0
+     "a": 0,
+     "t": "def"
     },
     {
      "k": "q",
@@ -597,7 +627,8 @@
       "du monde",
       "des animaux"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -608,7 +639,8 @@
       "Vénus",
       "Jupiter"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "p",
@@ -634,7 +666,8 @@
        "-graphie",
        "écriture"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   }
@@ -678,12 +711,14 @@
     {
      "k": "f",
      "q": "Qu'est-ce qu'une **phrase simple** ?",
-     "a": "Une phrase qui contient un seul verbe conjugué."
+     "a": "Une phrase qui contient un seul verbe conjugué.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Comment repérer le **sujet** ?",
-     "a": "On l'encadre par « c'est… qui » (ou « ce sont… qui »)."
+     "a": "On l'encadre par « c'est… qui » (ou « ce sont… qui »).",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -694,7 +729,8 @@
       "COI",
       "Complément circonstanciel"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -705,7 +741,8 @@
       "Quand Pandore ouvre la jarre, les maux s'échappent.",
       "Il pleut car Zeus est en colère."
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -717,7 +754,8 @@
       "On ne peut pas"
      ],
      "a": 0,
-     "x": "Le sujet est inversé : il est placé après le verbe."
+     "x": "Le sujet est inversé : il est placé après le verbe.",
+     "t": "exo"
     }
    ]
   },
@@ -775,17 +813,20 @@
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **COD** ?",
-     "a": "Un complément relié au verbe sans préposition ; il répond à qui ?/quoi ? et se remplace par le, la, l', les."
+     "a": "Un complément relié au verbe sans préposition ; il répond à qui ?/quoi ? et se remplace par le, la, l', les.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **COI** ?",
-     "a": "Un complément relié au verbe par une préposition (à, de…) ; il se remplace par lui, leur, en, y."
+     "a": "Un complément relié au verbe par une préposition (à, de…) ; il se remplace par lui, leur, en, y.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Deux tests qui prouvent qu'un groupe est **complément circonstanciel** ?",
-     "a": "On peut le déplacer et le supprimer."
+     "a": "On peut le déplacer et le supprimer.",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -796,7 +837,8 @@
       "COI",
       "Complément circonstanciel"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -808,7 +850,8 @@
       "Complément circonstanciel"
      ],
      "a": 0,
-     "x": "On peut dire : Zeus lui parle."
+     "x": "On peut dire : Zeus lui parle.",
+     "t": "exo"
     },
     {
      "k": "q",
@@ -819,7 +862,8 @@
       "Sujet",
       "COI"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -830,7 +874,8 @@
       "le temps",
       "la cause"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -841,7 +886,8 @@
       "COI",
       "Sujet"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -852,7 +898,8 @@
       "Sujet",
       "CC de lieu"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -864,7 +911,8 @@
       "Sujet"
      ],
      "a": 0,
-     "x": "Il s'en souvient : pronom « en »."
+     "x": "Il s'en souvient : pronom « en ».",
+     "t": "exo"
     },
     {
      "k": "s",
@@ -899,7 +947,8 @@
        "Ils dînent **sur l'Olympe**.",
        2
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -933,7 +982,8 @@
       "terrible",
       "la"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -944,7 +994,8 @@
       "un adverbe",
       "un déterminant"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -955,7 +1006,8 @@
       "L'adjectif",
       "Le déterminant"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -967,7 +1019,8 @@
       "un pronom sujet"
      ],
      "a": 0,
-     "x": "Devant un verbe, « la » remplace un nom : c'est un pronom."
+     "x": "Devant un verbe, « la » remplace un nom : c'est un pronom.",
+     "t": "exo"
     },
     {
      "k": "s",
@@ -1009,7 +1062,8 @@
        "très (adverbe)",
        1
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   }
@@ -1100,17 +1154,20 @@
     {
      "k": "g",
      "g": "conj1",
-     "n": 6
+     "n": 6,
+     "t": "exo"
     },
     {
      "k": "f",
      "q": "Terminaisons de l'**imparfait** ?",
-     "a": "-ais, -ais, -ait, -ions, -iez, -aient (pour tous les verbes)."
+     "a": "-ais, -ais, -ait, -ions, -iez, -aient (pour tous les verbes).",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Passé simple des verbes en -er : terminaisons ?",
-     "a": "-ai, -as, -a, -âmes, -âtes, -èrent."
+     "a": "-ai, -as, -a, -âmes, -âtes, -èrent.",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1121,7 +1178,8 @@
       "Passé simple",
       "Imparfait"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "s",
@@ -1164,7 +1222,8 @@
        "je jouais",
        0
       ]
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -1211,31 +1270,36 @@
     {
      "k": "f",
      "q": "Passé simple de **finir** ?",
-     "a": "je finis, tu finis, il finit, nous finîmes, vous finîtes, ils finirent."
+     "a": "je finis, tu finis, il finit, nous finîmes, vous finîtes, ils finirent.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "**Être** au passé simple ?",
-     "a": "je fus, tu fus, il fut, nous fûmes, vous fûtes, ils furent."
+     "a": "je fus, tu fus, il fut, nous fûmes, vous fûtes, ils furent.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "**Avoir** au passé simple ?",
-     "a": "j'eus, tu eus, il eut, nous eûmes, vous eûtes, ils eurent."
+     "a": "j'eus, tu eus, il eut, nous eûmes, vous eûtes, ils eurent.",
+     "t": "coeur"
     },
     {
      "k": "i",
      "q": "**Être**, futur, 1re personne du singulier : je …",
      "a": [
       "serai"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
      "q": "**Avoir**, futur, 3e personne du pluriel : ils …",
      "a": [
       "auront"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "i",
@@ -1243,7 +1307,8 @@
      "a": [
       "étiez",
       "etiez"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -1271,12 +1336,14 @@
     {
      "k": "f",
      "q": "Pourquoi écrit-on « nous commen**ç**ons » ?",
-     "a": "Devant a et o, le c prend une cédille pour garder le son [s]."
+     "a": "Devant a et o, le c prend une cédille pour garder le son [s].",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Pourquoi écrit-on « nous man**ge**ons » ?",
-     "a": "Devant a et o, on ajoute un e après le g pour garder le son [ʒ]."
+     "a": "Devant a et o, on ajoute un e après le g pour garder le son [ʒ].",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1287,7 +1354,8 @@
       "Le futur",
       "Le présent"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1298,7 +1366,8 @@
       "Le futur",
       "Le présent"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -1309,7 +1378,8 @@
       "Futur",
       "Présent"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -1320,7 +1390,8 @@
       "Futur",
       "Présent"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     }
    ]
   }

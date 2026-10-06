@@ -169,6 +169,36 @@
     if ("sop".includes(c.k)) return `${ch.id}:${c.k}:${ART.hash(c.q + "|" + JSON.stringify(c.items || c.pairs))}`;
     return `${ch.id}:${ART.hash(c.q + "|" + String(c.a))}`;
   }
+  // ---------- Définitions : exercices fabriqués automatiquement à partir de chaque carte « définition » ----------
+  // « Reconstitue » (remettre les morceaux de la phrase dans l'ordre) et « Complète » (taper le mot clé manquant).
+  const STOP = new Set("le la les un une des de du d l à au aux et ou en par pour sur dans qui que qu est sont a ont son sa ses leur leurs ce cet cette ces il elle on se s ne pas plus avec sans entre tout tous toute toutes même".split(" "));
+  const NUMW = { 2: "deux", 3: "trois", 4: "quatre", 5: "cinq", 10: "dix", 100: "cent" };
+  function defTerm(q) { const b = String(q).match(/\*\*([^*]+)\*\*/); if (b) return b[1]; const g = String(q).match(/«\s*([^»]+?)\s*»/); if (g) return g[1]; return String(q).replace(/^(définition d['eu]?\s*(une?|du|de la|des)?|qu'est-ce qu['e]?\s*(une?|la|le|l')?|définis|que signifie|que veut dire|que sont (les )?|qu'appelle-t-on (une?|la|le|les|l')?)\s*/i, "").replace(/\s*[?.:]\s*$/, ""); }
+  function chunks(words) {
+    const n = words.length, k = Math.min(n <= 6 ? 3 : n <= 10 ? 4 : n <= 16 ? 5 : 6, Math.floor(n / 2)), out = [];
+    for (let i = 0; i < k; i++) { const a = Math.round((i * n) / k), b = Math.round(((i + 1) * n) / k); if (b > a) out.push(words.slice(a, b).join(" ")); }
+    return out;
+  }
+  function deriveDef(c, baseId, ch, l) {
+    if (c.t !== "def" || c.k !== "f" || typeof c.a !== "string") return [];
+    const t0 = defTerm(c.q), term = t0.length <= 40 && !/\?/.test(t0) ? t0 : null, raw = c.a.replace(/\s+/g, " ").trim().replace(/[.;]\s*$/, ""), plain = raw.replace(/\*\*/g, "");
+    const words = plain.split(" ").filter(Boolean), out = [], base = { ch: ch.id, le: l.id, t: "def", derived: baseId, x: c.x, bonus: c.bonus };
+    if (words.length >= 5 && words.length <= 30) {
+      const items = chunks(words); if (new Set(items).size === items.length && items.length >= 3)
+        out.push(Object.assign({ id: baseId + ":ro", k: "o", q: term ? `Reconstitue la définition : **${term}**` : `${c.q} Reconstitue la réponse.`, items }, base));
+    }
+    // Mots clés : ceux en gras dans la réponse, sinon les mots les plus longs ; une carte « Complète » par mot clé (2 au plus)
+    let keys = []; raw.replace(/\*\*([^*]+)\*\*/g, (m, g) => { g.split(/\s+/).filter((w) => !STOP.has(w.toLowerCase().replace(/^[ld]'/, "")) && w.replace(/[^\p{L}\d]/gu, "").length >= 3).forEach((w) => keys.push(w)); return m; });
+    if (!keys.length) keys = words.filter((w) => !STOP.has(w.toLowerCase()) && w.replace(/[^\p{L}]/gu, "").length >= 6);
+    keys = Array.from(new Set(keys.map((w) => w.replace(/[,;:()]+$/g, "").replace(/^[(]+/, "").replace(/^(l|d|qu|j|s|n|m|t)['’]/i, "")))).filter((w) => w.length >= 2).sort((a, b) => b.length - a.length).slice(0, 2);
+    keys.forEach((w, i) => {
+      const re = new RegExp("(^|[\\s'(])" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?=$|[\\s,;:).])"); if (!re.test(plain)) return;
+      const holed = plain.replace(re, (m, p) => p + "……");
+      const ans = [w]; if (/^\d+$/.test(w) && NUMW[w]) ans.push(NUMW[w]); if (NUMW[w] === undefined) Object.entries(NUMW).forEach(([d, t]) => { if (t === w.toLowerCase()) ans.push(d); });
+      out.push(Object.assign({ id: baseId + ":c" + i, k: "i", q: term ? `Complète la définition de **${term}** : « ${holed} »` : `${c.q} Complète : « ${holed} »`, a: ans }, base));
+    });
+    return out;
+  }
   function lessonCards(ch, l) {
     const out = [], un = unlockedFiches(ch);
     (l.cards || []).forEach((c0) => {
@@ -179,7 +209,7 @@
       }
       if (l.remed) c = Object.assign({}, c, { bonus: true });
       if (c.k === "g") { const tag = c.tab ? ART.hash(c.tab.tense + Object.keys(c.tab.verbs).join()) + ":" : ""; for (let i = 0; i < (c.n || 3); i++) out.push(Object.assign({ id: `${ch.id}:g:${c.g}:${tag}${i}`, ch: ch.id, le: l.id }, c)); }
-      else out.push(Object.assign({ id: cardId(ch, c), ch: ch.id, le: l.id }, c));
+      else { const id = cardId(ch, c); out.push(Object.assign({ id, ch: ch.id, le: l.id }, c)); deriveDef(c, id, ch, l).forEach((d) => out.push(d)); }
     });
     (l.places || []).forEach((p) => out.push({ id: `${ch.id}:m:${p.id}`, ch: ch.id, le: l.id, k: "m", place: p, q: `Touche la carte là où se trouve **${p.n}**.` }));
     return out;
@@ -247,11 +277,15 @@
     const score = (c) => { const k = S.cards[c.id]; if (!k) return -1e15; if (k.lapses > 0 && !okDaysOf(c.id)) return -2e15 + (k.last || 0) / 1e3; /* ratée récemment : d'abord */ return Math.min(okDaysOf(c.id), READY_DAYS) * 1e14 - (k.lapses * 5 + (3 - k.ease) * 4) * 1e10 + (k.last || 0); };
     return cand.sort((a, b) => score(a) - score(b)).slice(0, max);
   }
-  function buildSession({ subject, chapter, lesson, agenda, max = 30 } = {}) {
+  // Nature d'une carte : def (définition), coeur (à savoir), exo (exercice), vocab (vocabulaire de langue)
+  const KINDS = { def: ["Définitions", "📖"], coeur: ["Par cœur", "🧠"], exo: ["Exercices", "✏️"], vocab: ["Vocabulaire", "💬"] };
+  const kindOf = (c) => c.t || (c.k === "g" ? "exo" : "coeur");
+  function buildSession({ subject, chapter, lesson, agenda, kind, max = 30 } = {}) {
     let pool = allActiveCards((c) => (!subject || c.s === subject) && (!chapter || c.id === chapter));
+    if (kind) pool = pool.filter((c) => kindOf(c) === kind);
     if (lesson) pool = pool.filter((c) => c.le === lesson);
     if (agenda && window.AGENDA) { const it = AGENDA.A().find((x) => x.id === agenda); if (!it) return []; return shuffleOrder(focusCards(agendaCands([it]), 20)); }
-    const items = !chapter && !lesson && window.AGENDA ? AGENDA.upcoming().filter((x) => AGENDA.daysTo(x.date) <= AGENDA.WINDOW) : [];
+    const items = !chapter && !lesson && !kind && window.AGENDA ? AGENDA.upcoming().filter((x) => AGENDA.daysTo(x.date) <= AGENDA.WINDOW) : [];
     const cands = agendaCands(items).filter((c) => !subject || (CHI[c.ch] && CHI[c.ch].s === subject));
     let fmax = 0; items.forEach((it) => { const P = itemProgress(it); fmax += Math.ceil(P.need / Math.max(1, AGENDA.daysTo(it.date))); });
     fmax = Math.min(30, Math.max(window.AGENDA ? AGENDA.FOCUS_MAX : 15, fmax));
@@ -456,7 +490,7 @@
 
   window.STORE = {
     load, save, isLibre, get S() { return S; }, today, buildContent, migrate, autoOpen, classWeek, weekStart, unlockedFiches, HOLIDAYS, ZONE_SENSITIVE_FROM, get CH() { return CH; }, get CHI() { return CHI; }, get LEI() { return LEI; }, get REFI() { return REFI; }, get SUBI() { return SUBI; },
-    cardList, lessonCards, relatedLessons, itemCards, itemProgress, READY_DAYS, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
+    cardList, lessonCards, KINDS, kindOf, relatedLessons, itemCards, itemProgress, READY_DAYS, chapterState, lessonOpen, openLesson, closeLesson, openLessons, activeChapters, allActiveCards, grade, isDue, isNew, mastered, buildSession, counts, countsOf,
     levelInfo, famPreview, addFam, famWeek, FAM_XP_MIN, FAM_REGULAR, stagesOf, report, grades, gradeAverages, remedFor, on20, messages, defiState, checkDefis, hardCards, addXP, countReview, streakAlive, RANKS, BADGES, checkBadges, validatePack, importPack, addPhoto, photos, delPhoto, exportAll, importAll, reset
   };
 })();

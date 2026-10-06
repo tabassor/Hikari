@@ -68,22 +68,26 @@
     {
      "k": "g",
      "g": "placeInt",
-     "n": 5
+     "n": 5,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "nbOf",
-     "n": 3
+     "n": 3,
+     "t": "exo"
     },
     {
      "k": "f",
      "q": "Différence entre **chiffre** et **nombre** ?",
-     "a": "Les chiffres (0 à 9) sont les symboles ; les nombres s'écrivent avec des chiffres."
+     "a": "Les chiffres (0 à 9) sont les symboles ; les nombres s'écrivent avec des chiffres.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Combien de zéros dans **un million** ? Et dans **un milliard** ?",
-     "a": "Un million = 1 000 000 (6 zéros) ; un milliard = 1 000 000 000 (9 zéros)."
+     "a": "Un million = 1 000 000 (6 zéros) ; un milliard = 1 000 000 000 (9 zéros).",
+     "t": "coeur"
     },
     {
      "k": "q",
@@ -94,7 +98,8 @@
       "10 000",
       "1 000 000"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     },
     {
      "k": "o",
@@ -105,7 +110,8 @@
       "1 020 000",
       "12 000 000",
       "1 000 000 000"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -129,7 +135,8 @@
     {
      "k": "g",
      "g": "words",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -140,7 +147,8 @@
       "quatres-vingts",
       "quatre-vingts-un"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -152,7 +160,8 @@
       "deux-milles"
      ],
      "a": 0,
-     "x": "Mille est invariable."
+     "x": "Mille est invariable.",
+     "t": "exo"
     }
    ]
   }
@@ -220,22 +229,26 @@
     {
      "k": "g",
      "g": "placeDec",
-     "n": 5
+     "n": 5,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "decFrac",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "f",
      "q": "Combien de centièmes dans une unité ?",
-     "a": "100 centièmes."
+     "a": "100 centièmes.",
+     "t": "coeur"
     },
     {
      "k": "f",
      "q": "Combien de millièmes dans un dixième ?",
-     "a": "100 millièmes (0,1 = 0,100)."
+     "a": "100 millièmes (0,1 = 0,100).",
+     "t": "coeur"
     },
     {
      "k": "p",
@@ -261,7 +274,8 @@
        "254/1000",
        "0,254"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -283,7 +297,8 @@
     {
      "k": "g",
      "g": "mul10",
-     "n": 6
+     "n": 6,
+     "t": "exo"
     }
    ]
   },
@@ -302,7 +317,8 @@
     {
      "k": "g",
      "g": "cmpDec",
-     "n": 5
+     "n": 5,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -314,7 +330,8 @@
       "3,09"
      ],
      "a": 0,
-     "x": "On compare les dixièmes : 5 > 4 > 0."
+     "x": "On compare les dixièmes : 5 > 4 > 0.",
+     "t": "exo"
     },
     {
      "k": "q",
@@ -325,7 +342,8 @@
       "différents : 0,7 est plus grand",
       "impossibles à comparer"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     },
     {
      "k": "o",
@@ -336,7 +354,8 @@
       "3,47",
       "3,5",
       "3,51"
-     ]
+     ],
+     "t": "exo"
     },
     {
      "k": "o",
@@ -347,7 +366,8 @@
       "0,15",
       "0,5",
       "0,51"
-     ]
+     ],
+     "t": "exo"
     }
    ]
   },
@@ -366,17 +386,20 @@
     {
      "k": "g",
      "g": "round",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "numline",
-     "n": 5
+     "n": 5,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "encadre",
-     "n": 3
+     "n": 3,
+     "t": "exo"
     }
    ]
   }
@@ -454,24 +477,28 @@
      "k": "f",
      "q": "Que représente **(AB)** ?",
      "a": "La droite passant par A et B (illimitée des deux côtés).",
-     "fig": "droite"
+     "fig": "droite",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Que représente **[AB)** ?",
      "a": "La demi-droite d'origine A passant par B.",
-     "fig": "demidroite"
+     "fig": "demidroite",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Que représente **[AB]** ?",
      "a": "Le segment d'extrémités A et B.",
-     "fig": "segment"
+     "fig": "segment",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Que représente **AB** (sans crochets) ?",
-     "a": "La longueur du segment [AB], c'est-à-dire la distance entre A et B."
+     "a": "La longueur du segment [AB], c'est-à-dire la distance entre A et B.",
+     "t": "def"
     },
     {
      "k": "q",
@@ -482,7 +509,8 @@
       "est parallèle à",
       "n'appartient pas à"
      ],
-     "a": 0
+     "a": 0,
+     "t": "def"
     },
     {
      "k": "p",
@@ -504,7 +532,8 @@
        "AB",
        "la longueur AB"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -533,7 +562,8 @@
      "k": "f",
      "q": "Définition du **milieu** I de [AB] ?",
      "a": "I appartient à [AB] et IA = IB.",
-     "fig": "milieu"
+     "fig": "milieu",
+     "t": "def"
     },
     {
      "k": "q",
@@ -545,7 +575,8 @@
       "2 cm"
      ],
      "a": 0,
-     "x": "Inégalité triangulaire : AC ≤ AB + BC = 7 cm."
+     "x": "Inégalité triangulaire : AC ≤ AB + BC = 7 cm.",
+     "t": "exo"
     },
     {
      "k": "q",
@@ -556,7 +587,8 @@
       "qu'ils sont parallèles",
       "qu'ils se croisent"
      ],
-     "a": 0
+     "a": 0,
+     "t": "coeur"
     }
    ]
   },
@@ -586,22 +618,26 @@
      "k": "f",
      "q": "Qu'est-ce qu'une **corde** ?",
      "a": "Un segment qui relie deux points du cercle.",
-     "fig": "cercle"
+     "fig": "cercle",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Qu'est-ce qu'un **diamètre** ?",
-     "a": "Une corde qui passe par le centre. Diamètre = 2 × rayon."
+     "a": "Une corde qui passe par le centre. Diamètre = 2 × rayon.",
+     "t": "def"
     },
     {
      "k": "f",
      "q": "Différence entre **cercle** et **disque** ?",
-     "a": "Le cercle est la ligne ; le disque est la surface qu'il délimite."
+     "a": "Le cercle est la ligne ; le disque est la surface qu'il délimite.",
+     "t": "coeur"
     },
     {
      "k": "g",
      "g": "rayon",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "q",
@@ -612,7 +648,8 @@
       "à l'intérieur du disque",
       "le centre"
      ],
-     "a": 0
+     "a": 0,
+     "t": "exo"
     }
    ]
   }
@@ -661,12 +698,14 @@
     {
      "k": "g",
      "g": "tables",
-     "n": 8
+     "n": 8,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "double",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     }
    ]
   },
@@ -677,12 +716,14 @@
     {
      "k": "g",
      "g": "fracQty",
-     "n": 4
+     "n": 4,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "frac14",
-     "n": 3
+     "n": 3,
+     "t": "exo"
     },
     {
      "k": "p",
@@ -704,7 +745,8 @@
        "1/10",
        "0,1"
       ]
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   },
@@ -715,12 +757,14 @@
     {
      "k": "g",
      "g": "convLen",
-     "n": 5
+     "n": 5,
+     "t": "exo"
     },
     {
      "k": "g",
      "g": "durees",
-     "n": 3
+     "n": 3,
+     "t": "exo"
     },
     {
      "k": "o",
@@ -733,7 +777,8 @@
       "dm",
       "cm",
       "mm"
-     ]
+     ],
+     "t": "coeur"
     }
    ]
   }

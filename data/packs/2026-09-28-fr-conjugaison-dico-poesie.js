@@ -1,5 +1,6 @@
 /* Pack 2026-09-28-fr-conjugaison-dico-poesie — Français — carnet de conjugaison, dictionnaire, poésie */
-window.REPO_PACKS.push({
+window.REPO_PACKS.push(
+{
  "format": "hikari-pack",
  "version": 2,
  "id": "2026-09-28-fr-conjugaison-dico-poesie",
@@ -466,7 +467,8 @@ window.REPO_PACKS.push({
          "pouvoir": 6,
          "faire": 7
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "g",
@@ -541,7 +543,8 @@ window.REPO_PACKS.push({
          "pouvoir": 6,
          "faire": 7
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "p",
@@ -576,7 +579,8 @@ window.REPO_PACKS.push({
          "fait"
         ]
        ],
-       "fiche": 7
+       "fiche": 7,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -588,7 +592,8 @@ window.REPO_PACKS.push({
         "dites-vous"
        ],
        "a": 0,
-       "fiche": 5
+       "fiche": 5,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -600,7 +605,8 @@ window.REPO_PACKS.push({
         "faîtes"
        ],
        "a": 0,
-       "fiche": 7
+       "fiche": 7,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -612,7 +618,8 @@ window.REPO_PACKS.push({
         "faient"
        ],
        "a": 0,
-       "fiche": 7
+       "fiche": 7,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -624,7 +631,8 @@ window.REPO_PACKS.push({
         "pouve"
        ],
        "a": 0,
-       "fiche": 6
+       "fiche": 6,
+       "t": "exo"
       },
       {
        "k": "s",
@@ -659,19 +667,22 @@ window.REPO_PACKS.push({
          1
         ]
        ],
-       "fiche": 3
+       "fiche": 3,
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "**ÊTRE** au présent ?",
        "a": "je suis, tu es, il est, nous sommes, vous êtes, ils sont.",
-       "fiche": 1
+       "fiche": 1,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Comment se forme le **passé composé** dans ces fiches ?",
        "a": "**Avoir au présent + participe passé** : j'ai fini, nous avons dit.",
-       "fiche": 1
+       "fiche": 1,
+       "t": "coeur"
       }
      ],
      "fiches": [
@@ -904,7 +915,8 @@ window.REPO_PACKS.push({
          "pouvoir": 13,
          "faire": 14
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "g",
@@ -979,19 +991,22 @@ window.REPO_PACKS.push({
          "pouvoir": 13,
          "faire": 14
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Terminaisons de l'**imparfait** ?",
        "a": "-ais, -ais, -ait, -ions, -iez, -aient.",
-       "fiche": 8
+       "fiche": 8,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Comment se forme le **plus-que-parfait** ?",
        "a": "**Avoir à l'imparfait + participe passé** : j'avais fini, nous avions dit.",
-       "fiche": 8
+       "fiche": 8,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -1003,7 +1018,8 @@ window.REPO_PACKS.push({
         "appelâmes"
        ],
        "a": 0,
-       "fiche": 10
+       "fiche": 10,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1015,7 +1031,8 @@ window.REPO_PACKS.push({
         "faisiions"
        ],
        "a": 0,
-       "fiche": 14
+       "fiche": 14,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1027,7 +1044,8 @@ window.REPO_PACKS.push({
         "finîmes"
        ],
        "a": 0,
-       "fiche": 11
+       "fiche": 11,
+       "t": "exo"
       },
       {
        "k": "s",
@@ -1062,7 +1080,8 @@ window.REPO_PACKS.push({
          1
         ]
        ],
-       "fiche": 14
+       "fiche": 14,
+       "t": "exo"
       }
      ],
      "fiches": [
@@ -1451,19 +1470,22 @@ window.REPO_PACKS.push({
          "aller": 21,
          "venir": 21
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "**ÊTRE** au passé simple ?",
        "a": "je fus, tu fus, il fut, nous fûmes, vous fûtes, ils furent.",
-       "fiche": 15
+       "fiche": 15,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "**AVOIR** au passé simple ?",
        "a": "j'eus, tu eus, il eut, nous eûmes, vous eûtes, ils eurent.",
-       "fiche": 15
+       "fiche": 15,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -1520,7 +1542,8 @@ window.REPO_PACKS.push({
          3
         ]
        ],
-       "fiche": 21
+       "fiche": 21,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1533,7 +1556,8 @@ window.REPO_PACKS.push({
        ],
        "a": 0,
        "x": "Au présent : vous dites. Au passé simple : vous dîtes, avec un accent.",
-       "fiche": 18
+       "fiche": 18,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1545,7 +1569,8 @@ window.REPO_PACKS.push({
         "vînes"
        ],
        "a": 0,
-       "fiche": 21
+       "fiche": 21,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1557,7 +1582,8 @@ window.REPO_PACKS.push({
         "mangeât"
        ],
        "a": 0,
-       "fiche": 16
+       "fiche": 16,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -1569,7 +1595,8 @@ window.REPO_PACKS.push({
         "allirent"
        ],
        "a": 0,
-       "fiche": 21
+       "fiche": 21,
+       "t": "exo"
       }
      ],
      "fiches": [
@@ -1998,13 +2025,15 @@ window.REPO_PACKS.push({
          "aller": 28,
          "venir": 28
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Terminaisons du **futur simple** ?",
        "a": "-ai, -as, -a, -ons, -ez, -ont.",
-       "fiche": 22
+       "fiche": 22,
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -2035,7 +2064,8 @@ window.REPO_PACKS.push({
          "je viendrai"
         ]
        ],
-       "fiche": 28
+       "fiche": 28,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -2048,7 +2078,8 @@ window.REPO_PACKS.push({
        ],
        "a": 0,
        "x": "Deux l : j'appellerai.",
-       "fiche": 23
+       "fiche": 23,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2060,7 +2091,8 @@ window.REPO_PACKS.push({
         "étions"
        ],
        "a": 0,
-       "fiche": 22
+       "fiche": 22,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2072,7 +2104,8 @@ window.REPO_PACKS.push({
         "voyeront"
        ],
        "a": 0,
-       "fiche": 27
+       "fiche": 27,
+       "t": "exo"
       }
      ],
      "fiches": [
@@ -2464,13 +2497,15 @@ window.REPO_PACKS.push({
          "aller": 35,
          "venir": 35
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Terminaisons du **conditionnel présent** ?",
        "a": "-ais, -ais, -ait, -ions, -iez, -aient.",
-       "fiche": 29
+       "fiche": 29,
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -2513,7 +2548,8 @@ window.REPO_PACKS.push({
          1
         ]
        ],
-       "fiche": 35
+       "fiche": 35,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2525,7 +2561,8 @@ window.REPO_PACKS.push({
         "voudrerions"
        ],
        "a": 0,
-       "fiche": 33
+       "fiche": 33,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2537,7 +2574,8 @@ window.REPO_PACKS.push({
         "allais"
        ],
        "a": 0,
-       "fiche": 35
+       "fiche": 35,
+       "t": "exo"
       }
      ],
      "fiches": [
@@ -2789,13 +2827,15 @@ window.REPO_PACKS.push({
          "prendre": 40,
          "mettre": 40
         }
-       }
+       },
+       "t": "exo"
       },
       {
        "k": "f",
        "q": "Combien de personnes a l'**impératif** ?",
        "a": "Trois : 2e du singulier (tu), 1re du pluriel (nous), 2e du pluriel (vous). Sans pronom sujet.",
-       "fiche": 36
+       "fiche": 36,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -2807,7 +2847,8 @@ window.REPO_PACKS.push({
         "arrivons"
        ],
        "a": 0,
-       "fiche": 37
+       "fiche": 37,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2819,7 +2860,8 @@ window.REPO_PACKS.push({
         "as"
        ],
        "a": 0,
-       "fiche": 36
+       "fiche": 36,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2831,7 +2873,8 @@ window.REPO_PACKS.push({
         "sachez"
        ],
        "a": 0,
-       "fiche": 39
+       "fiche": 39,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2843,7 +2886,8 @@ window.REPO_PACKS.push({
         "disiez"
        ],
        "a": 0,
-       "fiche": 38
+       "fiche": 38,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -2855,7 +2899,8 @@ window.REPO_PACKS.push({
         "recevez"
        ],
        "a": 0,
-       "fiche": 39
+       "fiche": 39,
+       "t": "exo"
       }
      ],
      "fiches": [
@@ -2980,12 +3025,14 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'un mot **polysémique** ?",
-       "a": "Un mot qui a **plusieurs sens**."
+       "a": "Un mot qui a **plusieurs sens**.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Qu'est-ce que l'**étymologie** ?",
-       "a": "L'**origine** du mot."
+       "a": "L'**origine** du mot.",
+       "t": "def"
       },
       {
        "k": "i",
@@ -2993,7 +3040,8 @@ window.REPO_PACKS.push({
        "a": [
         "Alphabet Phonétique International",
         "alphabet phonetique international"
-       ]
+       ],
+       "t": "def"
       },
       {
        "k": "q",
@@ -3004,7 +3052,8 @@ window.REPO_PACKS.push({
         "du plus court au plus long",
         "par date"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3015,7 +3064,8 @@ window.REPO_PACKS.push({
         "en majuscules",
         "entre parenthèses"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3026,7 +3076,8 @@ window.REPO_PACKS.push({
         "par des crochets",
         "par des majuscules"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3037,7 +3088,8 @@ window.REPO_PACKS.push({
         "en majuscules",
         "entre crochets"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3048,7 +3100,8 @@ window.REPO_PACKS.push({
         "la prononciation",
         "un exemple"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -3070,7 +3123,8 @@ window.REPO_PACKS.push({
          "un chat siamois",
          "exemple"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -3088,7 +3142,8 @@ window.REPO_PACKS.push({
          "il n'y a pas un chat",
          "il n'y a personne"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "i",
@@ -3097,7 +3152,8 @@ window.REPO_PACKS.push({
         "3",
         "trois"
        ],
-       "num": 3
+       "num": 3,
+       "t": "exo"
       },
       {
        "k": "q",
@@ -3108,7 +3164,8 @@ window.REPO_PACKS.push({
         "phonétique",
         "alphabétique"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "o",
@@ -3120,7 +3177,8 @@ window.REPO_PACKS.push({
         "l'étymologie",
         "les sens numérotés",
         "les expressions"
-       ]
+       ],
+       "t": "exo"
       }
      ]
     }
@@ -3163,7 +3221,8 @@ window.REPO_PACKS.push({
       {
        "k": "f",
        "q": "Qu'est-ce qu'un **poème** ?",
-       "a": "Une façon de **représenter une réalité** ou d'**exprimer des sentiments**."
+       "a": "Une façon de **représenter une réalité** ou d'**exprimer des sentiments**.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -3174,7 +3233,8 @@ window.REPO_PACKS.push({
         "compte les mots",
         "range les mots"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3185,7 +3245,8 @@ window.REPO_PACKS.push({
         "raconte une histoire vraie",
         "écrit en prose"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3196,7 +3257,8 @@ window.REPO_PACKS.push({
         "seulement en rimes",
         "seulement en alexandrins"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       }
      ]
     },
@@ -3284,7 +3346,8 @@ window.REPO_PACKS.push({
         "un tiret",
         "une minuscule"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3295,17 +3358,20 @@ window.REPO_PACKS.push({
         "une virgule",
         "une ligne blanche"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Qu'est-ce qu'un **pied** en poésie ?",
-       "a": "Une **syllabe**."
+       "a": "Une **syllabe**.",
+       "t": "def"
       },
       {
        "k": "f",
        "q": "Quand ne prononce-t-on **pas le e** dans un vers ?",
-       "a": "En **fin de vers** (à la rime) et quand il est **suivi d'une voyelle**."
+       "a": "En **fin de vers** (à la rime) et quand il est **suivi d'une voyelle**.",
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -3327,12 +3393,14 @@ window.REPO_PACKS.push({
          "12 pieds",
          "alexandrin"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "f",
        "q": "Qu'est-ce qu'un **vers libre** ?",
-       "a": "Un vers qui n'obéit à **aucune structure régulière**."
+       "a": "Un vers qui n'obéit à **aucune structure régulière**.",
+       "t": "def"
       },
       {
        "k": "q",
@@ -3344,7 +3412,8 @@ window.REPO_PACKS.push({
         "un trait"
        ],
        "a": 0,
-       "x": "Il n'y a pas d'alinéa, contrairement au paragraphe en prose."
+       "x": "Il n'y a pas d'alinéa, contrairement au paragraphe en prose.",
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -3358,7 +3427,8 @@ window.REPO_PACKS.push({
          "quatrain",
          "4 vers"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "q",
@@ -3369,7 +3439,8 @@ window.REPO_PACKS.push({
         "deux tercets et un quatrain",
         "quatorze strophes"
        ],
-       "a": 0
+       "a": 0,
+       "t": "coeur"
       },
       {
        "k": "p",
@@ -3387,7 +3458,8 @@ window.REPO_PACKS.push({
          "rimes embrassées",
          "ABBA"
         ]
-       ]
+       ],
+       "t": "coeur"
       },
       {
        "k": "s",
@@ -3422,7 +3494,8 @@ window.REPO_PACKS.push({
          "maison / raison",
          2
         ]
-       ]
+       ],
+       "t": "exo"
       },
       {
        "k": "s",
@@ -3448,11 +3521,13 @@ window.REPO_PACKS.push({
          "ami / joli",
          1
         ]
-       ]
+       ],
+       "t": "exo"
       }
      ]
     }
    ]
   }
  ]
-});
+}
+);
