@@ -12,6 +12,10 @@
   const sub = (id) => STORE.SUBI[id];
   const el = () => ART.ELEMENTS[(S().profile && S().profile.element) || "feu"];
   const plural = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+  // Dossier Google Drive « Hikari - cours » (partagé par Papa) : Anaïs y dépose les photos de son cahier, la routine du soir les transforme en leçons.
+  // L'accès reste limité aux comptes avec qui le dossier est partagé ; Hikari ne fait qu'ouvrir le lien.
+  const DRIVE_COURS = "https://drive.google.com/drive/folders/1hJYtU65R-xjpxSpmrstaQcEszVWqaWGi";
+  const sendBtn = (cls = "btn sm") => STORE.isLibre() ? "" : `<a class="${cls}" href="${DRIVE_COURS}" target="_blank" rel="noopener">📤 Envoyer mon cours</a>`;
 
   // ---------- Petits outils d'interface ----------
   function toast(msg) { const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2700); }
@@ -312,7 +316,7 @@
     const l = STORE.LEI[lid]; STORE.openLesson(lid); const up = STORE.addXP(20); STORE.save();
     FX.sfx("stamp"); FX.buzz(25);
     const [x, y] = FX.center(btn); FX.burst(x, y, { color: sub(STORE.CHI[l.ch].s).color, n: 26, speed: 5 }); fxText("開！", x, y);
-    if (l.stub) toast("Leçon ouverte. Ajoute les photos de ton cours pour la remplir.");
+    if (l.stub) toast(STORE.isLibre() ? "Leçon ouverte." : "Leçon ouverte. Envoie ton cours (📤) pour la remplir.");
     afterAction(); levelUpCheck(up); setTimeout(render, 350);
   }
 
@@ -329,28 +333,20 @@
         ${lc.length ? `<div class="kinds">${Object.entries(kc).map(([k, n]) => `<span class="pill">${n} ${kinds[k] || k}</span>`).join("")}</div>` : ""}
         <div class="row wrap">${open ? (lc.length ? `<button class="btn primary" data-go="seance~l:${lid}">Réviser cette leçon</button>` : "") : `<button class="btn primary pulse" id="le-open">Vu en classe : ouvrir</button>`}${open ? `<button class="btn ghost sm" id="le-close">Refermer</button>` : ""}</div>
       </section>
-      ${l.fiche ? `<section class="panel fiche" style="--accent:${s.color}"><p class="eyebrow">${l.fromTeacher ? "Fiche · d'après le cours de ta prof" : "Fiche"}</p>${l.note ? `<p class="small muted">${md(l.note)}</p>` : ""}${renderFiche(l.fiche)}</section>` : l.stub ? `<section class="flat">${senseiLine("Cette leçon est encore vide : c'est un <b>plan</b>. Quand ta prof la fait en classe, photographie ton cours ci-dessous et envoie-le pour qu'il devienne cartes et exercices.", "think")}</section>` : ""}
+      ${l.fiche ? `<section class="panel fiche" style="--accent:${s.color}"><p class="eyebrow">${l.fromTeacher ? "Fiche · d'après le cours de ta prof" : "Fiche"}</p>${l.note ? `<p class="small muted">${md(l.note)}</p>` : ""}${renderFiche(l.fiche)}</section>` : l.stub ? `<section class="flat">${senseiLine("Cette leçon est encore vide : c'est un <b>plan</b>. Quand ta prof la fait en classe, envoie ton cours avec le bouton ci-dessous : il deviendra cartes et exercices.", "think")}</section>` : ""}
       ${(l.extra || []).map((x) => `<section class="extra fiche"><p class="eyebrow">Ajouts de ta prof</p>${x.note ? `<p>${md(x.note)}</p>` : ""}${renderFiche(x.fiche)}</section>`).join("")}
       ${(l.photos || []).length ? `<section class="stack"><h2>Pages du cahier</h2>${photoStrip(l.photos)}</section>` : ""}
-      <section class="stack"><div class="row" style="justify-content:space-between"><h2>Mes photos de cours</h2><label class="btn sm">Ajouter<input type="file" accept="image/*" capture="environment" multiple id="ph-in" hidden></label></div><div class="photos" id="ph"></div><div id="ph-share"></div></section>
+      ${STORE.isLibre() ? "" : `<section class="panel stack send-cours"><p class="small muted" style="margin:0">Nouveau cours dans ton cahier ? Prends les pages en photo dans le dossier <b>« Hikari - cours »</b> (dans Drive : <b>+</b> puis <b>Numériser</b>). Le soir, il devient fiche, cartes et exercices.</p>${sendBtn("btn primary")}</section>`}
+      <section class="stack" id="ph-old" hidden><h2>Anciennes photos sur ce téléphone</h2><div class="photos" id="ph"></div></section>
       <details><summary>Programme officiel lié</summary><div class="in">${refsBlock(l.refs || c.refs)}</div></details>
       <div class="row" style="justify-content:space-between">${c.lessons[idx - 1] ? `<button class="btn ghost sm" data-go="le~${c.lessons[idx - 1].id}">← Précédente</button>` : "<span></span>"}${c.lessons[idx + 1] ? `<button class="btn ghost sm" data-go="le~${c.lessons[idx + 1].id}">Suivante →</button>` : ""}</div>`;
     const lo = $("#le-open"); if (lo) lo.onclick = () => unlockLesson(lid, lo);
     bindPhotoStrip(main, l.photos || []);
     const lcb = $("#le-close"); if (lcb) lcb.onclick = (e) => { if (e.target.dataset.sure) { STORE.closeLesson(lid); STORE.save(); render(); } else { e.target.dataset.sure = 1; e.target.textContent = "Confirmer (tes progrès sont gardés)"; } };
-    $("#ph-in").onchange = async (e) => { const files = Array.from(e.target.files || []); for (const f of files) await STORE.addPhoto(lid, f); toast(files.length > 1 ? `${files.length} photos ajoutées` : "Photo ajoutée"); FX.sfx("drop"); afterAction(); drawPhotos(); };
     async function drawPhotos() {
       const ps = (await STORE.photos(lid)).concat(idx === 0 ? await STORE.photos(c.id) : []); const box = $("#ph"); if (!box) return;
-      box.innerHTML = ps.length ? "" : `<p class="small muted" style="grid-column:1/-1">Aucune photo. Photographie les pages de ton cahier pour garder les notions ajoutées par ta prof.</p>`;
+      box.innerHTML = ""; $("#ph-old").hidden = !ps.length;
       ps.forEach((p) => { const u = URL.createObjectURL(p.blob); const im = document.createElement("img"); im.src = u; im.alt = "Photo de cours"; im.onclick = () => lightbox(u, p.id, drawPhotos); box.appendChild(im); });
-      const sh = $("#ph-share");
-      if (ps.length && navigator.canShare) {
-        const files = ps.map((p, i) => new File([p.blob], `hikari-${lid}-${i + 1}.jpg`, { type: "image/jpeg" }));
-        if (navigator.canShare({ files })) {
-          sh.innerHTML = `<button class="btn sm" id="ph-send">Envoyer les photos pour enrichissement</button>`;
-          $("#ph-send").onclick = () => navigator.share({ files, title: `Hikari — ${l.title}`, text: `Hikari · chapitre ${c.id} · leçon ${lid} (${s.name}) : ${l.title}\nRéférences : ${(l.refs || c.refs || []).join(", ")}` }).catch(() => { });
-        }
-      } else if (ps.length) sh.innerHTML = `<p class="tiny muted">Identifiant à transmettre avec les photos : <code>${esc(lid)}</code></p>`;
     }
     drawPhotos();
   }
@@ -894,18 +890,16 @@
     function drawNL() {
       const s = sub(tgt.s); const chs = STORE.CH.filter((c) => c.s === tgt.s); if (!tgt.ch || !STORE.CHI[tgt.ch] || STORE.CHI[tgt.ch].s !== tgt.s) tgt.ch = (chs.find((c) => STORE.chapterState(c.id) !== "locked") || chs[0]).id;
       const chRefs = new Set(STORE.CHI[tgt.ch].refs || []);
-      nl.innerHTML = `<p class="small">Ta prof fait une nouvelle leçon ? Crée-la dans son chapitre, rattache-la au programme et ajoute tes photos. Elle sera enrichie ensuite par un pack.</p>
+      nl.innerHTML = `<p class="small">Ta prof fait une nouvelle leçon ? Crée-la dans son chapitre et rattache-la au programme, puis envoie ton cours avec le bouton 📤 : elle sera remplie le soir même.</p>
         <select id="nl-s">${PROGRAMME.subjects.map((x) => `<option value="${x.id}" ${x.id === tgt.s ? "selected" : ""}>${x.name}</option>`).join("")}</select>
         <select id="nl-c">${chs.map((c) => `<option value="${c.id}" ${c.id === tgt.ch ? "selected" : ""}>${esc(c.title)}</option>`).join("")}</select>
         <input type="text" id="nl-t" placeholder="Titre de la leçon (comme dans ton cahier)" maxlength="80">
         <span class="small"><b>Points du programme concernés</b> <span class="muted">(ceux du chapitre sont pré-cochés)</span></span>
         <div class="checks">${s.domains.map((d) => `<span class="eyebrow">${esc(d.name)}</span>${d.items.map((it) => `<label><input type="checkbox" value="${it.id}" ${chRefs.has(it.id) ? "checked" : ""}><span><b>${esc(it.t)}</b> <span class="muted">${it.id}</span></span></label>`).join("")}`).join("")}</div>
-        <label class="btn">Ajouter les photos<input type="file" accept="image/*" capture="environment" multiple id="nl-ph" hidden></label><span class="small muted" id="nl-n">0 photo</span>
+        ${sendBtn("btn")}
         <button class="btn primary" id="nl-go">Créer la leçon</button>`;
-      let files = [];
       $("#nl-s").onchange = (e) => { tgt = { s: e.target.value, ch: null }; drawNL(); };
       $("#nl-c").onchange = (e) => { tgt.ch = e.target.value; drawNL(); };
-      $("#nl-ph").onchange = (e) => { files = Array.from(e.target.files || []); $("#nl-n").textContent = plural(files.length, "photo"); };
       $("#nl-go").onclick = async () => {
         const t = $("#nl-t").value.trim(), refs = $$(".checks input:checked", nl).map((i) => i.value);
         if (!t) return toast("Donne un titre à ta leçon.");
@@ -913,7 +907,6 @@
         const ts = Date.now(), lid = `u-${tgt.ch}-${ts}`;
         STORE.importPack({ format: "hikari-pack", version: 2, id: "photo-" + ts, title: "Leçon photo : " + t, created: STORE.today(), activate: false, extend: [{ chapter: tgt.ch, lessons: [{ id: lid, title: t, refs, userMade: true, cards: [] }] }] });
         STORE.openLesson(lid); STORE.save();
-        for (const f of files) await STORE.addPhoto(lid, f);
         FX.sfx("stamp"); toast("Leçon créée !"); afterAction(); go("le~" + lid);
       };
     }
@@ -1056,7 +1049,7 @@
   // Nouvelle échéance : l'apprenti de la matière vient la confirmer
   function apprentiSays(it) {
     const sj = AGENDA.subj(it.s), ty = AGENDA.TYPES[it.type], n = AGENDA.daysTo(it.date);
-    const line = it.lessons.length ? (n > AGENDA.WINDOW ? `Je mettrai ces leçons en tête de tes révisions 7 jours avant. On sera prêts !` : `Ces leçons passent dès aujourd'hui en tête de tes révisions. On s'y met ensemble ?`) : `C'est noté ! Pense à me dire quelle leçon réviser, ${STORE.isLibre() ? "ou demande à tes parents." : "ou demande à Papa d'envoyer la photo du cours."}`;
+    const line = it.lessons.length ? (n > AGENDA.WINDOW ? `Je mettrai ces leçons en tête de tes révisions 7 jours avant. On sera prêts !` : `Ces leçons passent dès aujourd'hui en tête de tes révisions. On s'y met ensemble ?`) : `C'est noté ! Pense à me dire quelle leçon réviser, ${STORE.isLibre() ? "ou demande à tes parents." : "ou envoie ton cours avec le bouton 📤 de la leçon."}`;
     FX.sfx("stamp");
     celebrate("記録！", `${sj.img ? `<img class="ap-img" src="${sj.img}" alt="">` : `<div style="font-size:4rem">${sj.ic}</div>`}<p><b>${esc(ty[0])} de ${esc(sj.n)} ${whenTxt(it.date)}</b>${it.title ? `<br><span class="small">${esc(it.title)}</span>` : ""}</p><p class="small">${line}</p>`, it.lessons.length && n <= AGENDA.WINDOW ? "On s'y met !" : "Compris", "level").then(() => { if (it.lessons.length && n <= AGENDA.WINDOW) go("seance~a:" + it.id); });
   }
@@ -1127,7 +1120,7 @@
         <label class="stack"><span class="small"><b>Matière</b></span><select id="af-s">${AGENDA.subjects().filter((x) => !["etude", "vdc", "cantine", "recre"].includes(x.id)).map((x) => `<option value="${x.id}" ${x.id === st.s ? "selected" : ""}>${x.ic} ${esc(x.n)}</option>`).join("")}</select></label>
         <label class="stack"><span class="small"><b>Pour quand ?</b></span><div class="row wrap" style="gap:6px">${nc ? `<button class="pday ${st.date === nc ? "on" : ""}" data-dt="${nc}">Prochain cours : ${new Date(nc + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", timeZone: "UTC" })}</button>` : ""}<input type="date" id="af-d" value="${st.date}" min="${STORE.today()}" style="width:auto"></div></label>
         <label class="stack"><span class="small"><b>Sur quoi ?</b> (facultatif)</span><input id="af-t" value="${esc(st.title)}" maxlength="80" placeholder="Ex. les fractions, la poésie à réciter"></label>
-        ${hk ? `<div class="stack"><span class="small"><b>Les leçons de Hikari à réviser</b></span>${ls.length ? `<div class="fix-list">${ls.map(({ l, c }) => `<label class="fix-row"><input type="checkbox" data-l="${l.id}" ${st.lessons.includes(l.id) ? "checked" : ""}> <span class="small">${esc(l.title)} <span class="muted tiny">· ${esc(c.title)}</span></span></label>`).join("")}</div>` : `<p class="small muted">Aucune leçon ouverte dans cette matière.</p>`}${st.lessons.length ? (() => { const n = STORE.itemCards({ lessons: st.lessons, prog: true }).filter((c) => c.comp).length; return n ? `<label class="fix-row"><input type="checkbox" id="af-prog" ${st.prog !== false ? "checked" : ""}> <span class="small">Ajouter les <b>${n} cartes du programme</b> sur le même thème <span class="muted tiny">(écrites d'après le programme officiel, pas d'après ton cours)</span></span></label>` : `<p class="tiny muted">Pas de carte du programme en plus pour ces leçons.</p>`; })() : ""}<p class="tiny muted">La leçon n'y est pas ? ${STORE.isLibre() ? "Hikari suit le programme officiel : demande à tes parents s'il manque une leçon." : "Demande à Papa d'envoyer la photo de ton cours."}</p></div>` : ""}
+        ${hk ? `<div class="stack"><span class="small"><b>Les leçons de Hikari à réviser</b></span>${ls.length ? `<div class="fix-list">${ls.map(({ l, c }) => `<label class="fix-row"><input type="checkbox" data-l="${l.id}" ${st.lessons.includes(l.id) ? "checked" : ""}> <span class="small">${esc(l.title)} <span class="muted tiny">· ${esc(c.title)}</span></span></label>`).join("")}</div>` : `<p class="small muted">Aucune leçon ouverte dans cette matière.</p>`}${st.lessons.length ? (() => { const n = STORE.itemCards({ lessons: st.lessons, prog: true }).filter((c) => c.comp).length; return n ? `<label class="fix-row"><input type="checkbox" id="af-prog" ${st.prog !== false ? "checked" : ""}> <span class="small">Ajouter les <b>${n} cartes du programme</b> sur le même thème <span class="muted tiny">(écrites d'après le programme officiel, pas d'après ton cours)</span></span></label>` : `<p class="tiny muted">Pas de carte du programme en plus pour ces leçons.</p>`; })() : ""}<p class="tiny muted">La leçon n'y est pas ? ${STORE.isLibre() ? "Hikari suit le programme officiel : demande à tes parents s'il manque une leçon." : "Envoie ton cours avec le bouton 📤 de la leçon (dossier Drive « Hikari - cours »)."}</p></div>` : ""}
         <div class="row wrap"><button class="btn primary" id="af-ok" style="flex:1">Enregistrer</button><button class="btn ghost" id="af-x">Annuler</button></div></section>`;
       const read = () => { st.title = $("#af-t").value.trim(); if ($("#af-d").value) st.date = $("#af-d").value; st.lessons = $$("[data-l]", box).filter((c) => c.checked).map((c) => c.dataset.l); const pg = $("#af-prog"); if (pg) st.prog = pg.checked; };
       $$("[data-l]", box).forEach((c) => (c.onchange = () => { read(); paint(); }));
