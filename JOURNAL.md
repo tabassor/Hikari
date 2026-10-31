@@ -17,5 +17,5 @@ Dossier Drive : « Hikari - cours » (id 1hJYtU65R-xjpxSpmrstaQcEszVWqaWGi).
 - Leçons : fr-natures-l1 à l4, ma-decimaux-l3 et l4, hi-humanite-l2 et l3, sc-ecosys-l1 et l2, sc-boisjoli-l4 (177 cartes)
 - En suspens : un mot illisible de la liste des mots invariables, colonne 4, entre « sinon » et « soudain » (affiché « (voir ta feuille) »).
 
-### 2026-10-15 → 2026-10-30 — rien de nouveau
+### 2026-10-15 → 2026-10-31 — rien de nouveau
 - Dossier Drive vide, aucune relecture en attente.
